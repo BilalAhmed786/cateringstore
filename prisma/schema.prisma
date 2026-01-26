@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // or mysql
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  CLIENT
+}
+
+model User {
+  id        String   @id // Firebase UID
+  email     String   @unique
+  name      String?
+  role      Role     @default(CLIENT)
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model Category {
+  id        String     @id @default(uuid())
+  name      String
+  createdAt DateTime   @default(now())
+  items     MenuItem[]
+}
+
+model MenuItem {
+  id          String  @id @default(uuid())
+  title       String
+  description String?
+  price       Float
+  image       String?
+  available   Boolean @default(true)
+  categoryId String
+  category   Category    @relation(fields: [categoryId], references: [id])
+  orderItems OrderItem[]
+  createdAt  DateTime    @default(now())
+}
+
+model Order {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  status OrderStatus @default(PENDING)
+  total  Float
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+}
+
+model OrderItem {
+  id       String   @id @default(uuid())
+  orderId  String
+  menuId   String
+  quantity Int
+  order    Order    @relation(fields: [orderId], references: [id])
+  menu     MenuItem @relation(fields: [menuId], references: [id])
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  COOKING
+  DELIVERED
+  CANCELLED
+}

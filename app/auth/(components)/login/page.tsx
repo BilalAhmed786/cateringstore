@@ -1,0 +1,70 @@
+"use client";
+import { useRouter } from "next/navigation";
+import { DynamicShadcnForm } from "@/components/reusables/dynamicform/dynamicform";
+import { generateSchema } from "@/components/reusables/valdiation/valdiation";
+import { authMutations } from "../hooks/authhook";
+import { FieldConfig } from "@/components/reusables/types/types";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import GmailIcon from "@/assets/gmail-old-svgrepo-com.svg";
+import FacebookIcon from "@/assets/facebook-svgrepo-com.svg";
+
+export default function LoginPage() {
+  const router = useRouter();
+  const {mutate,isPending} = authMutations.useLogin();
+  const oauthMutation = authMutations.useOAuth();
+
+  // --- Form Fields ---
+  const loginFields: FieldConfig[] = [
+    { name: "email", label: "Email", type: "email", placeholder: "you@example.com" },
+    { name: "password", label: "Password", type: "password", placeholder: "••••••••" },
+  ];
+
+  const schema = generateSchema(loginFields);
+
+  return (
+    <div className="space-y-6 max-w-md mx-auto mt-10">
+      {/* ----------------- EMAIL / PASSWORD LOGIN ----------------- */}
+      <DynamicShadcnForm
+        schema={schema}
+        fields={loginFields}
+        defaultvalues={{ email: "", password: "" }}
+        cardTitle="Login"
+        cardDescription="Login with your email or use Google/Facebook"
+        submitLabel={isPending ? "Logging in..." : "Login"}
+        reset="Reset"
+        onSubmit={(data) =>
+           mutate(data, {
+            onSuccess: () => router.push("/dashboard"), // redirect after login
+          })
+        }
+      />
+
+      {/* ----------------- OAUTH BUTTONS ----------------- */}
+      <div className="flex flex-col gap-2 mt-4">
+        {/* Google */}
+        <Button
+          variant="outline"
+          className="flex items-center gap-2 justify-center"
+          onClick={() =>
+            oauthMutation.mutate("google", { onSuccess: () => router.push("/dashboard") })
+          }
+        >
+          <Image src={GmailIcon} alt="Gmail" width={24} height={24} />
+          Sign in with Google
+        </Button>
+
+        {/* Facebook */}
+        <Button
+          className="flex items-center gap-2 justify-center bg-blue-600 text-white hover:bg-blue-700"
+          onClick={() =>
+            oauthMutation.mutate("facebook", { onSuccess: () => router.push("/dashboard") })
+          }
+        >
+          <Image src={FacebookIcon} alt="Facebook" width={24} height={24} />
+          Sign in with Facebook
+        </Button>
+      </div>
+    </div>
+  );
+}
