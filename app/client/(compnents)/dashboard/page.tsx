@@ -1,9 +1,13 @@
-import React from 'react'
+'use client'
+import { useAuthRedirect } from "@/components/reusables/hooks/useAuthRedirect"
 
-const page = () => {
-  return (
+const Page = () => {
+  const {isPending} = useAuthRedirect()
+   
+  if(isPending) return <>....</>
+   return (
     <div>Clientdashboard</div>
   )
 }
 
-export default page
+export default Page

@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function POST(req: NextRequest) {
+export async function POST(
+  req: NextRequest
+){
   try {
-    const { uid, email, name } = await req.json();
+    const { uid, email, name } = await req.json() 
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({ where: { id: uid } });
     if (existingUser) {
-      return NextResponse.json({ message: "User already exists" }, { status: 200 });
+      return NextResponse.json("User already exists",
+        { status: 409 }
+      );
     }
 
     // Create new user
@@ -17,13 +21,16 @@ export async function POST(req: NextRequest) {
         id: uid,
         email,
         name,
-        role: "CLIENT", // default role
+        role: "CLIENT",
       },
     });
 
     return NextResponse.json({ user });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: "Failed to register user" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to register user" },
+      { status: 500 }
+    );
   }
 }

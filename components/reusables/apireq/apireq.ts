@@ -1,5 +1,19 @@
 import { auth } from "@/lib/firebase";
-import { getIdToken } from "firebase/auth";
+import { getIdToken, onAuthStateChanged } from "firebase/auth";
+
+async function getCurrentUserToken(): Promise<string | null> {
+  return new Promise((resolve) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      unsubscribe(); // Stop listening after first call
+      if (user) {
+        const token = await getIdToken(user);
+        resolve(token);
+      } else {
+        resolve(null);
+      }
+    });
+  });
+}
 
 export async function apiRequest<TResponse = unknown, TBody = unknown>({
   url,
@@ -17,14 +31,12 @@ export async function apiRequest<TResponse = unknown, TBody = unknown>({
   let token: string | null = null;
 
   if (authRequired) {
-    const user = auth.currentUser;
+    // ✅ Use async listener instead of auth.currentUser directly
+    token = await getCurrentUserToken();
 
-    if (!user) {
-      window.location.href = "/login";
+    if (!token) {
       throw new Error("User not authenticated");
     }
-
-    token = await getIdToken(user); // Firebase token
   }
 
   const isFormData = body instanceof FormData;
@@ -37,20 +49,17 @@ export async function apiRequest<TResponse = unknown, TBody = unknown>({
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
-    body: body
-      ? isFormData
-        ? body
-        : JSON.stringify(body)
-      : undefined,
+    body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
   });
 
   if (res.ok) {
-    return res.json();
+    const data = await res.json();
+    return data;
   }
 
   if (res.status === 401 && authRequired) {
     await auth.signOut();
-    window.location.href = "/login";
+    window.location.href = "/auth/login";
     throw new Error("Session expired");
   }
 
