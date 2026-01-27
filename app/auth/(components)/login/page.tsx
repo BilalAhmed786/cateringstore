@@ -8,11 +8,10 @@ import GmailIcon from "@/assets/gmail-old-svgrepo-com.svg";
 import FacebookIcon from "@/assets/facebook-svgrepo-com.svg";
 import { useLogin } from "../hooks/useLogin";
 import { useOAuth } from "../hooks/useOAuth";
-import { useAuthRedirect } from "@/components/reusables/hooks/useAuthRedirect";
-import { FullScreenLoader } from "@/components/reusables/laoder/laoder";
+
 export default function LoginPage() {
   // ---------- HOOKS ----------
-  const { isPending } = useAuthRedirect();
+  // const { isPending } = useAuthRedirect();
   const { mutate: loginMutate, isPending: loginPending } = useLogin();
   const { mutate: oauthMutate, isPending: oauthPending } = useOAuth();
   // ---------- FORM FIELDS ----------
@@ -32,10 +31,7 @@ export default function LoginPage() {
   ];
 
   const schema = generateSchema(loginFields);
-
-  if (isPending) {
-    return <FullScreenLoader />;
-  }
+ 
   return (
     <div className="space-y-6 max-w-md mx-auto mt-10">
       {/* ----------------- EMAIL / PASSWORD LOGIN ----------------- */}

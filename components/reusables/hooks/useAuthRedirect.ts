@@ -1,3 +1,4 @@
+'use client'
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/components/reusables/apireq/apireq";
@@ -17,7 +18,6 @@ export function useAuthRedirect() {
           authRequired: true,
         });
 
-        // ✅ REDIRECT LOGIC HERE (as you requested)
         if (result.user.role === "ADMIN") {
           router.replace("/admin/dashboard");
         } else if(result.user.role === "CLIENT") {

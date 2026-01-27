@@ -8,8 +8,8 @@ import GmailIcon from "@/assets/gmail-old-svgrepo-com.svg";
 import FacebookIcon from "@/assets/facebook-svgrepo-com.svg";
 import { useRegister } from "../hooks/useRegister";
 import { useOAuth } from "../hooks/useOAuth";
-import { useAuthRedirect } from "@/components/reusables/hooks/useAuthRedirect";
-import { FullScreenLoader } from "@/components/reusables/laoder/laoder";
+// import { useAuthRedirect } from "@/components/reusables/hooks/useAuthRedirect";
+// import { FullScreenLoader } from "@/components/reusables/laoder/laoder";
 export default function RegisterPage() {
   /* ---------- FORM FIELDS ---------- */
   const registerFields: FieldConfig[] = [
@@ -33,11 +33,7 @@ export default function RegisterPage() {
   /* ---------- MUTATIONS ---------- */
   const registerMutation = useRegister();
   const oauthMutation = useOAuth();
-  const {isPending} = useAuthRedirect()
-
-  if (isPending) {
-    return <FullScreenLoader />;
-  }
+  
 
   return (
     <div className="space-y-6 max-w-md mx-auto mt-10">
