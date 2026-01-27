@@ -1,4 +1,4 @@
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { getIdToken, onAuthStateChanged } from "firebase/auth";
 
 async function getCurrentUserToken(): Promise<string | null> {

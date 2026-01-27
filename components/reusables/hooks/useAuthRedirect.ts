@@ -12,7 +12,7 @@ export function useAuthRedirect() {
     queryFn: async () => {
       try {
         const result = await apiRequest<AuthResponse>({
-          url: "/api/auth/verifytoken",
+          url: "/api/auth/authorize",
           method: "GET",
           authRequired: true,
         });

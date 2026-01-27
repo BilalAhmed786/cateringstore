@@ -1,7 +1,7 @@
 // hooks/useRegister.ts
 import { useMutation } from "@tanstack/react-query";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { apiRequest } from "@/components/reusables/apireq/apireq";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";

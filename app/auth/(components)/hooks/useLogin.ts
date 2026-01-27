@@ -1,7 +1,7 @@
 // hooks/useLogin.ts
 import { useMutation } from "@tanstack/react-query";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/lib/firebase/firebase";
 import { toast } from "sonner";
 import { LoginValues } from "../types/types";
 
