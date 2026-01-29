@@ -1,20 +1,19 @@
-"use client";
+'use client';
 import { DynamicShadcnForm } from "@/components/reusables/dynamicform/dynamicform";
 import { generateSchema } from "@/components/reusables/valdiation/valdiation";
 import { FieldConfig } from "@/components/reusables/types/types";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 import GmailIcon from "@/assets/gmail-old-svgrepo-com.svg";
 import FacebookIcon from "@/assets/facebook-svgrepo-com.svg";
 import { useLogin } from "../hooks/useLogin";
 import { useOAuth } from "../hooks/useOAuth";
+import { UniButton } from "@/components/reusables/button/button";
 
 export default function LoginPage() {
-  // ---------- HOOKS ----------
-  // const { isPending } = useAuthRedirect();
   const { mutate: loginMutate, isPending: loginPending } = useLogin();
   const { mutate: oauthMutate, isPending: oauthPending } = useOAuth();
-  // ---------- FORM FIELDS ----------
+
   const loginFields: FieldConfig[] = [
     {
       name: "email",
@@ -31,10 +30,10 @@ export default function LoginPage() {
   ];
 
   const schema = generateSchema(loginFields);
- 
+
   return (
     <div className="space-y-6 max-w-md mx-auto mt-10">
-      {/* ----------------- EMAIL / PASSWORD LOGIN ----------------- */}
+      {/* ---------------- EMAIL / PASSWORD LOGIN ---------------- */}
       <DynamicShadcnForm
         schema={schema}
         fields={loginFields}
@@ -46,28 +45,30 @@ export default function LoginPage() {
         onSubmit={(data) => loginMutate(data)}
       />
 
-      {/* ----------------- OAUTH BUTTONS ----------------- */}
+      {/* ---------------- OAUTH BUTTONS ---------------- */}
       <div className="flex flex-col gap-2 mt-4">
-        {/* Google */}
-        <Button
-          variant="outline"
-          className="flex items-center gap-2 justify-center"
-          disabled={oauthPending}
+        <UniButton
+          label="Continue with Google"
+          icon={<Image src={GmailIcon} alt="Gmail" width={24} height={24} />}
           onClick={() => oauthMutate("google")}
-        >
-          <Image src={GmailIcon} alt="Gmail" width={24} height={24} />
-          Sign in with Google
-        </Button>
-
-        {/* Facebook */}
-        <Button
-          className="flex items-center gap-2 justify-center bg-blue-600 text-white hover:bg-blue-700"
           disabled={oauthPending}
+        />
+
+        <UniButton
+          label="Continue with Facebook"
+          icon={<Image src={FacebookIcon} alt="Facebook" width={24} height={24} />}
           onClick={() => oauthMutate("facebook")}
-        >
-          <Image src={FacebookIcon} alt="Facebook" width={24} height={24} />
-          Sign in with Facebook
-        </Button>
+          disabled={oauthPending}
+          className="bg-blue-600 text-white hover:bg-blue-700"
+        />
+
+        {/* Links */}
+        <div className="flex justify-between text-sm text-blue-600 mt-2">
+          <Link href="/auth/register">Create Account</Link>
+          <Link href="/auth/forgotpassword" className="underline">
+            Forgot Password?
+          </Link>
+        </div>
       </div>
     </div>
   );

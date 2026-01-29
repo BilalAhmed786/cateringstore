@@ -3,21 +3,41 @@ import { useMutation } from "@tanstack/react-query";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase/firebase";
 import { toast } from "sonner";
-import { LoginValues } from "../types/types";
-
+import { apiRequest } from "@/components/reusables/apireq/apireq";
+import { useRouter } from "next/navigation";
+import { AuthResponse } from "../types/types";
 export function useLogin() {
-  return useMutation({
-    mutationFn: async (data: LoginValues) => {
-      await signInWithEmailAndPassword(auth, data.email, data.password);
+  const router = useRouter();
+
+  return useMutation<AuthResponse, Error, { email: string; password: string }>({
+    mutationFn: async (data) => {
+      // 1️⃣ Login via Firebase
+      const cred = await signInWithEmailAndPassword(auth, data.email, data.password);
+
+      // 2️⃣ Call backend to generate app JWT
+      return apiRequest({
+        url: "/api/auth/login",
+        method: "POST",
+        authRequired: true,
+        body: {
+          uid: cred.user.uid,
+          email: cred.user.email,
+        },
+      });
     },
 
-    onSuccess: () => {
-      toast.success("Logged in successfully!");
+    onSuccess: (res) => {
+      toast.success("Login successful!");
+
+      if (res.user.role === "ADMIN") {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/client/dashboard");
+      }
     },
 
-    onError: (err: unknown) => {
-
-        console.log(err)
+    onError: (err: Error) => {
+      console.log(err);
       toast.error("Login failed");
     },
   });
