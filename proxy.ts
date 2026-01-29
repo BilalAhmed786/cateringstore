@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyJwt } from "@/lib/jwt/jwt";
+import { verifyJwt } from "@/app/(backend)/lib/jwt/jwt";
 
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
