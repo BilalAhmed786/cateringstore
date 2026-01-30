@@ -12,13 +12,31 @@ enum Role {
   CLIENT
 }
 
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  COOKING
+  DELIVERED
+  CANCELLED
+}
+
+enum EventStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
 model User {
   id        String   @id // Firebase UID
   email     String   @unique
   name      String?
   role      Role     @default(CLIENT)
   createdAt DateTime @default(now())
-  orders    Order[]
+
+  orders  Order[]
+  events  Event[]
+  surveys Survey[]
 }
 
 model Category {
@@ -29,26 +47,33 @@ model Category {
 }
 
 model MenuItem {
-  id          String  @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
   description String?
   price       Float
   image       String?
-  available   Boolean @default(true)
-  categoryId String
-  category   Category    @relation(fields: [categoryId], references: [id])
-  orderItems OrderItem[]
-  createdAt  DateTime    @default(now())
+  available   Boolean  @default(true)
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  orderItems   OrderItem[]
+  packageItems PackageItem[]
+  hamperItems  HamperItem[]
+  surveys      Survey[]
+  createdAt    DateTime      @default(now())
 }
 
 model Order {
-  id     String @id @default(uuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-  status OrderStatus @default(PENDING)
-  total  Float
-  items     OrderItem[]
-  createdAt DateTime    @default(now())
+  id            String         @id @default(uuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  status        OrderStatus    @default(PENDING)
+  total         Float
+  items         OrderItem[]
+  orderPackages OrderPackage[]
+  orderHampers  OrderHamper[]
+  surveys       Survey[] // <-- add this
+  createdAt     DateTime       @default(now())
 }
 
 model OrderItem {
@@ -60,10 +85,100 @@ model OrderItem {
   menu     MenuItem @relation(fields: [menuId], references: [id])
 }
 
-enum OrderStatus {
-  PENDING
-  CONFIRMED
-  COOKING
-  DELIVERED
-  CANCELLED
+model OrderPackage {
+  id        String @id @default(uuid())
+  orderId   String
+  packageId String
+  quantity  Int    @default(1)
+  price     Float // snapshot price at time of order
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  package Package @relation(fields: [packageId], references: [id])
+}
+
+model OrderHamper {
+  id       String @id @default(uuid())
+  orderId  String
+  hamperId String
+  quantity Int    @default(1)
+  price    Float // snapshot price at time of order
+
+  order  Order  @relation(fields: [orderId], references: [id])
+  hamper Hamper @relation(fields: [hamperId], references: [id])
+}
+
+model Package {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  image       String?
+  available   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  items         PackageItem[]
+  events        Event[]
+  orderPackages OrderPackage[]
+}
+
+model PackageItem {
+  id         String @id @default(uuid())
+  packageId  String
+  menuItemId String
+  quantity   Int    @default(1)
+
+  package  Package  @relation(fields: [packageId], references: [id])
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+}
+
+model Hamper {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  image       String?
+  available   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  items        HamperItem[]
+  orderHampers OrderHamper[]
+}
+
+model HamperItem {
+  id         String @id @default(uuid())
+  hamperId   String
+  menuItemId String
+  quantity   Int    @default(1)
+
+  hamper   Hamper   @relation(fields: [hamperId], references: [id])
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+}
+
+model Event {
+  id         String      @id @default(uuid())
+  userId     String
+  packageId  String? // optional: event may be tied to a package
+  date       DateTime
+  location   String
+  guestCount Int
+  status     EventStatus @default(PENDING)
+  total      Float
+  createdAt  DateTime    @default(now())
+
+  user    User     @relation(fields: [userId], references: [id])
+  package Package? @relation(fields: [packageId], references: [id])
+}
+
+model Survey {
+  id         String   @id @default(uuid())
+  userId     String
+  menuItemId String
+  rating     Int // 1..5
+  comment    String?
+  orderId    String? // optional link to order (if desired)
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+  order    Order?   @relation(fields: [orderId], references: [id])
 }
