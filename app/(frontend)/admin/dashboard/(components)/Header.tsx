@@ -3,7 +3,7 @@
 import React from "react"
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button"
 import { LogOut } from "lucide-react"
-import type { HeaderProps } from "../../types/types"
+import type { HeaderProps } from "../types/types"
 
 export default function Header({ title = "Welcome Admin", onLogout }: HeaderProps) {
   return (

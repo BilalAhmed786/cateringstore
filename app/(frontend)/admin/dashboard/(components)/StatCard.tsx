@@ -2,7 +2,7 @@
 
 import React from "react"
 import { Card } from "@/app/(frontend)/components/ui/card"
-import type { StatCardProps } from "../../types/types"
+import type { StatCardProps } from "../types/types"
 
 export default function StatCard({ label, value, trend, icon: Icon }: StatCardProps) {
   return (

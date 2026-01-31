@@ -1,3 +1,4 @@
+import { LucideIcon } from "lucide-react"
 export type FieldConfig = {
   type: "email" | "password" |"text" | "number" | "select" | "checkbox" | "radio" | "date" | "file" | "textarea";
   name: string;
@@ -7,3 +8,39 @@ export type FieldConfig = {
   accept?: string;
   multiple?: boolean
 };
+
+export interface NavItemProps {
+  open: boolean
+  icon: LucideIcon
+  label: string
+  href: string
+}
+
+export interface SubNavProps {
+  icon: LucideIcon
+  label: string
+  href: string
+}
+
+export interface paginationProps {
+  page: number
+  total: number
+  limit: number
+  onPageChange: (page: number) => void
+}
+
+
+
+export interface MenuItemsTableProps<T> {
+  items: T[];
+  isLoading: boolean;
+  columns: { header: string; accessor: (item: T) => React.ReactNode }[];
+}
+
+ export interface BaseSelectProps {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  options: { label: string; value: string }[]
+  placeholder?: string
+}

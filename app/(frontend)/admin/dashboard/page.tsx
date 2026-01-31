@@ -4,9 +4,9 @@ import Sidebar from "./(components)/Sidebar"
 import Header from "./(components)/Header"
 import StatsGrid from "./(components)/StatsGrid"
 import RecentOrders from "./(components)/RecentOrders"
-import { useLogout } from "../hooks/useLogout"
-import { useDashboardStats } from "../hooks/useDashboardStats"
-import { useRecentOrders } from "../hooks/useRecentOrders"
+import { useLogout } from "./hooks/useLogout"
+import { useDashboardStats } from "./hooks/useDashboardStats"
+import { useRecentOrders } from "./hooks/useRecentOrders"
 
 export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true)

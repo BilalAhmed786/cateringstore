@@ -2,7 +2,7 @@
 
 import React from "react"
 import StatCard from "./StatCard"
-import type { StatsGridProps } from "../../types/types"
+import type { StatsGridProps } from "../types/types"
 
 export default function StatsGrid({ stats }: StatsGridProps) {
   return (

@@ -3,7 +3,7 @@
 import React from "react"
 import { Card } from "@/app/(frontend)/components/ui/card"
 import { ShoppingCart, MoreVertical } from "lucide-react"
-import type { RecentOrdersProps } from "../../types/types"
+import type { RecentOrdersProps } from "../types/types"
 
 export default function RecentOrders({ orders }: RecentOrdersProps) {
   return (
