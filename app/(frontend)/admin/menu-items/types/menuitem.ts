@@ -1,3 +1,13 @@
+export interface Survey {
+  id: string
+  userId: string
+  menuItemId: string
+  rating: number
+  comment?: string
+  orderId?: string
+  createdAt: string
+}
+
 export interface Category {
   id: string
   name: string
@@ -6,10 +16,13 @@ export interface Category {
 export interface MenuItem {
   id: string
   title: string
+  description?: string
   price: number
+  image?: string
   available: boolean
-  createdAt: string
   category: Category
+  surveys?: Survey[] 
+  createdAt: string
 }
 
 export interface CreateMenuItemPayload {
@@ -17,6 +30,15 @@ export interface CreateMenuItemPayload {
   price: number
   categoryId: string
   available: boolean
+}
+
+export interface MenuItemsFilters {
+  status?: string
+  category?: string
+  search?: string
+  dateFilter?: string 
+  page?: number
+  limit?: number
 }
 
 export type StatusFilter = "all" | "active" | "inactive"

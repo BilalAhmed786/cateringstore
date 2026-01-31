@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button"
 import { Separator } from "@/app/(frontend)/components/ui/separator"
 import {NavItem,SubNav} from "@/app/(frontend)/components/reusables/navitem/navitem"
+import { SidebarProps } from "../types/types"
 
 import {
   Home,
@@ -21,7 +22,7 @@ import {
   Layers,
   Star,
 } from "lucide-react"
-import type { SidebarProps } from "../types/types"
+
 
 export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -68,7 +69,7 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
 
         {menuOpen && open && (
           <div className="ml-6 space-y-1">
-            <SubNav label="Menu Items" icon={Utensils} href="menu-items" />
+            <SubNav label="Menu Items" icon={Utensils} href="/admin/menu-items" />
             <SubNav label="Categories" icon={Package} href="/dashboard/categories" />
             <SubNav label="Packages" icon={Gift} href="/dashboard/packages" />
             <SubNav label="Hampers" icon={Gift} href="/dashboard/hampers" />
