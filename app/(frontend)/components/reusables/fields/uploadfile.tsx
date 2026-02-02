@@ -7,12 +7,17 @@ import {
   FieldValues,
   useFormContext,
 } from "react-hook-form";
+import { Input } from "../../ui/input"; // reusable Input
+import { UniButton } from "../button/button"; // reusable Button
+import { Label } from "../../ui/label";
 
 interface FileUploadInputProps {
   name: string;
   label: string;
   accept?: string;
   multiple?: boolean;
+  className?: string; // for image previews
+  dragdrop?: string; // for drag area styling
 }
 
 const FileUploadInput: React.FC<FileUploadInputProps> = ({
@@ -20,10 +25,19 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
   label,
   accept = "image/*",
   multiple = false,
+  className,
+  dragdrop,
 }) => {
   const { control } = useFormContext();
   const [previews, setPreviews] = useState<string[]>([]);
+  const [mounted, setMounted] = useState(false);
 
+  // avoid SSR mismatch
+  useEffect(() => {
+    requestAnimationFrame(() => setMounted(true));
+  }, []);
+
+  // handle selected files
   const handleFiles = useCallback(
     (
       files: FileList | null,
@@ -40,11 +54,14 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
     [multiple],
   );
 
+  // remove a file
   const removeFile = (
     index: number,
     onChange: ControllerRenderProps<FieldValues, string>["onChange"],
     value: File | File[],
   ) => {
+    const inputEl = document.getElementById(name) as HTMLInputElement | null;
+
     if (multiple && Array.isArray(value)) {
       const updatedFiles = value.filter((_, i) => i !== index);
       onChange(updatedFiles);
@@ -56,8 +73,12 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
       previews.forEach((url) => URL.revokeObjectURL(url));
       setPreviews([]);
     }
+
+    // Reset the input so the same file can be re-selected
+    if (inputEl) inputEl.value = "";
   };
 
+  // cleanup object URLs
   useEffect(() => {
     return () => previews.forEach((url) => URL.revokeObjectURL(url));
   }, [previews]);
@@ -69,10 +90,13 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
       defaultValue={multiple ? [] : null}
       render={({ field, fieldState }) => (
         <div className="form-group">
-          <label className="block mb-2 font-medium">{label}</label>
+          <Label className="mb-2">{label}</Label>
 
+          {/* Drag & drop area */}
           <div
-            className="border-2 border-dashed rounded-lg p-4 cursor-pointer"
+            className={
+              dragdrop || "border-2 border-dashed rounded-lg p-4 cursor-pointer"
+            }
             onClick={() => document.getElementById(name)?.click()}
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
@@ -84,39 +108,44 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
               Drag & drop {multiple ? "files" : "file"} or click to upload
             </p>
 
-            <input
+            {/* Hidden input using reusable Input */}
+            <Input
               id={name}
               type="file"
               accept={accept}
               multiple={multiple}
-              hidden
+              className="hidden"
               onChange={(e) => handleFiles(e.target.files, field.onChange)}
             />
 
-            {previews.length > 0 && (
+            {/* Previews */}
+            {mounted && previews.length > 0 && (
               <div className="grid grid-cols-3 gap-3 mt-4">
                 {previews.map((src, index) => (
-                  <div key={src} className="relative">
+                  <div key={src} className={className}>
                     <Image
                       src={src}
                       alt="preview"
-                      className="w-full h-24 object-cover rounded"
+                      width={200} // in pixels
+                      height={200} // in pixels
+                      style={{ objectFit: "cover" }}
                     />
-                    <button
+                    <UniButton
                       type="button"
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6"
+                      className="absolute z-50 -top-2 -right-2 w-6 h-6 p-0 text-xs rounded-full bg-red-500 text-white"
+                      label="✕"
                       onClick={(e) => {
                         e.stopPropagation();
                         removeFile(index, field.onChange, field.value);
                       }}
-                    >
-                      ✕
-                    </button>
+                    />
                   </div>
                 ))}
               </div>
             )}
           </div>
+
+          {/* Error */}
           {previews.length === 0 && fieldState.error && (
             <p className="text-red-500 mt-2">{fieldState.error.message}</p>
           )}

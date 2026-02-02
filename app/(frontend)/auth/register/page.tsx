@@ -1,6 +1,5 @@
 'use client';
 import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamicform/dynamicform";
-import { generateSchema } from "@/app/(frontend)/components/reusables/validation/valdiation";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 import Image from "next/image";
 import GmailIcon from "@/app/(frontend)/assets/gmail-old-svgrepo-com.svg";
@@ -9,7 +8,7 @@ import { useRegister } from "../hooks/useRegister";
 import { useOAuth } from "../hooks/useOAuth";
 import Link from "next/link";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button"; // import your reusable button
-
+import { FieldValues } from "react-hook-form";
 export default function RegisterPage() {
   /* ---------- FORM FIELDS ---------- */
   const registerFields: FieldConfig[] = [
@@ -18,7 +17,7 @@ export default function RegisterPage() {
     { name: "password", label: "Password", type: "password", placeholder: "••••••••" },
   ];
 
-  const schema = generateSchema(registerFields);
+
 
   /* ---------- MUTATIONS ---------- */
   const registerMutation = useRegister();
@@ -28,14 +27,13 @@ export default function RegisterPage() {
     <div className="space-y-6 max-w-md mx-auto mt-10">
       {/* ---------------- EMAIL / PASSWORD REGISTER ---------------- */}
       <DynamicShadcnForm
-        schema={schema}
         fields={registerFields}
         defaultvalues={{ name: "", email: "", password: "" }}
         cardTitle="Create Account"
         cardDescription="Sign up with your email or use Google/Facebook"
         submitLabel={registerMutation.isPending ? "Registering..." : "Register"}
         reset="Reset"
-        onSubmit={(data) => registerMutation.mutate(data)}
+        onSubmit={(data:FieldValues) => registerMutation.mutate(data)}
       />
 
       {/* ---------------- OAUTH BUTTONS ---------------- */}

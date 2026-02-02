@@ -5,12 +5,12 @@ import { auth } from "@/app/(frontend)/lib/firebase/firebase";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { RegisterValues } from "../types/types";
+import { FieldValues } from "react-hook-form";
 import { AuthResponse } from "../types/types";
 export function useRegister() {
   const router = useRouter();
 
-  return useMutation<AuthResponse, Error, RegisterValues>({
+  return useMutation<AuthResponse, Error, FieldValues>({
     mutationFn: async (data) => {
       const cred = await createUserWithEmailAndPassword(
         auth,

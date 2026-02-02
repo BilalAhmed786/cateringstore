@@ -10,9 +10,11 @@ interface TextInputProps {
   label: string;
   placeholder?: string;
   type:"email" | "password" |"text" | "number" | "select" | "checkbox" | "radio" | "date" | "file" | "textarea";
+  className?:string
+  
 }
 
-const Inputtext: React.FC<TextInputProps> = ({ name, label, placeholder,type }) => {
+const Inputtext: React.FC<TextInputProps> = ({ name, label,className, placeholder,type }) => {
   const { control } = useFormContext();
 
   return (
@@ -24,7 +26,7 @@ const Inputtext: React.FC<TextInputProps> = ({ name, label, placeholder,type }) 
         render={({ field, fieldState }) => {
           return (
             <>
-              <Input {...field}  id={name} type={type} placeholder={placeholder}  />
+              <Input {...field}  id={name} className={className} type={type} placeholder={placeholder}  />
               {fieldState.error && (
                 <p className="text-red-500 mt-2">{fieldState.error.message}</p>
               )}

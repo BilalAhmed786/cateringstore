@@ -6,10 +6,11 @@ import { toast } from "sonner";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
 import { useRouter } from "next/navigation";
 import { AuthResponse } from "../types/types";
+import { FieldValues } from "react-hook-form";
 export function useLogin() {
   const router = useRouter();
 
-  return useMutation<AuthResponse, Error, { email: string; password: string }>({
+  return useMutation<AuthResponse, Error,FieldValues >({
     mutationFn: async (data) => {
       // 1️⃣ Login via Firebase
       const cred = await signInWithEmailAndPassword(auth, data.email, data.password);

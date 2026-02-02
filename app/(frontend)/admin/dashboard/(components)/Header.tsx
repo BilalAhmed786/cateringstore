@@ -1,6 +1,4 @@
 ﻿"use client"
-
-import React from "react"
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button"
 import { LogOut } from "lucide-react"
 import { HeaderProps } from "../types/types"

@@ -6,7 +6,9 @@ export type FieldConfig = {
   placeholder?: string;
   options?: { label: string; value: string }[];
   accept?: string;
-  multiple?: boolean
+  multiple?: boolean;
+  className?:string
+  dragdrop?:string
 };
 
 export interface NavItemProps {

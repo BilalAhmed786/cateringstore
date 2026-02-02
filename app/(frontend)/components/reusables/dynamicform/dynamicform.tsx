@@ -1,7 +1,6 @@
 "use client"
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
+import { useForm, FormProvider,FieldValues} from "react-hook-form";
 import { UniButton } from "../button/button";
 
 
@@ -16,23 +15,20 @@ import {
 import { FieldGroup } from "@/app/(frontend)/components/ui/field";
 import { FormField } from "../fields/fieldscase";
 import { FieldConfig } from "../types/types";
-
-type ZodFormSchema = z.ZodObject<Record<string, z.ZodTypeAny>>;
-
-interface DynamicShadcnFormProps<T> {
-  schema: ZodFormSchema;
+import { generateSchema } from "../validation/valdiation";
+interface DynamicShadcnFormProps{
+ 
   fields: FieldConfig[];
   cardTitle: string;
   cardDescription?: string;
   className?: string;
   reset: string;
   submitLabel: string;
-  defaultvalues: T;
-  onSubmit: (data: T) => void;
+  defaultvalues:FieldValues;
+  onSubmit: (data: FieldValues) => void;
 }
 
-export function DynamicShadcnForm<T>({
-  schema,
+export function DynamicShadcnForm({
   fields,
   defaultvalues,
   cardTitle,
@@ -41,17 +37,14 @@ export function DynamicShadcnForm<T>({
   reset,
   submitLabel,
   onSubmit,
-}: DynamicShadcnFormProps<T>) {
-  type FormValues = z.infer<typeof schema>;
+}: DynamicShadcnFormProps) {
 
-  const methods = useForm<FormValues>({
+ const schema = generateSchema(fields);
+  
+  const methods = useForm({
     resolver: zodResolver(schema),
-    defaultValues: defaultvalues as FormValues,
+    defaultValues: defaultvalues,
   });
-
-  const handleSubmit: SubmitHandler<FormValues> = async (data) => {
-      await onSubmit(data as T);
-  };
 
   return (
     <Card className={className}>
@@ -64,7 +57,7 @@ export function DynamicShadcnForm<T>({
 
       <CardContent>
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(handleSubmit)} 
+          <form onSubmit={methods.handleSubmit(onSubmit)} 
           id="dynamic-form">
             <FieldGroup>
               {fields.map((field) => (

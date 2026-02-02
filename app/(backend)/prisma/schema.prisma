@@ -51,17 +51,29 @@ model MenuItem {
   title       String
   description String?
   price       Float
-  image       String?
-  available   Boolean  @default(true)
+  available   Boolean @default(true)
   categoryId  String
   category    Category @relation(fields: [categoryId], references: [id])
+
+  images      MenuItemImage[]
 
   orderItems   OrderItem[]
   packageItems PackageItem[]
   hamperItems  HamperItem[]
   surveys      Survey[]
-  createdAt    DateTime      @default(now())
+  createdAt    DateTime @default(now())
 }
+
+model MenuItemImage {
+  id         String   @id @default(uuid())
+  url        String
+  publicId   String   
+  menuItemId String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now())
+}
+
 
 model Order {
   id            String         @id @default(uuid())

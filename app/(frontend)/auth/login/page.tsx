@@ -1,6 +1,6 @@
 'use client';
 import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamicform/dynamicform";
-import { generateSchema } from "@/app/(frontend)/components/reusables/validation/valdiation";
+// import { generateSchema } from "@/app/(frontend)/components/reusables/validation/valdiation";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,7 +9,7 @@ import FacebookIcon from "@/app/(frontend)/assets/facebook-svgrepo-com.svg";
 import { useLogin } from "../hooks/useLogin";
 import { useOAuth } from "../hooks/useOAuth";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
-
+import { FieldValues } from "react-hook-form";
 export default function LoginPage() {
   const { mutate: loginMutate, isPending: loginPending } = useLogin();
   const { mutate: oauthMutate, isPending: oauthPending } = useOAuth();
@@ -29,20 +29,19 @@ export default function LoginPage() {
     },
   ];
 
-  const schema = generateSchema(loginFields);
+  // const schema = generateSchema(loginFields);
 
   return (
     <div className="space-y-6 max-w-md mx-auto mt-10">
       {/* ---------------- EMAIL / PASSWORD LOGIN ---------------- */}
       <DynamicShadcnForm
-        schema={schema}
         fields={loginFields}
         defaultvalues={{ email: "", password: "" }}
         cardTitle="Login"
         cardDescription="Login with your email or use Google/Facebook"
         submitLabel={loginPending ? "Logging in..." : "Login"}
         reset="Reset"
-        onSubmit={(data) => loginMutate(data)}
+        onSubmit={(data:FieldValues) => loginMutate(data)}
       />
 
       {/* ---------------- OAUTH BUTTONS ---------------- */}
