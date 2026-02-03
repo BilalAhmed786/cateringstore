@@ -12,6 +12,6 @@ export function useDeleteCategory() {
         method: "DELETE",
         authRequired: true,
       }),
-    onSuccess: () => queryClient.invalidateQueries(["categories"]),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["categories"]})
   });
 }

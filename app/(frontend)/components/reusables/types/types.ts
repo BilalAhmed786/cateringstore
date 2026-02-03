@@ -1,4 +1,5 @@
 import { LucideIcon } from "lucide-react"
+import { FieldValues } from "react-hook-form";
 export type FieldConfig = {
   type: "email" | "password" |"text" | "number" | "select" | "checkbox" | "radio" | "date" | "file" | "textarea";
   name: string;
@@ -10,6 +11,17 @@ export type FieldConfig = {
   className?:string
   dragdrop?:string
 };
+export interface DynamicShadcnFormProps{
+ 
+  fields: FieldConfig[];
+  cardTitle: string;
+  cardDescription?: string;
+  className?: string;
+  reset: string;
+  submitLabel: string;
+  defaultvalues:FieldValues;
+  onSubmit: (data: FieldValues) => void;
+}
 
 export interface NavItemProps {
   open: boolean

@@ -13,6 +13,6 @@ export function useUpdateCategory() {
         body: { name },
         authRequired: true,
       }),
-    onSuccess: () => queryClient.invalidateQueries(["categories"]),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["categories"] })
   });
 }

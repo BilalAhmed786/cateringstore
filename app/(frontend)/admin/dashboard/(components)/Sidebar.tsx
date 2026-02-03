@@ -29,7 +29,7 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
 
   return (
     <aside
-      className={`${open ? "lg:w-64 md:w-52" : "w-20"} bg-slate-900 border-r border-slate-800 transition-all duration-300 flex flex-col`}
+      className={`${open ? "w-64" : "w-20"} bg-slate-900 border-r border-slate-800 transition-all duration-300 flex flex-col`}
     >
       {/* Header */}
       <div className="p-6 flex items-center justify-between">

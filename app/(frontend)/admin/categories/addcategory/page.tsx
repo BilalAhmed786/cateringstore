@@ -1,9 +1,34 @@
-import React from 'react'
+"use client";
+import { FieldValues } from "react-hook-form";
+import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamicform/dynamicform";
+import { useCreateCategory } from "../hooks/useCreateCategory";
+import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 
-const page = () => {
+export default function AddCategoryPage() {
+  const { mutate, isPending } = useCreateCategory();
+
+const fields: FieldConfig[] = [
+  {
+    name: "name",
+    label: "Category Name",
+    type: "text", 
+    placeholder: "Enter category name",
+  },
+];
+
   return (
-    <div>page</div>
-  )
-}
+    <div className="space-y-6 m-6">
+      <h1 className="text-2xl font-bold">Add Category</h1>
 
-export default page
+      <DynamicShadcnForm
+        fields={fields}
+        defaultvalues={{ name: "" }}
+        cardTitle="Category Details"
+        cardDescription="Create a new category"
+        submitLabel={isPending ? "Creating..." : "Create Category"}
+        reset="Reset"
+        onSubmit={(data: FieldValues) => mutate({name:data.name})}
+      />
+    </div>
+  );
+}

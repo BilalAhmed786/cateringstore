@@ -1,6 +1,6 @@
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, FormProvider,FieldValues} from "react-hook-form";
+import { useForm, FormProvider} from "react-hook-form";
 import { UniButton } from "../button/button";
 
 
@@ -14,19 +14,9 @@ import {
 } from "@/app/(frontend)/components/ui/card";
 import { FieldGroup } from "@/app/(frontend)/components/ui/field";
 import { FormField } from "../fields/fieldscase";
-import { FieldConfig } from "../types/types";
+import { DynamicShadcnFormProps} from "../types/types";
 import { generateSchema } from "../validation/valdiation";
-interface DynamicShadcnFormProps{
- 
-  fields: FieldConfig[];
-  cardTitle: string;
-  cardDescription?: string;
-  className?: string;
-  reset: string;
-  submitLabel: string;
-  defaultvalues:FieldValues;
-  onSubmit: (data: FieldValues) => void;
-}
+
 
 export function DynamicShadcnForm({
   fields,

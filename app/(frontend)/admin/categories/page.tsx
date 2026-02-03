@@ -1,41 +1,28 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import Link from "next/link";
+import { Edit, Trash2 } from "lucide-react";
 
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
-import { Category } from "@prisma/client";
 import { BaseSearch } from "../../components/reusables/search/search";
 import { DataTable } from "../../components/reusables/table/table";
 import { MenuItemsPagination } from "../../components/reusables/pagination/pagination";
-import { Edit,Trash2 } from "lucide-react";
-import Link from "next/link";
-const CATEGORIES: Category[] = [
-  { id: "1", name: "Biryani", createdAt: new Date("2025-01-01") },
-  { id: "2", name: "BBQ", createdAt: new Date("2025-01-01") },
-  { id: "3", name: "Desserts", createdAt: new Date("2025-01-01") },
-  { id: "4", name: "Rice", createdAt: new Date("2025-01-01") },
-  { id: "5", name: "Chinese", createdAt: new Date("2025-01-01") },
-  { id: "6", name: "Fast Food", createdAt: new Date("2025-01-01") },
-];
+import { useCategories } from "./hooks/usecategories";
+
+
 
 export default function CategoriesPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-
   const limit = 4;
 
-  /** 1️⃣ Filter */
-  const filtered = useMemo(() => {
-    return CATEGORIES.filter((cat) =>
-      cat.name.toLowerCase().includes(search.toLowerCase()),
-    );
-  }, [search]);
+  // ✅ Fetch categories using your hook
+  const { data, isLoading } = useCategories({ page, limit, search });
 
-  /** 2️⃣ Paginate */
-  const paginatedData = useMemo(() => {
-    const start = (page - 1) * limit;
-    return filtered.slice(start, start + limit);
-  }, [filtered, page]);
+  // React Query returns data in your CategoryResponse type
+  const categories = data?.categories || [];
+  const total = data?.total || 0;
 
   return (
     <div className="w-full flex justify-center py-10">
@@ -60,8 +47,8 @@ export default function CategoriesPage() {
 
         {/* Table */}
         <DataTable
-          items={paginatedData}
-          isLoading={false}
+          items={categories}
+          isLoading={isLoading}
           columns={[
             {
               header: "Name",
@@ -69,7 +56,8 @@ export default function CategoriesPage() {
             },
             {
               header: "Created At",
-              accessor: (item) => item.createdAt.toLocaleDateString(),
+              accessor: (item) =>
+                new Date(item.createdAt).toLocaleDateString(),
             },
             {
               header: "Actions",
@@ -95,7 +83,7 @@ export default function CategoriesPage() {
         <div className="mt-6">
           <MenuItemsPagination
             page={page}
-            total={filtered.length}
+            total={total}
             limit={limit}
             onPageChange={setPage}
           />
