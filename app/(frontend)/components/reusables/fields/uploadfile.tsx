@@ -10,15 +10,9 @@ import {
 import { Input } from "../../ui/input"; // reusable Input
 import { UniButton } from "../button/button"; // reusable Button
 import { Label } from "../../ui/label";
+import { FileUploadInputProps } from "../types/types";
 
-interface FileUploadInputProps {
-  name: string;
-  label: string;
-  accept?: string;
-  multiple?: boolean;
-  className?: string; // for image previews
-  dragdrop?: string; // for drag area styling
-}
+
 
 const FileUploadInput: React.FC<FileUploadInputProps> = ({
   name,

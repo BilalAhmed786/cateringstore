@@ -3,26 +3,26 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Edit, Trash2 } from "lucide-react";
-
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { BaseSearch } from "../../components/reusables/search/search";
 import { DataTable } from "../../components/reusables/table/table";
 import { MenuItemsPagination } from "../../components/reusables/pagination/pagination";
 import { useCategories } from "./hooks/usecategories";
-
-
-
+import { useDeleteCategory } from "./hooks/useDeleteCategory";
+import { FullScreenLoader } from "../../components/reusables/loader/loader";
 export default function CategoriesPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const limit = 4;
 
-  // ✅ Fetch categories using your hook
-  const { data, isLoading } = useCategories({ page, limit, search });
+  const { data,isPending } = useCategories({ page, limit, search });
+  const { mutate: deleteCategory} = useDeleteCategory();
 
   // React Query returns data in your CategoryResponse type
   const categories = data?.categories || [];
   const total = data?.total || 0;
+
+  if (isPending) return <FullScreenLoader/>;
 
   return (
     <div className="w-full flex justify-center py-10">
@@ -48,7 +48,7 @@ export default function CategoriesPage() {
         {/* Table */}
         <DataTable
           items={categories}
-          isLoading={isLoading}
+          isLoading={isPending}
           columns={[
             {
               header: "Name",
@@ -56,22 +56,24 @@ export default function CategoriesPage() {
             },
             {
               header: "Created At",
-              accessor: (item) =>
-                new Date(item.createdAt).toLocaleDateString(),
+              accessor: (item) => new Date(item.createdAt).toLocaleDateString(),
             },
             {
               header: "Actions",
-              accessor: () => (
+              accessor: (item) => (
                 <div className="flex gap-2">
-                  <UniButton
-                    size="sm"
-                    variant="outline"
-                    icon={<Edit className="w-4 h-4" />}
-                  />
+                  <Link href={`/admin/categories/${item.id}`}>
+                    <UniButton
+                      size="sm"
+                      variant="outline"
+                      icon={<Edit className="w-4 h-4" />}
+                    />
+                  </Link>
                   <UniButton
                     size="sm"
                     variant="destructive"
                     icon={<Trash2 className="w-4 h-4" />}
+                    onClick={() => deleteCategory(item.id)}
                   />
                 </div>
               ),

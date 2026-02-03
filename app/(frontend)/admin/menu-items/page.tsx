@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";

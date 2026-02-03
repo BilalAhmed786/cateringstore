@@ -9,12 +9,7 @@ import {
   SelectValue,
 } from "../../ui/select";
 import { Label } from "../../ui/label";
-
-interface SelectInputProps {
-  name: string;
-  label: string;
-  options?: { label: string; value: string }[];
-}
+import { SelectInputProps } from "../types/types";
 
 const Selectinput: React.FC<SelectInputProps> = ({ name, label, options }) => {
   const { control } = useFormContext();

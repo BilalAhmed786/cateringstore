@@ -4,15 +4,9 @@ import React from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
+import { TextInputProps } from "../types/types";
 
-interface TextInputProps {
-  name: string;
-  label: string;
-  placeholder?: string;
-  type:"email" | "password" |"text" | "number" | "select" | "checkbox" | "radio" | "date" | "file" | "textarea";
-  className?:string
-  
-}
+
 
 const Inputtext: React.FC<TextInputProps> = ({ name, label,className, placeholder,type }) => {
   const { control } = useFormContext();

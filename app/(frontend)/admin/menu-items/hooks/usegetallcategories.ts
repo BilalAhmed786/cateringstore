@@ -7,7 +7,7 @@ export function useAllCategories() {
     queryKey: ["all-categories"],
     queryFn: () =>
       apiRequest<Category[]>({
-        url: "/api/categories/dropdown",
+        url: "/api/admin/category",
         authRequired: true,
       }),
   });

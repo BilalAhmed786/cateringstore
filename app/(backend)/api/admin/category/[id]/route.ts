@@ -2,10 +2,10 @@ import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }>}) {
   const userOrResponse = await requireRole(req, ["ADMIN"]);
       if (userOrResponse instanceof NextResponse) return userOrResponse;
-  const { id } = params;
+  const { id } = await params;
   const { name } = await req.json();
 
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -18,11 +18,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   return NextResponse.json(updated);
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const userOrResponse = await requireRole(req, ["ADMIN"]);
-      if (userOrResponse instanceof NextResponse) return userOrResponse;
-  const { id } = params;
+  if (userOrResponse instanceof NextResponse) return userOrResponse;
+  
+  const { id } = await params
+  
 
   await prisma.category.delete({ where: { id } });
 
@@ -31,10 +32,10 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 
 
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const userOrResponse = await requireRole(req, ["ADMIN"]);
       if (userOrResponse instanceof NextResponse) return userOrResponse;
-  const { id } = params;
+  const { id } = await params;
 
   if (!id) {
     return NextResponse.json({ error: "ID is required" }, { status: 400 });

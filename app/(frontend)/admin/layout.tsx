@@ -3,7 +3,11 @@ import Header from "./dashboard/(components)/Header"
 import { useState } from "react"
 import Sidebar from "./dashboard/(components)/Sidebar"
 import { useLogout } from "./dashboard/hooks/useLogout"
-import { DashboardLayoutProps } from "./types"
+
+interface DashboardLayoutProps {
+  children: React.ReactNode
+}
+
 export default function DashboardLayout({ children }:DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false) 
   const { logout } = useLogout()

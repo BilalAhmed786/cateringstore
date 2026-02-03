@@ -1,5 +1,7 @@
 import { LucideIcon } from "lucide-react"
 import { FieldValues } from "react-hook-form";
+import React from "react";
+import { Button } from "@/app/(frontend)/components/ui/button";
 export type FieldConfig = {
   type: "email" | "password" |"text" | "number" | "select" | "checkbox" | "radio" | "date" | "file" | "textarea";
   name: string;
@@ -18,9 +20,46 @@ export interface DynamicShadcnFormProps{
   cardDescription?: string;
   className?: string;
   reset: string;
+  showreset?:boolean;
   submitLabel: string;
   defaultvalues:FieldValues;
   onSubmit: (data: FieldValues) => void;
+}
+export interface CheckboxProps {
+  name: string;
+  label: string;
+}
+
+export interface FieldProps {
+  field: FieldConfig;
+}
+export interface TextInputProps {
+  name: string;
+  label: string;
+  placeholder?: string;
+  type:"email" | "password" |"text" | "number" | "select" | "checkbox" | "radio" | "date" | "file" | "textarea";
+  className?:string
+  
+}
+export interface SelectInputProps {
+  name: string;
+  label: string;
+  options?: { label: string; value: string }[];
+}
+export interface FileUploadInputProps {
+  name: string;
+  label: string;
+  accept?: string;
+  multiple?: boolean;
+  className?: string; // for image previews
+  dragdrop?: string; // for drag area styling
+}
+
+export interface UniButtonProps extends React.ComponentProps<typeof Button> {
+  label?: string;
+  loading?: boolean;
+  loadingLabel?: string;
+  icon?: React.ReactNode;
 }
 
 export interface NavItemProps {

@@ -3,11 +3,8 @@ import React from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { Checkbox as ShadCheckbox } from "../../ui/checkbox";
 import { Label } from "../../ui/label";
+import { CheckboxProps } from "../types/types";
 
-interface CheckboxProps {
-  name: string;
-  label: string;
-}
 
 const Checkbox: React.FC<CheckboxProps> = ({ name, label }) => {
   const { control } = useFormContext();

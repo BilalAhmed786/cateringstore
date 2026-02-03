@@ -1,7 +1,7 @@
 "use client"
 import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamicform/dynamicform"
 import { useAllCategories } from "../hooks/usegetallcategories"
-import { getMenuItemFields } from "../(components)/fields"
+import { getMenuItemFields } from "./fields"
 import { useCreateMenuItemWithImages } from "../hooks/usecreatemenuitems"
 import { FieldValues } from "react-hook-form"
 

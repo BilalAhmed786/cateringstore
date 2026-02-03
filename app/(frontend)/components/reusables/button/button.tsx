@@ -1,14 +1,7 @@
 'use client'
 import { Button } from "@/app/(frontend)/components/ui/button";
 import { Loader2 } from "lucide-react";
-import React from "react";
-
-interface UniButtonProps extends React.ComponentProps<typeof Button> {
-  label?: string;
-  loading?: boolean;
-  loadingLabel?: string;
-  icon?: React.ReactNode;
-}
+import { UniButtonProps } from "../types/types";
 
 export function UniButton({
   label,

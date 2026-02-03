@@ -1,17 +1,29 @@
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
+import { toast } from "sonner";
 
 export function useDeleteCategory() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) =>
-      apiRequest<{ success: boolean }>({
-        url: `/api/categories/${id}`,
+    mutationFn: async (id: string) => {
+      alert(id) 
+
+      return apiRequest<{ success: boolean }>({
+        url: `/api/admin/category/${id}`,
         method: "DELETE",
         authRequired: true,
-      }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["categories"]})
+      });
+    },
+
+    onSuccess: () => {
+      toast.success("Category deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+
+    onError: (error: unknown) => {
+      console.error(error);
+      toast.error("Failed to delete category");
+    },
   });
 }
