@@ -1,5 +1,13 @@
-import { Button } from "@/app/(frontend)/components/ui/button"
-import { paginationProps } from "../types/types"
+"use client";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/app/(frontend)/components/ui/pagination"; // adjust path
+import { paginationProps } from "../types/types";
 
 export function MenuItemsPagination({
   page,
@@ -7,25 +15,50 @@ export function MenuItemsPagination({
   limit,
   onPageChange,
 }: paginationProps) {
-  const totalPages = Math.ceil(total / limit)
+  const totalPages = Math.ceil(total / limit);
 
-  if (totalPages <= 1) return null
+  if (totalPages <= 1) return null;
+
+  const pagesArray = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="flex justify-center gap-2">
-      {Array.from({ length: totalPages }).map((_, i) => {
-        const p = i + 1
-        return (
-          <Button
-            key={p}
+    <Pagination>
+      <PaginationContent className="justify-center gap-2">
+        {/* Previous Button */}
+        <PaginationItem>
+          <PaginationPrevious
             size="sm"
-            variant={p === page ? "default" : "outline"}
-            onClick={() => onPageChange(p)}
+            onClick={() => page > 1 && onPageChange(page - 1)}
+            className={page === 1 ? "pointer-events-none opacity-50" : ""}
           >
-            {p}
-          </Button>
-        )
-      })}
-    </div>
-  )
+            Previous
+          </PaginationPrevious>
+        </PaginationItem>
+
+        {/* Page Numbers */}
+        {pagesArray.map((p) => (
+          <PaginationItem key={p}>
+            <PaginationLink
+              size="sm"
+              onClick={() => onPageChange(p)}
+              className={p === page ? "bg-blue-500 text-white" : ""}
+            >
+              {p}
+            </PaginationLink>
+          </PaginationItem>
+        ))}
+
+        {/* Next Button */}
+        <PaginationItem>
+          <PaginationNext
+            size="sm"
+            onClick={() => page < totalPages && onPageChange(page + 1)}
+            className={page === totalPages ? "pointer-events-none opacity-50" : ""}
+          >
+            Next
+          </PaginationNext>
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  );
 }

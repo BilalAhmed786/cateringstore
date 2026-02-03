@@ -46,3 +46,12 @@ export interface MenuItemsTableProps<T> {
   options: { label: string; value: string }[]
   placeholder?: string
 }
+
+
+export interface BaseSearchProps {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  placeholder?: string
+  className?:string
+}

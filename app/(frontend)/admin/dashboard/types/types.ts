@@ -4,6 +4,7 @@ export type SidebarProps = {
   open: boolean
   setOpen: (v: boolean) => void
   onLogout: () => void
+  className?: string 
 }
 
 export type HeaderProps = {

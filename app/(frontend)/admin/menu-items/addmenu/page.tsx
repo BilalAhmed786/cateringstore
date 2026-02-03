@@ -1,13 +1,12 @@
 "use client"
-
 import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamicform/dynamicform"
-import { useCategories } from "../hooks/usecategories"
+import { useAllCategories } from "../hooks/usegetallcategories"
 import { getMenuItemFields } from "../(components)/fields"
 import { useCreateMenuItemWithImages } from "../hooks/usecreatemenuitems"
 import { FieldValues } from "react-hook-form"
 
 export default function AddMenuItemPage() {
-  const { data: categories = [] } = useCategories()
+  const { data: categories = [] } = useAllCategories()
   const { mutate, isPending } = useCreateMenuItemWithImages()
 
   const fields = getMenuItemFields(categories)

@@ -1,15 +1,9 @@
 "use client"
-
 import { Label } from "@/app/(frontend)/components/ui/label"
+import { BaseSearchProps } from "../types/types"
 
-interface BaseSearchProps {
-  label: string
-  value: string
-  onChange: (value: string) => void
-  placeholder?: string
-}
 
-export function BaseSearch({ label, value, onChange, placeholder }: BaseSearchProps) {
+export function BaseSearch({ label, value, onChange, placeholder,className }: BaseSearchProps) {
   return (
     <div className="flex flex-col">
       <Label className="mb-2">{label}</Label>
@@ -18,7 +12,7 @@ export function BaseSearch({ label, value, onChange, placeholder }: BaseSearchPr
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder ?? `Search ${label}`}
-        className="border rounded px-3 py-2 w-60 focus:outline-none focus:ring-2 focus:ring-slate-400"
+        className={className}
       />
     </div>
   )

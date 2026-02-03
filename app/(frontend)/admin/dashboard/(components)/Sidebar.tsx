@@ -29,7 +29,7 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
 
   return (
     <aside
-      className={`${open ? "w-64" : "w-20"} bg-slate-900 border-r border-slate-800 transition-all duration-300 flex flex-col`}
+      className={`${open ? "lg:w-64 md:w-52" : "w-20"} bg-slate-900 border-r border-slate-800 transition-all duration-300 flex flex-col`}
     >
       {/* Header */}
       <div className="p-6 flex items-center justify-between">
@@ -44,7 +44,7 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-2 text-slate-300">
 
-        <NavItem open={open} icon={Home} label="Dashboard" href="dashboard" />
+        <NavItem open={open} icon={Home} label="Dashboard" href="/admin/dashboard" />
         <NavItem open={open} icon={ShoppingCart} label="Orders" href="orders" />
 
         {/* Customers */}
@@ -70,7 +70,7 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
         {menuOpen && open && (
           <div className="ml-6 space-y-1">
             <SubNav label="Menu Items" icon={Utensils} href="/admin/menu-items" />
-            <SubNav label="Categories" icon={Package} href="/dashboard/categories" />
+            <SubNav label="Categories" icon={Package} href="/admin/categories" />
             <SubNav label="Packages" icon={Gift} href="/dashboard/packages" />
             <SubNav label="Hampers" icon={Gift} href="/dashboard/hampers" />
             <SubNav label="Events" icon={Calendar} href="/dashboard/events" />

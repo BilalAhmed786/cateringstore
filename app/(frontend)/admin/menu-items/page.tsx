@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
-import { useCategories } from "./hooks/usecategories";
+import { useAllCategories } from "./hooks/usegetallcategories";
 import { useGetMenuItems } from "./hooks/useGetMenuItems";
 import { BaseSelect } from "../../components/reusables/filters/filterselect";
 import { BaseSearch } from "../../components/reusables/search/search";
@@ -21,7 +21,7 @@ export default function MenuItemsPage() {
   const [page, setPage] = useState(1);
   const limit = 6;
 
-  const { data: categories = [] } = useCategories();
+  const { data: categories = [] } = useAllCategories();
   const { data, isLoading } = useGetMenuItems({
     status,
     category,
