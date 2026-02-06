@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
-import { Category } from "@/app/(frontend)/admin/menu-items/types/menuitem";
+import { Category } from "@/app/(frontend)/admin/menu-items/types/types";
 
 export function useAllCategories() {
   return useQuery<Category[]>({

@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
+import Link from "next/link";
 import { useAllCategories } from "./hooks/usegetallcategories";
 import { useGetMenuItems } from "./hooks/useGetMenuItems";
 import { BaseSelect } from "../../components/reusables/filters/filterselect";
@@ -9,16 +8,16 @@ import { BaseSearch } from "../../components/reusables/search/search";
 import { MenuItemsPagination } from "../../components/reusables/pagination/pagination";
 import { MenuItemsGrid } from "./(components)/menuitemsgrid";
 import { UniButton } from "../../components/reusables/button/button";
-import Link from "next/link";
-export default function MenuItemsPage() {
-  const queryClient = useQueryClient();
+import { useDeleteMenuItem } from "./hooks/usedeletemenuItem";
+import { useToggleMenuItem } from "./hooks/usetogglemenuItem";
 
+export default function MenuItemsPage() {
   const [status, setStatus] = useState("all");
   const [category, setCategory] = useState("all");
   const [search, setSearch] = useState("");
   const [dateFilter, setDateFilter] = useState("all");
   const [page, setPage] = useState(1);
-  const limit = 6;
+  const limit = 8;
 
   const { data: categories = [] } = useAllCategories();
   const { data, isLoading } = useGetMenuItems({
@@ -30,24 +29,16 @@ export default function MenuItemsPage() {
     limit,
   });
 
+  // Hooks for delete and toggle
+  const deleteMutation = useDeleteMenuItem();
+  const toggleMutation = useToggleMenuItem();
+
+  const handleDelete = (id: string) => deleteMutation.mutate(id);
+  const handleToggle = (id: string, available: boolean) =>
+    toggleMutation.mutate({ id, available });
+
   const items = data?.items ?? [];
   const total = data?.total ?? 0;
-
-  // Add new category
-  const handleAddCategory = async () => {
-    const name = prompt("Enter new category name");
-    if (!name) return;
-
-    await apiRequest({
-      url: "/api/categories",
-      method: "POST",
-      authRequired: true,
-      body: { name },
-    });
-
-    queryClient.invalidateQueries({ queryKey: ["categories"] });
-    alert("Category added successfully");
-  };
 
   return (
     <div className="p-6 space-y-6">
@@ -59,7 +50,7 @@ export default function MenuItemsPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 items-end">
+      <div className="flex flex-wrap gap-7 items-center">
         <BaseSelect
           label="Status"
           value={status}
@@ -78,12 +69,7 @@ export default function MenuItemsPage() {
           label="Category"
           value={category}
           onChange={(val) => {
-            if (val === "add-new") {
-              handleAddCategory();
-              setCategory("all");
-            } else {
-              setCategory(val);
-            }
+            setCategory(val);
             setPage(1);
           }}
           options={[
@@ -114,11 +100,17 @@ export default function MenuItemsPage() {
             setPage(1);
           }}
           placeholder="Search by title..."
+          className="max-w-3xl sm:max-w-2xl lg:w-3xl py-2 px-5 rounded-3xl"
         />
       </div>
 
       {/* Grid */}
-      <MenuItemsGrid items={items} isLoading={isLoading} />
+      <MenuItemsGrid
+        items={items}
+        isLoading={isLoading}
+        onDelete={handleDelete}
+        onToggleStatus={handleToggle}
+      />
 
       {/* Pagination */}
       <MenuItemsPagination

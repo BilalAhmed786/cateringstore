@@ -21,6 +21,7 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
   multiple = false,
   className,
   dragdrop,
+  onUpload,
 }) => {
   const { control } = useFormContext();
   const [previews, setPreviews] = useState<string[]>([]);
@@ -38,14 +39,17 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({
       onChange: ControllerRenderProps<FieldValues, string>["onChange"],
     ) => {
       if (!files || files.length === 0) return;
-
-      const fileArray = Array.from(files);
-      onChange(multiple ? fileArray : fileArray[0]);
+       const fileArray = Array.from(files);
+       onChange(multiple ? fileArray : fileArray[0]);
+      // call onUpload callback if provided
+    if (fileArray.length && onUpload) {
+      onUpload(fileArray); 
+    }
 
       const urls = fileArray.map((file) => URL.createObjectURL(file));
       setPreviews(multiple ? (prev) => [...prev, ...urls] : urls);
     },
-    [multiple],
+    [multiple,onUpload],
   );
 
   // remove a file

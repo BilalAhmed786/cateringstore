@@ -5,62 +5,109 @@ export const generateSchema = (fields: FieldConfig[]) => {
   const shape: Record<string, z.ZodTypeAny> = {};
 
   fields.forEach((field) => {
+    const isRequired = field.required !== false;
+
     switch (field.type) {
-      case "email":
-        shape[field.name] = z
-          .string(`${field.label} is required`)
-          .nonempty(`${field.label} is required`)
-          .email("Invalid email format");
-        break;
+      /* ================= EMAIL ================= */
+      case "email": {
+        const base = z.string().email("Invalid email format");
 
-      case "password":
-        shape[field.name] = z
-          .string(`${field.label} is required`)
-          .nonempty(`${field.label} is required`)
-          .min(6, "Password must be at least 6 characters");
-        break;
+        shape[field.name] = isRequired
+          ? base.nonempty(`${field.label} is required`)
+          : base.optional();
 
-      case "select":
+        break;
+      }
+
+      /* ================= PASSWORD ================= */
+      case "password": {
+        const base = z.string().min(6, "Password must be at least 6 characters");
+
+        shape[field.name] = isRequired
+          ? base.nonempty(`${field.label} is required`)
+          : base.optional();
+
+        break;
+      }
+
+      /* ================= TEXT TYPES ================= */
       case "text":
       case "textarea":
-      case "date":
+      case "select":
       case "radio":
-        shape[field.name] = z
-          .string(`${field.label} is required`)
-          .min(1, `${field.label} is required`)
-          .nonempty(`${field.label} is required`);
-        break;
+      case "date": {
+        const base = z.string();
 
-      case "number":
-        shape[field.name] = z.coerce.number().min(1);
-        break;
+        shape[field.name] = isRequired
+          ? base.min(1, `${field.label} is required`)
+          : base.optional();
 
-      case "checkbox":
-        shape[field.name] = z.boolean();
         break;
+      }
 
-      case "file":
+      /* ================= NUMBER ================= */
+      case "number": {
+        const base = z.coerce.number().min(1, `${field.label} must be greater than 0`);
+
+        shape[field.name] = isRequired
+          ? base
+          : base.optional();
+
+        break;
+      }
+
+      /* ================= CHECKBOX ================= */
+      case "checkbox": {
+        shape[field.name] = z.boolean().optional();
+        break;
+      }
+
+      /* ================= FILE ================= */
+      case "file": {
+        // MULTIPLE FILES
         if (field.multiple) {
-          shape[field.name] = z
+          const base = z
             .array(z.instanceof(File))
-            .nonempty(`${field.label} is required`)
             .refine(
-              (files) => files.every((f) => f.type.startsWith("image/")),
+              (files) =>
+                files.length === 0 ||
+                files.every((f) => f.type.startsWith("image/")),
               "Only image files are allowed"
             )
             .refine(
-              (files) => files.every((f) => f.size <= 2 * 1024 * 1024),
-              "Each file must be <= 2MB"
+              (files) =>
+                files.length === 0 ||
+                files.every((f) => f.size <= 2 * 1024 * 1024),
+              "Each file must be ≤ 2MB"
             );
-        } else {
-          shape[field.name] = z
-            .instanceof(File, {message: `${field.label} is required`} )
-            .refine(
-              (f) => f.type.startsWith("image/"),
-              "Only image files are allowed"
-            )
-            .refine((f) => f.size <= 2 * 1024 * 1024, "File must be <= 2MB");
+
+          shape[field.name] = isRequired
+            ? base.nonempty(`${field.label} is required`)
+            : base.optional();
         }
+
+        // SINGLE FILE
+        else {
+          const base = z
+            .instanceof(File)
+            .refine((f) => f.type.startsWith("image/"), "Only image files are allowed")
+            .refine((f) => f.size <= 2 * 1024 * 1024, "File must be ≤ 2MB");
+
+          shape[field.name] = isRequired
+            ? base
+            : base.optional();
+        }
+
+        break;
+      }
+
+      /* ================= IMAGE PREVIEW (NO VALIDATION) ================= */
+      case "imagepreview": {
+        // NOT a form input → ignore validation
+        break;
+      }
+
+      default:
         break;
     }
   });

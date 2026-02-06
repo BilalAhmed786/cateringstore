@@ -15,20 +15,20 @@ export default function CategoriesPage() {
   const [page, setPage] = useState(1);
   const limit = 4;
 
-  const { data,isPending } = useCategories({ page, limit, search });
-  const { mutate: deleteCategory} = useDeleteCategory();
+  const { data, isPending } = useCategories({ page, limit, search });
+  const { mutate: deleteCategory } = useDeleteCategory();
 
   // React Query returns data in your CategoryResponse type
   const categories = data?.categories || [];
   const total = data?.total || 0;
 
-  if (isPending) return <FullScreenLoader/>;
+  if (isPending) return <FullScreenLoader />;
 
   return (
     <div className="w-full flex justify-center py-10">
       <div className="w-full max-w-5xl px-4">
         {/* Top bar */}
-        <div className="flex items-end justify-between mb-6">
+        <div className="flex flex-wrap gap-2 items-end justify-between mb-6">
           <BaseSearch
             label="Categories"
             value={search}
@@ -37,7 +37,7 @@ export default function CategoriesPage() {
               setPage(1); // reset page on search
             }}
             placeholder="Search category"
-            className="w-3xl py-3 px-5 rounded-3xl"
+            className="max-w-3xl sm:max-w-2xl lg:w-3xl py-2 px-5 rounded-3xl"
           />
 
           <Link href="/admin/categories/addcategory">

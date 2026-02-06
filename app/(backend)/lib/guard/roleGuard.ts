@@ -10,7 +10,7 @@ export async function requireRole(req: Request, roles: string[]) {
   }
 
   if (!roles.includes(user.role)) {
-    console.log(user.role)
+    
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 

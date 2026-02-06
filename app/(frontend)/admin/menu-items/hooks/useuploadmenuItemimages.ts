@@ -1,31 +1,31 @@
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq"
 import { useMutation } from "@tanstack/react-query"
+import { UploadMenuItemImagesPayload } from "../types/types";
 
 
-interface UploadMenuItemImagesPayload {
-  menuItemId: string
-  images: File[]
-}
 
 export function useUploadMenuItemImages() {
   return useMutation({
     mutationFn: async ({
       menuItemId,
-      images,
+      image,
     }: UploadMenuItemImagesPayload) => {
+      console.log(menuItemId,image)
 
-      const formData = new FormData()
+      const formData = new FormData();
 
-      images.forEach((file) => {
-        formData.append("images", file)
-      })
+      const files = Array.isArray(image) ? image : [image];
+
+      files.forEach((file) => {
+        formData.append("images", file);
+      });
 
       return apiRequest({
-        url: `/api/menu-items/${menuItemId}/images`,
+        url: `/api/admin/images/${menuItemId}`,
         method: "POST",
         authRequired: true,
-        body: formData, 
-      })
+        body: formData,
+      });
     },
-  })
+  });
 }
