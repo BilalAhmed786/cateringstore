@@ -17,8 +17,7 @@ export async function DELETE(
     if (userOrResponse instanceof NextResponse) return userOrResponse;
 
     const { menuitemid, imageid } = await params;
-// console.log(menuitemid)
-// console.log(imageid)
+
     if (!menuitemid || !imageid) {
       return NextResponse.json(
         { message: "Invalid parameters" },

@@ -22,5 +22,8 @@ export function useGetMenuItems(filters?: MenuItemsFilters) {
         method: "GET",
         authRequired: true,
       }),
-  })
+    
+      placeholderData: (prev) => prev, 
+      staleTime: 1000 * 10,
+  })  
 }

@@ -23,7 +23,7 @@ export const FormField: React.FC<FieldProps> = ({ field }) => {
       return <SelectInput {...field} />;
 
     case "file":
-      return <ImageUploadInput {...field}  />;
+      return <ImageUploadInput {...field} />;
 
     case "imagepreview":
       return (
@@ -33,7 +33,7 @@ export const FormField: React.FC<FieldProps> = ({ field }) => {
           onDelete={field.onDelete || (() => {})}
         />
       );
-
+ 
     default:
       return null;
   }

@@ -4,12 +4,14 @@ import { CategoryResponse, UseCategoriesOptions } from "../types/type";
 
 export function useCategories({ page, limit, search }: UseCategoriesOptions) {
   return useQuery<CategoryResponse>({
-    queryKey: ["categories", page, limit, search],
+    queryKey: ["categories", page, limit, search || ""],
     queryFn: () =>
       apiRequest<CategoryResponse>({
         url: `/api/admin/category/paginated?page=${page}&limit=${limit}&search=${search || ""}`,
+        method: "GET",
         authRequired: true,
       }),
-    
+    placeholderData: (prev) => prev, 
+    staleTime: 1000 * 10,
   });
 }

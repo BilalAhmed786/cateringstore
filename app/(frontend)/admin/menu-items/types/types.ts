@@ -52,24 +52,7 @@ export interface UploadMenuItemImagesPayload {
   image: File[]
 }
 
-export interface Dropdowitems {
-  items?: MenuItem[];
-  isLoading?: boolean;
-  onDelete?: (id: string) => void;
-  onToggleStatus?: (id: string, available: boolean) => void;
-}
 
-export interface DropdownAction {
-  label: string;
-  icon?: React.ComponentType;
-  onClick: () => void;
-  variant?: "danger" | "default";
-  show?: boolean; // optional, if false, don't show
-}
-
-export interface MenuItemDropdownProps {
-  actions: DropdownAction[];
-}
 
 export type StatusFilter = "all" | "active" | "inactive"
 export type DateFilter = "all" | "7days"

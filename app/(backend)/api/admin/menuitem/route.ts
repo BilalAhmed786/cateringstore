@@ -28,7 +28,6 @@ export async function POST(req: Request) {
   }
 }
 
-
 export async function GET(req: NextRequest) {
   try {
     await requireRole(req, ["admin"]);
@@ -47,22 +46,48 @@ export async function GET(req: NextRequest) {
       dateFilter: searchParams.get("dateFilter"),
     });
 
+    // Fetch menu items with category, images, and aggregated reviews
     const [items, total] = await Promise.all([
       prisma.menuItem.findMany({
         where,
         skip,
         take: limit,
         orderBy: { createdAt: "desc" },
-        include: { category: true, images: true },
+        include: {
+          category: true,
+          images: true,
+          reviews: true, // Include all reviews for aggregation
+        },
       }),
       prisma.menuItem.count({ where }),
     ]);
 
-    return NextResponse.json({ items, total });
+    // Map items to include averageRating and totalComments
+    const itemsWithRatings = items.map((item) => {
+      const totalReviews = item.reviews.length;
+      const averageRating =
+        totalReviews > 0
+          ? item.reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
+          : 0;
+
+      return {
+        ...item,
+        averageRating,
+        totalReviews,
+        totalComments: totalReviews,
+      };
+    });
+
+    return NextResponse.json({ items: itemsWithRatings, total });
   } catch (error) {
     console.error("MenuItem GET error:", error);
     return NextResponse.json(
-      { message: error instanceof Error ? error.message : "Failed to fetch menu items" },
+      {
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch menu items",
+      },
       { status: 500 }
     );
   }

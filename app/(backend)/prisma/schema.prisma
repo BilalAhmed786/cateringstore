@@ -3,8 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // or mysql
-}
+  provider = "postgresql"
+ }
+
+/* =======================
+   ENUMS
+======================= */
 
 enum Role {
   SUPER_ADMIN
@@ -26,6 +30,14 @@ enum EventStatus {
   CANCELLED
   COMPLETED
 }
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+/* =======================
+   USER
+======================= */
 
 model User {
   id        String   @id // Firebase UID
@@ -34,16 +46,24 @@ model User {
   role      Role     @default(CLIENT)
   createdAt DateTime @default(now())
 
-  orders  Order[]
-  events  Event[]
-  surveys Survey[]
+  orders        Order[]
+  events        Event[]
+  menuReviews   MenuItemReview[]
+  packageReviews PackageReview[]
+  hamperReviews HamperReview[]
+  eventReviews  EventReview[]
 }
 
+/* =======================
+   CATEGORY & MENU ITEMS
+======================= */
+
 model Category {
-  id        String     @id @default(uuid())
+  id        String   @id @default(uuid())
   name      String
-  createdAt DateTime   @default(now())
-  items     MenuItem[]
+  createdAt DateTime @default(now())
+
+  items MenuItem[]
 }
 
 model MenuItem {
@@ -52,40 +72,45 @@ model MenuItem {
   description String?
   price       Float
   available   Boolean @default(true)
-  categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
 
-  images      MenuItemImage[]
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
 
+  images        MenuItemImage[]
   orderItems   OrderItem[]
   packageItems PackageItem[]
   hamperItems  HamperItem[]
-  surveys      Survey[]
-  createdAt    DateTime @default(now())
+  reviews      MenuItemReview[]
+
+  createdAt DateTime @default(now())
 }
 
 model MenuItemImage {
   id         String   @id @default(uuid())
   url        String
-  publicId   String   
+  publicId   String
   menuItemId String
-  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
 
-  createdAt  DateTime @default(now())
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }
 
+/* =======================
+   ORDERS
+======================= */
 
 model Order {
-  id            String         @id @default(uuid())
-  userId        String
+  id        String      @id @default(uuid())
+  userId    String
+  status    OrderStatus @default(PENDING)
+  total     Float
+  createdAt DateTime    @default(now())
+
   user          User           @relation(fields: [userId], references: [id])
-  status        OrderStatus    @default(PENDING)
-  total         Float
   items         OrderItem[]
   orderPackages OrderPackage[]
   orderHampers  OrderHamper[]
-  surveys       Survey[] // <-- add this
-  createdAt     DateTime       @default(now())
 }
 
 model OrderItem {
@@ -93,8 +118,9 @@ model OrderItem {
   orderId  String
   menuId   String
   quantity Int
-  order    Order    @relation(fields: [orderId], references: [id])
-  menu     MenuItem @relation(fields: [menuId], references: [id])
+
+  order Order    @relation(fields: [orderId], references: [id])
+  menu  MenuItem @relation(fields: [menuId], references: [id])
 }
 
 model OrderPackage {
@@ -102,7 +128,7 @@ model OrderPackage {
   orderId   String
   packageId String
   quantity  Int    @default(1)
-  price     Float // snapshot price at time of order
+  price     Float
 
   order   Order   @relation(fields: [orderId], references: [id])
   package Package @relation(fields: [packageId], references: [id])
@@ -113,25 +139,36 @@ model OrderHamper {
   orderId  String
   hamperId String
   quantity Int    @default(1)
-  price    Float // snapshot price at time of order
+  price    Float
 
   order  Order  @relation(fields: [orderId], references: [id])
   hamper Hamper @relation(fields: [hamperId], references: [id])
 }
 
+/* =======================
+   PACKAGES
+======================= */
+
 model Package {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  price       Float
-  image       String?
-  available   Boolean  @default(true)
-  createdAt   DateTime @default(now())
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+
+  originalPrice Float    // calculated from menu items
+  discountType  DiscountType?
+  discountValue Float?   // percentage OR fixed amount
+  finalPrice    Float    // what client actually pays
+
+  image         String?
+  available     Boolean  @default(true)
+  createdAt     DateTime @default(now())
 
   items         PackageItem[]
   events        Event[]
   orderPackages OrderPackage[]
+  reviews       PackageReview[]
 }
+
 
 model PackageItem {
   id         String @id @default(uuid())
@@ -143,18 +180,29 @@ model PackageItem {
   menuItem MenuItem @relation(fields: [menuItemId], references: [id])
 }
 
+/* =======================
+   HAMPERS
+======================= */
+
 model Hamper {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  price       Float
-  image       String?
-  available   Boolean  @default(true)
-  createdAt   DateTime @default(now())
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+
+  originalPrice Float
+  discountType  DiscountType?
+  discountValue Float?
+  finalPrice    Float
+
+  image         String?
+  available     Boolean  @default(true)
+  createdAt     DateTime @default(now())
 
   items        HamperItem[]
   orderHampers OrderHamper[]
+  reviews      HamperReview[]
 }
+
 
 model HamperItem {
   id         String @id @default(uuid())
@@ -166,10 +214,14 @@ model HamperItem {
   menuItem MenuItem @relation(fields: [menuItemId], references: [id])
 }
 
+/* =======================
+   EVENTS
+======================= */
+
 model Event {
   id         String      @id @default(uuid())
   userId     String
-  packageId  String? // optional: event may be tied to a package
+  packageId  String?
   date       DateTime
   location   String
   guestCount Int
@@ -177,20 +229,67 @@ model Event {
   total      Float
   createdAt  DateTime    @default(now())
 
-  user    User     @relation(fields: [userId], references: [id])
-  package Package? @relation(fields: [packageId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+  package  Package? @relation(fields: [packageId], references: [id])
+  reviews  EventReview[]
 }
 
-model Survey {
+/* =======================
+   ⭐ REVIEWS (SEPARATE)
+======================= */
+
+model MenuItemReview {
   id         String   @id @default(uuid())
   userId     String
   menuItemId String
-  rating     Int // 1..5
+  rating     Int      // 1..5
   comment    String?
-  orderId    String? // optional link to order (if desired)
   createdAt  DateTime @default(now())
 
   user     User     @relation(fields: [userId], references: [id])
   menuItem MenuItem @relation(fields: [menuItemId], references: [id])
-  order    Order?   @relation(fields: [orderId], references: [id])
+
+  @@unique([userId, menuItemId])
+}
+
+model PackageReview {
+  id         String   @id @default(uuid())
+  userId     String
+  packageId  String
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  package Package @relation(fields: [packageId], references: [id])
+
+  @@unique([userId, packageId])
+}
+
+model HamperReview {
+  id         String   @id @default(uuid())
+  userId     String
+  hamperId   String
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  hamper Hamper @relation(fields: [hamperId], references: [id])
+
+  @@unique([userId, hamperId])
+}
+
+model EventReview {
+  id        String   @id @default(uuid())
+  userId    String
+  eventId   String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
 }

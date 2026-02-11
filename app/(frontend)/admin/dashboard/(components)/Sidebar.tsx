@@ -71,7 +71,7 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
           <div className="ml-6 space-y-1">
             <SubNav label="Menu Items" icon={Utensils} href="/admin/menu-items" />
             <SubNav label="Categories" icon={Package} href="/admin/categories" />
-            <SubNav label="Packages" icon={Gift} href="/dashboard/packages" />
+            <SubNav label="Packages" icon={Gift} href="/admin/packages" />
             <SubNav label="Hampers" icon={Gift} href="/dashboard/hampers" />
             <SubNav label="Events" icon={Calendar} href="/dashboard/events" />
           </div>

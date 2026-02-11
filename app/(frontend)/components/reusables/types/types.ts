@@ -19,6 +19,8 @@ export type FieldConfig = {
   onDelete?: (id: string) => void;
   onUpload?: (files: File[]) => void;
   isDeleting?: boolean;
+  onChange?: (value:number) => void; 
+
 };
 
 export interface ImagePreviewFieldProps {

@@ -1,0 +1,107 @@
+"use client";
+import { Button } from "@/app/(frontend)/components/ui/button";
+import Image from "next/image";
+import { GridSelectableItem } from "../../reusable/types/type";
+
+
+interface CartItem extends GridSelectableItem {
+  quantity: number;
+}
+
+export function PackageCart({
+  items,
+  onChange,
+}: {
+  items: CartItem[];
+  onChange: (items: CartItem[]) => void;
+}) {
+  const removeItem = (id: string) => {
+    onChange(items.filter((i) => i.id !== id));
+  };
+
+  const updateQty = (id: string, qty: number) => {
+    onChange(
+      items.map((i) =>
+        i.id === id ? { ...i, quantity: Math.max(1, qty) } : i
+      )
+    );
+  };
+
+  const total = items.reduce(
+    (sum, i) => sum + i.price * i.quantity,
+    0
+  );
+
+  return (
+    <div className="rounded-xl border bg-white p-4 space-y-4">
+      <h3 className="text-lg font-semibold">Selected Items</h3>
+
+      {!items.length && (
+        <p className="text-sm text-muted-foreground">
+          No items selected
+        </p>
+      )}
+
+      {items.map((item) => (
+        <div
+          key={item.id}
+          className="flex items-center gap-3 rounded-lg border p-2"
+        >
+          <div className="h-14 w-14 bg-slate-100 rounded overflow-hidden">
+            {item.images?.[0]?.url && (
+              <Image
+                src={item.images[0].url}
+                alt={item.title}
+                width={56}
+                height={56}
+                className="object-cover"
+              />
+            )}
+          </div>
+
+          <div className="flex-1">
+            <p className="font-medium">{item.title}</p>
+            <p className="text-sm text-muted-foreground">
+              Rs {item.price}
+            </p>
+
+            <div className="flex items-center gap-2 mt-1">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => updateQty(item.id, item.quantity - 1)}
+              >
+                -
+              </Button>
+
+              <span>{item.quantity}</span>
+
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => updateQty(item.id, item.quantity + 1)}
+              >
+                +
+              </Button>
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            size="sm"
+            variant="destructive"
+            onClick={() => removeItem(item.id)}
+          >
+            Remove
+          </Button>
+        </div>
+      ))}
+
+      <div className="border-t pt-3 text-right font-semibold">
+        Total: Rs {total}
+      </div>
+    </div>
+  );
+}
