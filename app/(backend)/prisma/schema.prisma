@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
- }
+}
 
 /* =======================
    ENUMS
@@ -30,6 +30,7 @@ enum EventStatus {
   CANCELLED
   COMPLETED
 }
+
 enum DiscountType {
   PERCENTAGE
   FIXED
@@ -40,18 +41,17 @@ enum DiscountType {
 ======================= */
 
 model User {
-  id        String   @id // Firebase UID
+  id        String   @id
   email     String   @unique
   name      String?
   role      Role     @default(CLIENT)
   createdAt DateTime @default(now())
 
-  orders        Order[]
-  events        Event[]
-  menuReviews   MenuItemReview[]
+  orders         Order[]
+  menuReviews    MenuItemReview[]
   packageReviews PackageReview[]
-  hamperReviews HamperReview[]
-  eventReviews  EventReview[]
+  hamperReviews  HamperReview[]
+  eventReviews   EventReview[]
 }
 
 /* =======================
@@ -146,7 +146,7 @@ model OrderHamper {
 }
 
 /* =======================
-   PACKAGES
+   PACKAGES (NO EVENTS)
 ======================= */
 
 model Package {
@@ -154,21 +154,19 @@ model Package {
   name          String
   description   String?
 
-  originalPrice Float    // calculated from menu items
+  originalPrice Float
   discountType  DiscountType?
-  discountValue Float?   // percentage OR fixed amount
-  finalPrice    Float    // what client actually pays
+  discountValue Float?
+  finalPrice    Float
 
   image         String?
   available     Boolean  @default(true)
   createdAt     DateTime @default(now())
 
   items         PackageItem[]
-  events        Event[]
   orderPackages OrderPackage[]
   reviews       PackageReview[]
 }
-
 
 model PackageItem {
   id         String @id @default(uuid())
@@ -181,7 +179,22 @@ model PackageItem {
 }
 
 /* =======================
-   HAMPERS
+   EVENTS (ADMIN CREATED)
+======================= */
+
+model Event {
+  id          String      @id @default(uuid())
+  title       String
+  description String?
+  status      EventStatus @default(PENDING)
+  createdAt DateTime @default(now())
+
+  hampers Hamper[]
+  reviews EventReview[]
+}
+
+/* =======================
+   HAMPERS (EVENT-BASED)
 ======================= */
 
 model Hamper {
@@ -198,11 +211,13 @@ model Hamper {
   available     Boolean  @default(true)
   createdAt     DateTime @default(now())
 
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id])
+
   items        HamperItem[]
   orderHampers OrderHamper[]
   reviews      HamperReview[]
 }
-
 
 model HamperItem {
   id         String @id @default(uuid())
@@ -215,34 +230,14 @@ model HamperItem {
 }
 
 /* =======================
-   EVENTS
-======================= */
-
-model Event {
-  id         String      @id @default(uuid())
-  userId     String
-  packageId  String?
-  date       DateTime
-  location   String
-  guestCount Int
-  status     EventStatus @default(PENDING)
-  total      Float
-  createdAt  DateTime    @default(now())
-
-  user     User     @relation(fields: [userId], references: [id])
-  package  Package? @relation(fields: [packageId], references: [id])
-  reviews  EventReview[]
-}
-
-/* =======================
-   ⭐ REVIEWS (SEPARATE)
+   REVIEWS
 ======================= */
 
 model MenuItemReview {
   id         String   @id @default(uuid())
   userId     String
   menuItemId String
-  rating     Int      // 1..5
+  rating     Int
   comment    String?
   createdAt  DateTime @default(now())
 
