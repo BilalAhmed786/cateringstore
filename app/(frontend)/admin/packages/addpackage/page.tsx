@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
@@ -15,10 +15,10 @@ import { generateSchema } from "../../../components/reusables/validation/valdiat
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 import { GridSelectableItem } from "../../reusable/types/type";
 import { DynamicFormFields } from "../../reusable/formfields/dynamicformfields";
-import { MenuItemsBrowser } from "../../reusable/menuitem/menuitemsbrowser";
-import { PackageCart } from "@/app/(frontend)/admin/packages/(components)/packagecart";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
-
+import { useCreatePackage } from "../hooks/usecreatepackage";
+import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
+import { EntityCart } from "../../reusable/cart/entitycart";
 /* -------------------- FORM FIELDS -------------------- */
 const fields: FieldConfig[] = [
   { name: "name", label: "Package Name", type: "text", required: true },
@@ -41,7 +41,7 @@ export default function CreatePackagePage() {
     (GridSelectableItem & { quantity: number })[]
   >([]);
   const [activeTab, setActiveTab] = useState("details");
-  const [submitting, setSubmitting] = useState(false);
+  const { mutate: createPackage, isPending } = useCreatePackage();
 
   /* -------------------- MENU ITEM SELECT -------------------- */
   const handleSelectItem = (item: GridSelectableItem) => {
@@ -49,7 +49,7 @@ export default function CreatePackagePage() {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
         return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i,
         );
       }
       return [...prev, { ...item, quantity: 1 }];
@@ -57,37 +57,26 @@ export default function CreatePackagePage() {
   };
 
   /* -------------------- SUBMIT -------------------- */
-  const onSubmit = async (data:FieldValues) => {
-    // Check if no items selected
+  const onSubmit = (data: FieldValues) => {
     if (selectedItems.length === 0) {
       toast.error("Please select at least one menu item.");
       setActiveTab("items");
       return;
     }
 
-    setSubmitting(true);
-
-    const subtotal = selectedItems.reduce(
-      (sum, i) => sum + i.price * i.quantity,
-      0
-    );
-    const discount = Number(data.discount ?? 0);
-    const finalPrice = subtotal - (subtotal * discount) / 100;
-
-    const payload = {
-      ...data,
-      price: finalPrice,
-      items: selectedItems.map((i) => ({ menuItemId: i.id, quantity: i.quantity })),
-    };
-
-    console.log("PACKAGE PAYLOAD", payload);
-
-    toast.success("Package created successfully!");
-    setSubmitting(false);
+    createPackage({
+      name: data.name,
+      description: data.description,
+      discount: Number(data.discount ?? 0),
+      items: selectedItems.map((i) => ({
+        menuItemId: i.id,
+        quantity: i.quantity,
+      })),
+    });
   };
 
   const onError = (errors: FieldValues) => {
-    console.log(errors)
+    console.log(errors);
     toast.error("Please fill all required fields.");
     setActiveTab("details");
   };
@@ -116,7 +105,9 @@ export default function CreatePackagePage() {
           <TabsContent value="items">
             <div
               className={`grid gap-6 transition-all duration-300 ${
-                selectedItems.length > 0 ? "grid-cols-1 lg:grid-cols-3" : "grid-cols-1"
+                selectedItems.length > 0
+                  ? "grid-cols-1 lg:grid-cols-3"
+                  : "grid-cols-1"
               }`}
             >
               <div
@@ -124,7 +115,7 @@ export default function CreatePackagePage() {
                   selectedItems.length > 0 ? "lg:col-span-2" : "lg:col-span-3"
                 }`}
               >
-                <MenuItemsBrowser
+                <MenuItemBrowser
                   selectable={false}
                   showFilters={true}
                   onSelectItem={handleSelectItem}
@@ -133,7 +124,8 @@ export default function CreatePackagePage() {
 
               {selectedItems.length > 0 && (
                 <div className="lg:col-span-1">
-                  <PackageCart
+                  <EntityCart
+                    title="Package Items"
                     items={selectedItems}
                     onChange={setSelectedItems}
                   />
@@ -145,7 +137,7 @@ export default function CreatePackagePage() {
             <div className="pt-4 float-right">
               <UniButton
                 type="button"
-                loading={submitting}
+                loading={isPending}
                 loadingLabel="Creating..."
                 label="Create Package"
                 onClick={handleSubmit(onSubmit, onError)}

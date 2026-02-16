@@ -1,11 +1,12 @@
 'use client'
 import Link from "next/link";
-import { UniButton } from "../../components/reusables/button/button";
-import { MenuItemsBrowser } from "../reusable/menuitem/menuitemsbrowser";
+import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
+import MenuItemBrowser from "./(components)/menuitemsbrowser";
 
 export default function MenuItemsPage() {
   return (
-    <div className="p-6 space-y-6">
+    <section className="p-6 space-y-6">
+      {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Menu Items</h1>
         <Link href="/admin/menu-items/addmenu">
@@ -13,7 +14,8 @@ export default function MenuItemsPage() {
         </Link>
       </div>
 
-      <MenuItemsBrowser showFilters selectable />
-    </div>
+      {/* Menu Items Grid */}
+      <MenuItemBrowser showFilters selectable />
+    </section>
   );
 }

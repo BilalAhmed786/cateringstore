@@ -7,6 +7,7 @@ export function useDeleteMenuItem() {
 
   const mutation = useMutation({
     mutationFn: async (id: string) => {
+      alert(id)
       return apiRequest({
         url: `/api/admin/menuitem/${id}`,
         method: "DELETE",

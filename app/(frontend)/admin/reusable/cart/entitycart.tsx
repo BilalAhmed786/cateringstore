@@ -1,20 +1,18 @@
 "use client";
-import { Button } from "@/app/(frontend)/components/ui/button";
+
 import Image from "next/image";
-import { GridSelectableItem } from "../../reusable/types/type";
+import { Button } from "@/app/(frontend)/components/ui/button";
+import { EntityCartProps } from "../types/type";
 
 
-interface CartItem extends GridSelectableItem {
-  quantity: number;
-}
 
-export function PackageCart({
+
+export function EntityCart({
+  title = "Selected Items",
   items,
   onChange,
-}: {
-  items: CartItem[];
-  onChange: (items: CartItem[]) => void;
-}) {
+  showTotal = true,
+}: EntityCartProps) {
   const removeItem = (id: string) => {
     onChange(items.filter((i) => i.id !== id));
   };
@@ -28,13 +26,13 @@ export function PackageCart({
   };
 
   const total = items.reduce(
-    (sum, i) => sum + i.price * i.quantity,
+    (sum, i) => sum + (i.price ?? 0) * i.quantity,
     0
   );
 
   return (
     <div className="rounded-xl border bg-white p-4 space-y-4">
-      <h3 className="text-lg font-semibold">Selected Items</h3>
+      <h3 className="text-lg font-semibold">{title}</h3>
 
       {!items.length && (
         <p className="text-sm text-muted-foreground">
@@ -47,6 +45,7 @@ export function PackageCart({
           key={item.id}
           className="flex items-center gap-3 rounded-lg border p-2"
         >
+          {/* Image */}
           <div className="h-14 w-14 bg-slate-100 rounded overflow-hidden">
             {item.images?.[0]?.url && (
               <Image
@@ -59,11 +58,14 @@ export function PackageCart({
             )}
           </div>
 
+          {/* Info */}
           <div className="flex-1">
             <p className="font-medium">{item.title}</p>
-            <p className="text-sm text-muted-foreground">
-              Rs {item.price}
-            </p>
+            {item.price !== undefined && (
+              <p className="text-sm text-muted-foreground">
+                Rs {item.price}
+              </p>
+            )}
 
             <div className="flex items-center gap-2 mt-1">
               <Button
@@ -88,6 +90,7 @@ export function PackageCart({
             </div>
           </div>
 
+          {/* Remove */}
           <Button
             type="button"
             size="sm"
@@ -99,9 +102,11 @@ export function PackageCart({
         </div>
       ))}
 
-      <div className="border-t pt-3 text-right font-semibold">
-        Total: Rs {total}
-      </div>
+      {showTotal && (
+        <div className="border-t pt-3 text-right font-semibold">
+          Total: Rs {total}
+        </div>
+      )}
     </div>
   );
 }

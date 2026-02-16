@@ -7,10 +7,10 @@ import { Category } from "../../menu-items/types/types";
   price: number;
   images?: { url: string }[];
   available: boolean;
-  averageRating?: number;   // ⭐ new
+  averageRating?: number; 
   totalReviews?: number;  
   totalComments?:number
-};
+ };
 
 export interface Dropdowitems {
   items?: GridSelectableItem[];
@@ -20,6 +20,16 @@ export interface Dropdowitems {
   onToggleStatus?: (id: string, available: boolean) => void;
   onSelect?: (item: GridSelectableItem) => void;
  
+}
+export interface CartItem extends GridSelectableItem {
+  quantity: number;
+}
+
+export interface EntityCartProps {
+  title?: string;
+  items: CartItem[];
+  onChange: (items: CartItem[]) => void;
+  showTotal?: boolean;
 }
 
 export interface DynamicFormFieldsProps {
@@ -42,7 +52,7 @@ export interface MenuItemDropdownProps {
 
 
 type FilterValue = string;
-export interface MenuItemsFiltersProps {
+export interface ItemsFiltersProps {
   status: FilterValue;
   category: FilterValue;
   dateFilter: FilterValue;
@@ -59,4 +69,28 @@ export interface menuitembrowser {
   showFilters?: boolean;
   selectable?: boolean;
   onSelectItem?: (item: GridSelectableItem) => void;
+}
+export type RatingSummaryProps = {
+  rating?: number;
+  count?: number;
+};
+export interface EntityItem {
+  id: string
+  name: string
+  description?: string
+  originalPrice: number
+  finalPrice: number
+  available: boolean
+}
+
+export interface EntityAction{
+  label: string
+  onClick: () => void
+  variant?: "danger"
+  show?: boolean
+}
+export interface Etitygrid{
+  items: EntityItem[]
+  isLoading?: boolean
+  getActions: (item: EntityItem) => EntityAction[]
 }

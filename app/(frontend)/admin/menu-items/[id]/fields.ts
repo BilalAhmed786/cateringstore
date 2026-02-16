@@ -42,6 +42,7 @@ export const getEditMenuItemFields = (
     name: "image",
     label: "Upload New Images",
     multiple: true,
+    required:false,
     accept: "image/*",
     onUpload: onUploadImage,
     className: "w-[200] relative h-32 rounded",

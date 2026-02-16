@@ -1,18 +1,15 @@
 "use client";
 import Image from "next/image";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
+import { existingimage } from "../types/types";
 
-type Props = {
-  images: { id: string; url: string }[];
-  onDelete: (id: string) => void;
-  isDeleting?: boolean;
-};
+
 
 export default function MenuItemExistingImages({
   images,
   onDelete,
   isDeleting,
-}: Props) {
+}: existingimage) {
   if (!images?.length) return null;
 
   return (

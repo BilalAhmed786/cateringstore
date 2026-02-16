@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/app/(frontend)/components/ui/dropdown-menu";
-import { MenuItemDropdownProps } from "@/app/(frontend)/admin/menu-items/types/types";
+
 import { Button } from "@/app/(frontend)/components/ui/button"; // Correct
 
 export function MenuItemDropdown({ actions }: MenuItemDropdownProps) {

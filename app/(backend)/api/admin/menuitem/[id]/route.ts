@@ -54,13 +54,13 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireRole(req, ["ADMIN"]);
     if (auth instanceof NextResponse) return auth;
 
-    const { id } = params;
+    const { id } = await params;
 
     // 1️⃣ Fetch all image publicIds
     const menuItem = await prisma.menuItem.findUnique({

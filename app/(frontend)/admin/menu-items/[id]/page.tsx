@@ -68,8 +68,7 @@ export default function EditMenuItemPage() {
           image: [],
         }}
         onSubmit={(data) => {
-          // Update menu item JSON fields
-          updateMenuItem({
+         updateMenuItem({
             id: menuItemData.id,
             title: data.title,
             description: data.description,
