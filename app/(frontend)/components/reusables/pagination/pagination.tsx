@@ -9,7 +9,7 @@ import {
 } from "@/app/(frontend)/components/ui/pagination"; // adjust path
 import { paginationProps } from "../types/types";
 
-export function MenuItemsPagination({
+export function ItemsPagination({
   page,
   total,
   limit,

@@ -12,7 +12,7 @@ import { DropdownAction, GridItem } from "../../reusable/grid/gridtypes";
 import { MenuItemBrowserProps } from "../types/types";
 import { useDeleteMenuItem } from "../hooks/usedeletemenuItem";
 import { useToggleMenuItem } from "../hooks/usetogglemenuItem";
-import { MenuItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
+import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
 
 export default function MenuItemBrowser({
   showFilters = true,
@@ -125,7 +125,7 @@ export default function MenuItemBrowser({
         )}
       />
 
-      <MenuItemsPagination
+      <ItemsPagination
         page={page}
         limit={limit}
         total={data?.total ?? 0}

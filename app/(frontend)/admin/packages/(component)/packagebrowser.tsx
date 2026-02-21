@@ -10,31 +10,47 @@ import { DropdownAction, GridItem } from "../../reusable/grid/gridtypes";
 import { useGetPackages } from "../hooks/usegetpackages";
 import { useDeletePackage } from "../hooks/usedeletepackage";
 import { useTogglePackage } from "../hooks/usetogglepackage";
+import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
 
-
-
-/* ---------------- TYPES ---------------- */
-
-
-/* ---------------- COMPONENT ---------------- */
 export default function PackageBrowser({
   showFilters = true,
-  selectable=false
+  selectable = false,
 }) {
   const router = useRouter();
 
+  // Filter + Pagination State
   const [status, setStatus] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const limit = 5;
 
   const { data, isPending } = useGetPackages({
     status,
     dateFilter,
     search,
+    page,
+    limit,
   });
 
   const deleteMutation = useDeletePackage();
   const toggleMutation = useTogglePackage();
+
+  // ✅ Handlers to reset page on filter change
+  const onStatusChange = (value: string) => {
+    setStatus(value);
+    setPage(1);
+  };
+
+  const onDateFilterChange = (value: string) => {
+    setDateFilter(value);
+    setPage(1);
+  };
+
+  const onSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
 
   /* ---------------- FILTERS ---------------- */
   const filters = [
@@ -42,7 +58,7 @@ export default function PackageBrowser({
       key: "status",
       label: "Status",
       value: status,
-      onChange: setStatus,
+      onChange: onStatusChange,
       options: [
         { label: "All", value: "all" },
         { label: "Active", value: "true" },
@@ -53,7 +69,7 @@ export default function PackageBrowser({
       key: "dateFilter",
       label: "Date",
       value: dateFilter,
-      onChange: setDateFilter,
+      onChange: onDateFilterChange,
       options: [
         { label: "All", value: "all" },
         { label: "Past 7 Days", value: "7days" },
@@ -91,7 +107,7 @@ export default function PackageBrowser({
       {showFilters && (
         <EntityFilters
           filters={filters}
-          search={{ value: search, onChange: setSearch }}
+          search={{ value: search, onChange: onSearchChange }}
         />
       )}
 
@@ -100,13 +116,29 @@ export default function PackageBrowser({
         isLoading={isPending}
         actions={getActions}
         selectable={selectable}
-        renderPrice={(i) => <span>Rs {i.price}</span>}
+        renderPrice={(i) => (
+          <span>
+            Rs {i.finalPrice}{" "}
+            {i.originalPrice && (
+              <span className="line-through text-sm text-gray-400 ml-2">
+                Rs {i.originalPrice}
+              </span>
+            )}
+          </span>
+        )}
         renderMeta={(i) => (
-          <RatingSummary    
+          <RatingSummary
             rating={i.averageRating ?? 0}
             count={i.totalReviews ?? 0}
           />
         )}
+      />
+
+      <ItemsPagination
+        page={page}
+        limit={limit}
+        total={data?.total ?? 0}
+        onPageChange={setPage}
       />
     </div>
   );
