@@ -1,49 +1,65 @@
 import { Prisma } from "@prisma/client";
-import { MenuItemFilters } from "../types/type";
+import { CommonFilters } from "../types/type";
 
-export function Datafilter(filters: MenuItemFilters): Prisma.MenuItemWhereInput {
-  const { status, category, search, dateFilter } = filters;
 
-  const where: Prisma.MenuItemWhereInput = {};
+type WhereLike = {
+  OR?: unknown;
+};
 
-  // STATUS filter
-  if (status && status.toLowerCase() !== "all") {
-    if (status.toLowerCase() === "true") where.available = true;
-    else if (status.toLowerCase() === "false") where.available = false;
+export function buildFilter<T extends WhereLike>(
+  filters: CommonFilters,
+  options: {
+    searchFields: readonly (keyof T)[];
+    hasCategory?: boolean;
+  }
+): T {
+  const where = {} as T;
+
+  /* -------- STATUS -------- */
+  if (filters.status && filters.status !== "all") {
+    (where as Prisma.MenuItemWhereInput | Prisma.PackageWhereInput).available =
+      filters.status === "true";
   }
 
-  // CATEGORY filter
-  if (category && category.toLowerCase() !== "all") {
-    where.categoryId = category.trim();
+  /* -------- SEARCH -------- */
+  if (filters.search?.trim()) {
+    where.OR = options.searchFields.map((field) => ({
+      [field]: {
+        contains: filters.search,
+        mode: "insensitive",
+      },
+    })) as T["OR"];
   }
 
-  // SEARCH filter
-  if (search?.trim()) {
-    where.OR = [
-      { title: { contains: search.trim(), mode: "insensitive" } },
-      { description: { contains: search.trim(), mode: "insensitive" } },
-    ];
+  /* -------- CATEGORY (OPTIONAL) -------- */
+  if (
+    options.hasCategory &&
+    filters.category &&
+    filters.category !== "all"
+  ) {
+    (where as Prisma.MenuItemWhereInput).categoryId =
+      filters.category.trim();
   }
 
-  // DATE FILTER
-  if (dateFilter && dateFilter.toLowerCase() !== "all") {
+  /* -------- DATE -------- */
+  if (filters.dateFilter && filters.dateFilter !== "all") {
     const now = new Date();
-    let start: Date | undefined;
 
-    if (dateFilter.toLowerCase() === "today") {
-      start = new Date(now);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(now);
-      end.setHours(23, 59, 59, 999);
-      where.createdAt = { gte: start, lte: end };
-    } else if (dateFilter.toLowerCase() === "past7") {
-      start = new Date();
-      start.setDate(start.getDate() - 7);
-      where.createdAt = { gte: start };
-    } else if (dateFilter.toLowerCase() === "past30") {
-      start = new Date();
-      start.setDate(start.getDate() - 30);
-      where.createdAt = { gte: start };
+    const createdAtFilter =
+      filters.dateFilter === "today"
+        ? {
+            gte: new Date(now.setHours(0, 0, 0, 0)),
+            lte: new Date(now.setHours(23, 59, 59, 999)),
+          }
+        : filters.dateFilter === "past7"
+        ? { gte: new Date(Date.now() - 7 * 86400000) }
+        : filters.dateFilter === "past30"
+        ? { gte: new Date(Date.now() - 30 * 86400000) }
+        : undefined;
+
+    if (createdAtFilter) {
+      (where as Prisma.MenuItemWhereInput | Prisma.PackageWhereInput).createdAt =
+        createdAtFilter;
     }
   }
 

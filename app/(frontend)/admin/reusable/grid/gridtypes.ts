@@ -1,6 +1,7 @@
 export type GridItem = {
   id: string;
   title: string;
+  name:string;
   images?: { url: string }[];
   available: boolean;
   price: number;

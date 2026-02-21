@@ -1,23 +1,23 @@
-import { useQuery } from "@tanstack/react-query"
-import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq"
-import { GetPackagesResponse } from "../types/type"
+import { useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
+import { PackageFilters } from "../types/type";
+import { GridItem } from "../../reusable/grid/gridtypes";
 
 
-type Params = {
-  search?: string
-  status?: string
-  page: number
-  limit: number
-}
-
-export function useGetPackages(params: Params) {
-  return useQuery({
-    queryKey: ["packages", params],
+export function useGetPackages(filters?: PackageFilters) {
+  return useQuery<{ items: GridItem[]; total: number }>({
+    queryKey: ["packages", filters],
     queryFn: () =>
-      apiRequest<GetPackagesResponse>({
-        url: "/api/admin/packages",
+      apiRequest({
+        url: `/api/admin/packages?${new URLSearchParams({
+          status: filters?.status ?? "",
+          search: filters?.search ?? "",
+          dateFilter: filters?.dateFilter ?? "",
+        })}`,
         method: "GET",
         authRequired: true,
       }),
-  })
+    placeholderData: (prev) => prev,
+    staleTime: 1000 * 10,
+  });
 }

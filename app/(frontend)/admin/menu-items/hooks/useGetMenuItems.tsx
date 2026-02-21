@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq"
-import { MenuItem, MenuItemsFilters } from "../types/types"
-
+import { MenuItemsFilters } from "../types/types"
+import { GridItem } from "../../reusable/grid/gridtypes";
 
 
 export function useGetMenuItems(filters?: MenuItemsFilters) {
-  return useQuery<{ items: MenuItem[]; total: number }>({
+  return useQuery<{ items: GridItem[]; total: number }>({
     queryKey: ["menu-items", filters], // include filters in queryKey for caching
     queryFn: () =>
       apiRequest({

@@ -1,7 +1,10 @@
 import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { CreatePackageBody } from "./types/type";
+import { buildFilter } from "../../reusables/filters/filters";
+import { Prisma } from "@prisma/client";
+
 
 
 export async function POST(req: Request) {
@@ -55,6 +58,73 @@ export async function POST(req: Request) {
     console.error(error);
     return NextResponse.json(
       { message: "Something went wrong" },
+      { status: 500 }
+    );
+  }
+}
+
+
+
+export async function GET(req: NextRequest) {
+  try {
+    await requireRole(req, ["admin"]);
+
+    const { searchParams } = new URL(req.url);
+
+    const page = Number(searchParams.get("page") ?? 1);
+    const limit = Number(searchParams.get("limit") ?? 10);
+    const skip = (page - 1) * limit;
+
+    /* -------------------- FILTERS -------------------- */
+   const where = buildFilter<Prisma.PackageWhereInput>(
+  {
+    status: searchParams.get("status"),
+    search: searchParams.get("search"),
+    dateFilter: searchParams.get("dateFilter"),
+  },
+  {
+    searchFields: ["name", "description"],
+  }
+);
+    /* -------------------- QUERY -------------------- */
+    const [items, total] = await Promise.all([
+      prisma.package.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          items: {
+            include: {
+              menuItem: true,
+            },
+          },
+        },
+      }),
+      prisma.package.count({ where }),
+    ]);
+
+    const mappedItems = items.map((pkg) => ({
+      ...pkg,
+      totalItems: pkg.items.reduce(
+        (sum, i) => sum + i.quantity,
+        0
+      ),
+    }));
+
+    return NextResponse.json({
+      items: mappedItems,
+      total,
+    });
+  } catch (error) {
+    console.error("Package GET error:", error);
+    return NextResponse.json(
+      {
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch packages",
+      },
       { status: 500 }
     );
   }

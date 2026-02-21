@@ -1,4 +1,5 @@
 "use client";
+
 import Image from "next/image";
 import { Badge } from "@/app/(frontend)/components/ui/badge";
 import { MenuItemDropdown } from "@/app/(frontend)/components/reusables/actiondropdown/actiondropdown";
@@ -10,8 +11,6 @@ export function EntityGrid({
   isLoading,
   selectable = false,
   onSelect,
-  renderPrice,
-  renderMeta,
   actions,
 }: EntityGridProps) {
   if (isLoading) {
@@ -46,11 +45,11 @@ export function EntityGrid({
           )}
 
           {/* Image */}
-          <div className="h-40 w-full bg-slate-100 overflow-hidden flex items-center justify-center">
+          <div className="h-40 w-full bg-slate-100 flex items-center justify-center">
             {item.images?.[0]?.url ? (
               <Image
                 src={item.images[0].url}
-                alt={item.title}
+                alt={item.title ?? item.name ?? "Item"}
                 width={400}
                 height={160}
                 className="h-full w-full object-cover"
@@ -64,30 +63,43 @@ export function EntityGrid({
           <div className="flex flex-1 flex-col justify-between p-4">
             <div>
               <h2 className="line-clamp-1 text-lg font-semibold">
-                {item.title}
+                {item.title ?? item.name}
               </h2>
 
-              {/* ⭐ Rating / Meta */}
-              {renderMeta ? (
-                renderMeta(item)
-              ) : (
-                <div className="mt-1">
-                  <RatingSummary
-                    rating={item.averageRating ?? 0}
-                    count={item.totalReviews ?? 0}
-                  />
-                </div>
-              )}
+              {/* ⭐ Rating OR Created Date */}
+
+              <div className="mt-1">
+                <RatingSummary
+                  rating={item.averageRating ?? 0}
+                  count={item.totalReviews ?? 0}
+                />
+              </div>
             </div>
 
             {/* Price & Status */}
             <div className="mt-4 flex items-center justify-between">
-              {renderPrice ? (
-                renderPrice(item)
-              ) : (
+              {/* PRICE LOGIC */}
+              {"price" in item && (
                 <span className="font-medium text-gray-800">
                   Rs {item.price}
                 </span>
+              )}
+
+              {"finalPrice" in item && (
+                <div className="flex flex-col text-right">
+                  {item.originalPrice ? (
+                    <>
+                      <span className="text-xs line-through text-gray-400">
+                        Rs {item.originalPrice}
+                      </span>
+                      <span className="font-semibold text-green-600">
+                        Rs {item.finalPrice}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="font-semibold">Rs {item.finalPrice}</span>
+                  )}
+                </div>
               )}
 
               {item.available !== undefined && (

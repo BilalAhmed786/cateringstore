@@ -21,3 +21,12 @@ export interface SelectedItem {
 }
 
 
+
+export type PackageFilters = {
+  status?: string;
+  dateFilter?:string;
+  search?: string;
+  page?: number;
+  limit?: number;
+};
+
