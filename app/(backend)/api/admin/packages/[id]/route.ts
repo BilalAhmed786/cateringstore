@@ -1,6 +1,7 @@
 import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { CreatePackageBody } from "../types/type";
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -26,31 +27,62 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await requireRole(req, ["admin"]);
+    await requireRole(req, ["ADMIN"]);
 
     const { id } = await params;
-    const body = await req.json();
-    const { available } = body;
+    const body = await req.json() as CreatePackageBody;
 
-    console.log(available)
+    const existingPackage = await prisma.package.findUnique({
+      where: { id },
+      include: { items: true },
+    });
 
-    // Check if package exists
-    const existing = await prisma.package.findUnique({ where: { id } });
-    if (!existing) {
+    if (!existingPackage) {
       return NextResponse.json({ message: "Package not found" }, { status: 404 });
     }
 
-    // Update availability
-    const updated = await prisma.package.update({
+    let originalPrice = existingPackage.originalPrice;
+    let finalPrice = existingPackage.finalPrice;
+
+    // If items are updated, recalc price
+    if (body.items?.length) {
+      const menuItems = await prisma.menuItem.findMany({
+        where: { id: { in: body.items.map(i => i.menuItemId) } },
+        select: { id: true, price: true },
+      });
+
+      originalPrice = body.items.reduce((sum, item) => {
+        const menu = menuItems.find(m => m.id === item.menuItemId);
+        return sum + (menu?.price || 0) * item.quantity;
+      }, 0);
+
+      finalPrice = originalPrice - ((originalPrice * (body.discount ?? existingPackage.discountValue)) / 100);
+    }
+
+    const updatedPackage = await prisma.package.update({
       where: { id },
-      data: { available },
+      data: {
+        name: body.name,
+        description: body.description,
+        discountValue: body.discount,
+        discountType: body.discount && body.discount > 0 ? "PERCENTAGE" : null,
+        originalPrice,
+        finalPrice,
+        available: body.available,
+        items: body.items?.length
+          ? {
+              deleteMany: {}, 
+              create: body.items.map(i => ({ menuItemId: i.menuItemId, quantity: i.quantity })),
+            }
+          : undefined,
+      },
     });
 
-    return NextResponse.json(updated);
+    return NextResponse.json(updatedPackage);
   } catch (error) {
-    console.error("PATCH Package error:", error);
+    console.error("Update package error:", error);
     return NextResponse.json(
-      { message: error instanceof Error ? error.message : "Failed to toggle package" },
+      { message: error instanceof Error ? error.message : "Failed to update package" },
       { status: 500 }
     );
   }

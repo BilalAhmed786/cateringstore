@@ -6,6 +6,7 @@ type PackageItemInput = {
 export type CreatePackageBody = {
   name: string
   description?: string
-  discount?: number
+  discount: number
+  available?:boolean
   items: PackageItemInput[]
 }
