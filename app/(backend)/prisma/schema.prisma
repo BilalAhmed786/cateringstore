@@ -174,7 +174,7 @@ model PackageItem {
   menuItemId String
   quantity   Int    @default(1)
 
-  package  Package  @relation(fields: [packageId], references: [id])
+  package  Package  @relation(fields: [packageId], references: [id],onDelete: Cascade)
   menuItem MenuItem @relation(fields: [menuItemId], references: [id])
 }
 

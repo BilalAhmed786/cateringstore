@@ -1,6 +1,7 @@
-  import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
+import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 import { Category } from "../../menu-items/types/types";
-  import { UseFormRegister, FieldErrors, FieldValues } from "react-hook-form";
+import { UseFormRegister, FieldErrors, FieldValues } from "react-hook-form";
+import { PackageMenuItem } from "../../packages/types/type";
   export type GridSelectableItem = {
   id: string;
   title: string;
@@ -93,4 +94,9 @@ export interface Etitygrid{
   items: EntityItem[]
   isLoading?: boolean
   getActions: (item: EntityItem) => EntityAction[]
+}
+
+
+export interface MenuItemDetailProps {
+  items: PackageMenuItem[];
 }

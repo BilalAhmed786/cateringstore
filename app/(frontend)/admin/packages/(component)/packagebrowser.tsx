@@ -81,6 +81,11 @@ export default function PackageBrowser({
   /* ---------------- ACTIONS ---------------- */
   const getActions = (item: GridItem): DropdownAction[] => [
     {
+      label: "View",
+      icon: Eye,
+      onClick: () => router.push(`/admin/packages/viewdetail/${item.id}`),
+    },
+    {
       label: "Edit",
       icon: Pencil,
       onClick: () => router.push(`/admin/packages/${item.id}`),

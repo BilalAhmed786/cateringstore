@@ -15,7 +15,7 @@ export function useTogglePackage() {
       available: boolean;
     }) =>
       apiRequest({
-        url: `/api/admin/package/${id}`,
+        url: `/api/admin/packages/${id}`,
         method: "PATCH",
         body: { available: !available },
         authRequired: true,

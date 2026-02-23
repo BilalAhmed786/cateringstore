@@ -9,7 +9,7 @@ export function useDeletePackage() {
   return useMutation({
     mutationFn: async (id: string) =>
       apiRequest({
-        url: `/api/admin/package/${id}`,
+        url: `/api/admin/packages/${id}`,
         method: "DELETE",
         authRequired: true,
       }),

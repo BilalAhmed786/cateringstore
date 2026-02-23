@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Badge } from "@/app/(frontend)/components/ui/badge";
+import { Card, CardHeader, CardContent, CardFooter } from "@/app/(frontend)/components/ui/card";
 import { MenuItemDropdown } from "@/app/(frontend)/components/reusables/actiondropdown/actiondropdown";
 import { RatingSummary } from "../ratingsummary/ratingsummary";
 import { EntityGridProps } from "./gridtypes";
@@ -32,9 +33,9 @@ export function EntityGrid({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {items.map((item) => (
-        <div
+        <Card
           key={item.id}
-          className="relative flex flex-col overflow-hidden rounded-xl border bg-white shadow-sm transition hover:shadow-md cursor-pointer"
+          className="relative cursor-pointer overflow-hidden transform transition hover:scale-105 hover:shadow-lg duration-300"
           onClick={() => onSelect?.(item)}
         >
           {/* Dropdown */}
@@ -45,28 +46,27 @@ export function EntityGrid({
           )}
 
           {/* Image */}
-          <div className="h-40 w-full bg-slate-100 flex items-center justify-center">
+          <CardHeader className="relative h-40 bg-black rounded-t-xl overflow-hidden">
             {item.images?.[0]?.url ? (
               <Image
                 src={item.images[0].url}
                 alt={item.title ?? item.name ?? "Item"}
-                width={400}
-                height={160}
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover rounded-t-xl"
               />
             ) : (
-              <span className="text-sm text-slate-400">No Image</span>
+              <div className="h-full w-full flex items-center justify-center bg-black rounded-t-xl">
+                <span className="text-sm text-gray-300">No Image</span>
+              </div>
             )}
-          </div>
+          </CardHeader>
 
           {/* Content */}
-          <div className="flex flex-1 flex-col justify-between p-4">
+          <CardContent className="flex flex-col justify-between p-4 gap-2">
             <div>
               <h2 className="line-clamp-1 text-lg font-semibold">
                 {item.title ?? item.name}
               </h2>
-
-              {/* ⭐ Rating OR Created Date */}
 
               <div className="mt-1">
                 <RatingSummary
@@ -76,13 +76,9 @@ export function EntityGrid({
               </div>
             </div>
 
-            {/* Price & Status */}
-            <div className="mt-4 flex items-center justify-between">
-              {/* PRICE LOGIC */}
+            <CardFooter className="mt-4 flex items-center justify-between p-0">
               {"price" in item && (
-                <span className="font-medium text-gray-800">
-                  Rs {item.price}
-                </span>
+                <span className="font-medium text-gray-800">Rs {item.price}</span>
               )}
 
               {"finalPrice" in item && (
@@ -107,9 +103,9 @@ export function EntityGrid({
                   {item.available ? "Active" : "Inactive"}
                 </Badge>
               )}
-            </div>
-          </div>
-        </div>
+            </CardFooter>
+          </CardContent>
+        </Card>
       ))}
     </div>
   );

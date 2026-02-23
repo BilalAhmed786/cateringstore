@@ -30,3 +30,17 @@ export type PackageFilters = {
   limit?: number;
 };
 
+export type PackageMenuItem = {
+  id: string;
+  packageId: string;
+  menuItemId: string;
+  quantity: number;
+  menuItem: {
+    id: string;
+    title: string;
+    price: number;
+    images: {
+      url: string;
+    }[];
+  };
+}

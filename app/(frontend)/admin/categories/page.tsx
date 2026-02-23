@@ -7,7 +7,7 @@ import { Edit, Trash2 } from "lucide-react";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { BaseSearch } from "../../components/reusables/search/search";
 import { DataTable } from "../../components/reusables/table/table";
-import { MenuItemsPagination } from "../../components/reusables/pagination/pagination";
+import {ItemsPagination } from "../../components/reusables/pagination/pagination";
 import { useCategories } from "./hooks/usecategories";
 import { useDeleteCategory } from "./hooks/useDeleteCategory";
 import { FullScreenLoader } from "../../components/reusables/loader/loader";
@@ -103,7 +103,7 @@ export default function CategoriesPage() {
         </div>
 
         {/* Pagination */}
-        <MenuItemsPagination
+        <ItemsPagination
           page={page}
           total={total}
           limit={limit}
