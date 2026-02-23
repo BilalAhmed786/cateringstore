@@ -1,7 +1,12 @@
+import { images } from "../../menu-items/types/types";
+
 export interface MenuItem {
   id: string;
+  title:string;
   name: string;
   price: number;
+  images:images[]
+  
 }
 export interface PackageItemsFieldProps {
   menuItems: MenuItem[];
@@ -22,7 +27,7 @@ export interface SelectedItem {
 
 
 
-export type PackageFilters = {
+export interface PackageFilters{
   status?: string;
   dateFilter?:string;
   search?: string;
@@ -30,17 +35,25 @@ export type PackageFilters = {
   limit?: number;
 };
 
-export type PackageMenuItem = {
+
+export interface PackageMenuItem {
+  id: string;           
+  packageId: string;     
+  menuItemId: string;  
+  quantity: number;      
+  menuItem: MenuItem;    
+}
+
+export interface Package {
   id: string;
-  packageId: string;
-  menuItemId: string;
-  quantity: number;
-  menuItem: {
-    id: string;
-    title: string;
-    price: number;
-    images: {
-      url: string;
-    }[];
-  };
+  name: string;
+  description: string;
+  available: boolean;
+  createdAt: string;
+  discountType: string;
+  discountValue: number;
+  finalPrice: number;
+  originalPrice: number;
+  image: string | null;
+  items: PackageMenuItem[];
 }

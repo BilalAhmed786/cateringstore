@@ -11,7 +11,7 @@ import { Menuitemdetail } from "../../../reusable/menuitemdetail/menuitemdetail"
 export default function ViewPackageItemsPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-
+  
   const { data, isPending } = useGetPackageDetails(id);
 
   if (isPending) return <div className="p-6">Loading...</div>;
@@ -29,7 +29,7 @@ export default function ViewPackageItemsPage() {
         Back
       </UniButton>
 
-      <Menuitemdetail items={data} />
+      <Menuitemdetail items={data.items} />
     </div>
   );
 }

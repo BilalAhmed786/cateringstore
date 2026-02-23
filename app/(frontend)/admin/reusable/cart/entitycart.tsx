@@ -18,6 +18,7 @@ export function EntityCart({
   };
 
   const updateQty = (id: string, qty: number) => {
+    alert(id)
     onChange(
       items.map((i) =>
         i.id === id ? { ...i, quantity: Math.max(1, qty) } : i

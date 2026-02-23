@@ -2,11 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
-import { PackageMenuItem } from "../types/type";
+import { Package } from "../types/type";
+
 
 
 export function useGetPackageDetails(id: string) {
-  return useQuery<PackageMenuItem[]>({
+  return useQuery<Package>({
     queryKey: ["package", id],
     enabled: !!id,
     queryFn: async () =>

@@ -7,7 +7,7 @@ import { PackageMenuItem } from "../../packages/types/type";
   title: string;
   price: number;
   images?: { url: string }[];
-  available: boolean;
+  available?: boolean;
   averageRating?: number; 
   totalReviews?: number;  
   totalComments?:number
@@ -98,5 +98,5 @@ export interface Etitygrid{
 
 
 export interface MenuItemDetailProps {
-  items: PackageMenuItem[];
+  items: PackageMenuItem[] | undefined;
 }

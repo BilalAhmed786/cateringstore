@@ -32,6 +32,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const body = await req.json();
     const { available } = body;
 
+    console.log(available)
+
     // Check if package exists
     const existing = await prisma.package.findUnique({ where: { id } });
     if (!existing) {
@@ -56,28 +58,40 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const items = await prisma.packageItem.findMany({
-      where: { packageId: params.id },
+    const id = await params
+    const packageData = await prisma.package.findUnique({
+      where: id,
       include: {
-        menuItem: {
-          select: {
-            id: true,
-            title: true,
-            price: true,
-            images: true,
+        items: {
+          include: {
+            menuItem: {
+              select: {
+                id: true,
+                title: true,
+                price: true,
+                images: true,
+              },
+            },
           },
         },
       },
     });
 
-    return NextResponse.json(items);
+    if (!packageData) {
+      return NextResponse.json(
+        { message: "Package not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(packageData);
   } catch (error) {
-    console.log(error)
+    console.error(error);
     return NextResponse.json(
-      { message: "Failed to fetch package items" },
+      { message: "Failed to fetch package details" },
       { status: 500 }
     );
   }
