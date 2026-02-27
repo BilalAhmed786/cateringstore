@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import React, { useState } from "react"
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button"
@@ -45,10 +45,10 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
       <nav className="flex-1 p-4 space-y-2 text-slate-300">
 
         <NavItem open={open} icon={Home} label="Dashboard" href="/admin/dashboard" />
-        <NavItem open={open} icon={ShoppingCart} label="Orders" href="orders" />
+        <NavItem open={open} icon={ShoppingCart} label="Orders" href="/admin/orders" />
 
         {/* Customers */}
-        <NavItem open={open} icon={Users} label="Customers" href="customers" />
+        <NavItem open={open} icon={Users} label="Customers" href="/admin/customers" />
 
         {/* MENU DROPDOWN */}
         <button
@@ -72,16 +72,16 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
             <SubNav label="Menu Items" icon={Utensils} href="/admin/menu-items" />
             <SubNav label="Categories" icon={Package} href="/admin/categories" />
             <SubNav label="Packages" icon={Gift} href="/admin/packages" />
-            <SubNav label="Hampers" icon={Gift} href="/dashboard/hampers" />
-            <SubNav label="Events" icon={Calendar} href="/dashboard/events" />
+            <SubNav label="Hampers" icon={Gift} href="/admin/hampers" />
+            <SubNav label="Events" icon={Calendar} href="/admin/events" />
           </div>
         )}
 
         {/* Surveys */}
-        <NavItem open={open} icon={Star} label="Surveys" href="/dashboard/surveys" />
+        <NavItem open={open} icon={Star} label="Surveys" href="/admin/surveys" />
 
         {/* Settings */}
-        <NavItem open={open} icon={Settings} label="Settings" href="/dashboard/settings" />
+        <NavItem open={open} icon={Settings} label="Settings" href="/admin/settings" />
       </nav>
 
       <Separator className="bg-slate-800" />
