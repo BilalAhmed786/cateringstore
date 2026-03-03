@@ -8,6 +8,7 @@ import { useEvent } from "../hooks/usegetsingleevent";
 import { useUpdateEvent } from "../hooks/useUpdateEvent";
 
 
+
 const fields: FieldConfig[] = [
   {
     name: "title",
