@@ -5,7 +5,9 @@ import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamic
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 import { FullScreenLoader } from "@/app/(frontend)/components/reusables/loader/loader";
 import { useEvent } from "../hooks/usegetsingleevent";
-import { useUpdateEvent } from "../hooks/useUpdateEvent";
+import { useUpdateEvent } from "../hooks/useupdateevent";
+
+
 
 
 
