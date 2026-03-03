@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FieldValues, useForm } from "react-hook-form";
+import { FieldValues, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import {
@@ -14,11 +14,13 @@ import {
 import { generateSchema } from "../../../components/reusables/validation/valdiation";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 import { GridSelectableItem } from "../../reusable/types/type";
-import { DynamicFormFields } from "../../reusable/formfields/dynamicformfields";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { useCreatePackage } from "../hooks/usecreatepackage";
 import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
 import { EntityCart } from "../../reusable/cart/entitycart";
+import { FieldGroup } from "@/app/(frontend)/components/ui/field";
+import { FormField } from "@/app/(frontend)/components/reusables/fields/fieldscase";
+
 /* -------------------- FORM FIELDS -------------------- */
 const fields: FieldConfig[] = [
   { name: "name", label: "Package Name", type: "text", required: true },
@@ -30,17 +32,20 @@ const schema = generateSchema(fields);
 
 /* -------------------- COMPONENT -------------------- */
 export default function CreatePackagePage() {
-  const form = useForm({ resolver: zodResolver(schema) });
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = form;
+  const form = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      name: "",
+      description: "",
+      discount: 0,
+    },
+  });
 
   const [selectedItems, setSelectedItems] = useState<
     (GridSelectableItem & { quantity: number })[]
   >([]);
   const [activeTab, setActiveTab] = useState("details");
+
   const { mutate: createPackage, isPending } = useCreatePackage();
 
   /* -------------------- MENU ITEM SELECT -------------------- */
@@ -58,7 +63,7 @@ export default function CreatePackagePage() {
 
   /* -------------------- SUBMIT -------------------- */
   const onSubmit = (data: FieldValues) => {
-    if (selectedItems.length === 0) {
+    if (!selectedItems.length) {
       toast.error("Please select at least one menu item.");
       setActiveTab("items");
       return;
@@ -75,8 +80,7 @@ export default function CreatePackagePage() {
     });
   };
 
-  const onError = (errors: FieldValues) => {
-    console.log(errors);
+  const onError = () => {
     toast.error("Please fill all required fields.");
     setActiveTab("details");
   };
@@ -85,67 +89,56 @@ export default function CreatePackagePage() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 p-6">
       <h1 className="text-2xl font-bold">Add Packages</h1>
-      <form className="w-full space-y-6 bg-white p-8 rounded-xl shadow-lg">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="details">Package Details</TabsTrigger>
-            <TabsTrigger value="items">Menu Items</TabsTrigger>
-          </TabsList>
 
-          {/* ---------------- DETAILS TAB ---------------- */}
-          <TabsContent value="details">
-            <DynamicFormFields
-              fields={fields}
-              register={register}
-              errors={errors}
-            />
-          </TabsContent>
+      <FormProvider {...form}>
+        <form className="w-full space-y-6 bg-white p-8 rounded-xl shadow-lg">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList>
+              <TabsTrigger value="details">Package Details</TabsTrigger>
+              <TabsTrigger value="items">Menu Items</TabsTrigger>
+            </TabsList>
 
-          {/* ---------------- ITEMS TAB ---------------- */}
-          <TabsContent value="items">
-            <div
-              className={`grid gap-6 transition-all duration-300 ${
-                selectedItems.length > 0
-                  ? "grid-cols-1 lg:grid-cols-3"
-                  : "grid-cols-1"
-              }`}
-            >
+            <TabsContent value="details">
+              <FieldGroup>
+                {fields.map((field) => (
+                  <FormField key={field.name} field={field} />
+                ))}
+              </FieldGroup>
+            </TabsContent>
+
+            <TabsContent value="items">
               <div
-                className={`${
-                  selectedItems.length > 0 ? "lg:col-span-2" : "lg:col-span-3"
-                }`}
+                className={`grid gap-6 ${selectedItems.length ? "lg:grid-cols-3" : ""}`}
               >
-                <MenuItemBrowser
-                  selectable={false}
-                  showFilters={true}
-                  onSelectItem={handleSelectItem}
-                />
-              </div>
+                <div className={selectedItems.length ? "lg:col-span-2" : ""}>
+                  <MenuItemBrowser
+                    selectable={false}
+                    showFilters
+                    onSelectItem={handleSelectItem}
+                  />
+                </div>
 
-              {selectedItems.length > 0 && (
-                <div className="lg:col-span-1">
+                {selectedItems.length > 0 && (
                   <EntityCart
                     title="Package Items"
                     items={selectedItems}
                     onChange={setSelectedItems}
                   />
-                </div>
-              )}
-            </div>
+                )}
+              </div>
 
-            {/* ---------------- SUBMIT BUTTON ONLY ON ITEMS TAB ---------------- */}
-            <div className="pt-4 float-right">
-              <UniButton
-                type="button"
-                loading={isPending}
-                loadingLabel="Creating..."
-                label="Create Package"
-                onClick={handleSubmit(onSubmit, onError)}
-              />
-            </div>
-          </TabsContent>
-        </Tabs>
-      </form>
+              <div className="pt-4 float-right">
+                <UniButton
+                  type="button"
+                  loading={isPending}
+                  label="Create Package"
+                  onClick={form.handleSubmit(onSubmit, onError)}
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
+        </form>
+      </FormProvider>
     </div>
   );
 }
