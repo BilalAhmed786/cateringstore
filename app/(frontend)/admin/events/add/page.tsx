@@ -3,7 +3,10 @@
 import { FieldValues } from "react-hook-form";
 import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamicform/dynamicform";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
-import { useCreateEvent } from "../hooks/useCreateEvent";
+import { useCreateEvent } from "../hooks/usecreateEvent";
+
+
+
 
 
 

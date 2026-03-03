@@ -10,8 +10,9 @@ import { DataTable } from "../../components/reusables/table/table";
 import { ItemsPagination } from "../../components/reusables/pagination/pagination";
 import { FullScreenLoader } from "../../components/reusables/loader/loader";
 import { useDebounce } from "../../components/reusables/hooks/useDebounce";
-import { useEvents } from "./hooks/useEvents";
-import { useDeleteEvent } from "./hooks/useDeleteEvent";
+import { useDeleteEvent } from "./hooks/usedeleteEvent";
+import { useEvents } from "./hooks/useevents";
+
 
 export default function EventsPage() {
   const [search, setSearch] = useState("");
