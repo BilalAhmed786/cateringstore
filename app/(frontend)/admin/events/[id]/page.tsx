@@ -4,8 +4,11 @@ import { useParams } from "next/navigation";
 import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamicform/dynamicform";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 import { FullScreenLoader } from "@/app/(frontend)/components/reusables/loader/loader";
-import { useEvent } from "../hooks/useGetEvent";
-import { useUpdateEvent } from "../hooks/useUpdateEvent";
+import { useEvent } from "../hooks/usegetsingleevent";
+import { useUpdateEvent } from "../hooks/useupdateevent";
+
+
+
 
 
 const fields: FieldConfig[] = [
