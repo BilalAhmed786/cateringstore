@@ -6,6 +6,7 @@ import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 import { useCreateEvent } from "../hooks/useCreateEvent";
 
 
+
 const fields: FieldConfig[] = [
   {
     name: "title",
