@@ -225,7 +225,7 @@ model HamperItem {
   menuItemId String
   quantity   Int    @default(1)
 
-  hamper   Hamper   @relation(fields: [hamperId], references: [id])
+  hamper   Hamper   @relation(fields: [hamperId], references: [id],onDelete: Cascade)
   menuItem MenuItem @relation(fields: [menuItemId], references: [id])
 }
 

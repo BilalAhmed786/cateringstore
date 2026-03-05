@@ -10,8 +10,8 @@ import { DataTable } from "../../components/reusables/table/table";
 import { ItemsPagination } from "../../components/reusables/pagination/pagination";
 import { FullScreenLoader } from "../../components/reusables/loader/loader";
 import { useDebounce } from "../../components/reusables/hooks/useDebounce";
-import { useDeleteEvent } from "./hooks/usedeleteEvent";
-import { useEvents } from "./hooks/useevents";
+import { useEvents } from "./hooks/useEvents";
+import { useDeleteEvent } from "./hooks/usedeleteevent";
 
 
 export default function EventsPage() {

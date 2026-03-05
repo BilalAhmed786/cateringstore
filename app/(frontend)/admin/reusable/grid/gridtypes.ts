@@ -3,6 +3,7 @@ export type GridItem = {
   title: string;
   name:string;
   images?: { url: string }[];
+  event?:{id:string,status:string,title:string,description:string,createdAt:string}
   available: boolean;
   price: number;
   originalPrice?: number;

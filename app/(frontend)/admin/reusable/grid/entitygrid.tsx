@@ -21,7 +21,7 @@ export function EntityGrid({
       </div>
     );
   }
-
+console.log(items)
   if (!items.length) {
     return (
       <div className="py-16 text-center text-muted-foreground">
@@ -67,7 +67,7 @@ export function EntityGrid({
               <h2 className="line-clamp-1 text-lg font-semibold">
                 {item.title ?? item.name}
               </h2>
-
+              {item.event && <p>{item.event.title}</p>}
               <div className="mt-1">
                 <RatingSummary
                   rating={item.averageRating ?? 0}

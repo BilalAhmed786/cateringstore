@@ -6,7 +6,7 @@ export function useGetHamperDetails(id?: string) {
     queryKey: ["hamper", id],
     queryFn: () =>
       apiRequest({
-        url: `/api/admin/hampers/${id}`,
+        url: `/api/admin/hamper/${id}`,
         method: "GET",
         authRequired: true,
       }),

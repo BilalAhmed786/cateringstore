@@ -3,20 +3,24 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash, Eye, EyeOff } from "lucide-react";
+
 import { EntityFilters } from "../../reusable/filters/entityfilters";
 import { EntityGrid } from "../../reusable/grid/entitygrid";
 import { RatingSummary } from "../../reusable/ratingsummary/ratingsummary";
 import { DropdownAction, GridItem } from "../../reusable/grid/gridtypes";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
+
 import { useGetHampers } from "../hooks/usegethampers";
 import { useDeleteHamper } from "../hooks/usedeletehamper";
 import { useToggleHamper } from "../hooks/usetogglehamper";
 
-
-
-export default function HamperBrowser({ showFilters = true, selectable = false }) {
+export default function HamperBrowser({
+  showFilters = true,
+  selectable = false,
+}) {
   const router = useRouter();
 
+  /* ---------------- STATE ---------------- */
   const [status, setStatus] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
   const [search, setSearch] = useState("");
@@ -27,31 +31,55 @@ export default function HamperBrowser({ showFilters = true, selectable = false }
     status,
     dateFilter,
     search,
-    page,
-    limit,
-  });
+   });
 
   const deleteMutation = useDeleteHamper();
   const toggleMutation = useToggleHamper();
 
+  /* ---------------- FILTER HANDLERS ---------------- */
+  const onStatusChange = (value: string) => {
+    setStatus(value);
+    setPage(1);
+  };
+
+  const onDateFilterChange = (value: string) => {
+    setDateFilter(value);
+    setPage(1);
+  };
+
+  const onSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  /* ---------------- FILTERS ---------------- */
   const filters = [
     {
       key: "status",
       label: "Status",
       value: status,
-      onChange: (v: string) => {
-        setStatus(v);
-        setPage(1);
-      },
+      onChange: onStatusChange,
       options: [
         { label: "All", value: "all" },
         { label: "Active", value: "true" },
         { label: "Inactive", value: "false" },
       ],
     },
+    {
+      key: "dateFilter",
+      label: "Date",
+      value: dateFilter,
+      onChange: onDateFilterChange,
+      options: [
+        { label: "All", value: "all" },
+        { label: "Past 7 Days", value: "7days" },
+        { label: "Past 30 Days", value: "30days" },
+      ],
+    },
   ];
 
-  const actions = (item: GridItem): DropdownAction[] => [
+  /* ---------------- ACTIONS ---------------- */
+  const getActions = (item: GridItem): DropdownAction[] => [
     {
       label: "View",
       icon: Eye,
@@ -66,7 +94,10 @@ export default function HamperBrowser({ showFilters = true, selectable = false }
       label: item.available ? "Deactivate" : "Activate",
       icon: item.available ? EyeOff : Eye,
       onClick: () =>
-        toggleMutation.mutate({ id: item.id, available: item.available }),
+        toggleMutation.mutate({
+          id: item.id,
+          available: item.available,
+        }),
     },
     {
       label: "Delete",
@@ -76,25 +107,26 @@ export default function HamperBrowser({ showFilters = true, selectable = false }
     },
   ];
 
+  /* ---------------- UI ---------------- */
   return (
     <div className="space-y-6">
       {showFilters && (
         <EntityFilters
           filters={filters}
-          search={{ value: search, onChange: setSearch }}
+          search={{ value: search, onChange: onSearchChange }}
         />
       )}
 
       <EntityGrid
         items={data?.items ?? []}
         isLoading={isPending}
-        actions={actions}
+        actions={getActions}
         selectable={selectable}
         renderPrice={(i) => (
           <span>
             Rs {i.finalPrice}
             {i.originalPrice && (
-              <span className="ml-2 line-through text-gray-400 text-sm">
+              <span className="line-through text-sm text-gray-400 ml-2">
                 Rs {i.originalPrice}
               </span>
             )}

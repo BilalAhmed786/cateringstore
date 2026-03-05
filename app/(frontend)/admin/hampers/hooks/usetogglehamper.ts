@@ -1,8 +1,9 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
 
 export function useToggleHamper() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
       id,
@@ -12,7 +13,7 @@ export function useToggleHamper() {
       available: boolean;
     }) => {
       return apiRequest({
-        url: "/api/admin/hampers/toggle",
+        url: "/api/admin/hamper/toggle",
         method: "PATCH",
         body: { id, available },
         authRequired: true,
@@ -21,6 +22,7 @@ export function useToggleHamper() {
 
     onSuccess: () => {
       toast.success("Hamper status updated");
+       queryClient.invalidateQueries({ queryKey: ["hampers"] })
     },
 
     onError: () => {

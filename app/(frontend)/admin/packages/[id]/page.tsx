@@ -13,7 +13,6 @@ import {
   TabsTrigger,
 } from "@/app/(frontend)/components/ui/tabs";
 
-import { DynamicFormFields } from "../../reusable/formfields/dynamicformfields";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
 import { EntityCart } from "../../reusable/cart/entitycart";

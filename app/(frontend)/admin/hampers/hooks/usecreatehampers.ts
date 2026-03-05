@@ -10,7 +10,7 @@ export function useCreateHamper() {
   return useMutation({
     mutationFn: async (data: FieldValues) => {
       return apiRequest({
-        url: "/api/admin/hampers",
+        url: "/api/admin/hamper",
         method: "POST",
         body: data,
         authRequired: true,
