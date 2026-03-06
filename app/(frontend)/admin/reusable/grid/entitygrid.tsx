@@ -14,6 +14,7 @@ export function EntityGrid({
   onSelect,
   actions,
 }: EntityGridProps) {
+
   if (isLoading) {
     return (
       <div className="py-16 text-center text-muted-foreground">
@@ -21,7 +22,7 @@ export function EntityGrid({
       </div>
     );
   }
-console.log(items)
+
   if (!items.length) {
     return (
       <div className="py-16 text-center text-muted-foreground">

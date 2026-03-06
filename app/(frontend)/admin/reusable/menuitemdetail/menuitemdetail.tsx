@@ -4,11 +4,12 @@ import Image from "next/image";
 import { Card, CardContent, CardFooter, CardHeader } from "@/app/(frontend)/components/ui/card";
 import { Badge } from "@/app/(frontend)/components/ui/badge";
 import { PackageMenuItem } from "../../packages/types/type";
+import { HampereMenuItem } from "../../hampers/types/type";
 
 
 
-export function Menuitemdetail({ items }: { items: PackageMenuItem[] } ) {
-
+export function Menuitemdetail({ items }: { items: PackageMenuItem[] | HampereMenuItem[] } ) {
+console.log(items)
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {items.map((item,index) => {

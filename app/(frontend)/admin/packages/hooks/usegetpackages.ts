@@ -9,7 +9,7 @@ export function useGetPackages(filters?: PackageFilters) {
     queryKey: ["packages", filters],
     queryFn: () =>
       apiRequest({
-        url: `/api/admin/packages?${new URLSearchParams({
+          url: `/api/admin/packages?${new URLSearchParams({
           status: filters?.status ?? "",
           search: filters?.search ?? "",
           dateFilter: filters?.dateFilter ?? "",

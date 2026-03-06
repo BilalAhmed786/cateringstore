@@ -38,7 +38,7 @@ export interface PackageFilters{
 
 export interface PackageMenuItem {
   id: string;           
-  packageId: string;     
+  packageId?: string;
   menuItemId: string;  
   quantity: number;      
   menuItem: MenuItem;    

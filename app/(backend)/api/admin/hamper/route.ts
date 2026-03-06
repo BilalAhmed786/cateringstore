@@ -1,6 +1,6 @@
 import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import { NextRequest, NextResponse } from "next/server";
-import { CreateHamperBody } from "./types/types";
+import { HamperBody } from "./types/types";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { Prisma } from "@prisma/client";
 import { buildFilter } from "../../reusables/filters/filters";
@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     const auth = await requireRole(req, ["ADMIN"]);
     if (auth instanceof NextResponse) return auth;
 
-    const body = (await req.json()) as CreateHamperBody;
+    const body = (await req.json()) as HamperBody;
 
     const {
       name,

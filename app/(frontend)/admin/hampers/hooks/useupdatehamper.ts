@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
+import { FieldValues } from "react-hook-form";
 
 export function useUpdateHamper() {
   const router = useRouter();
@@ -12,10 +13,10 @@ export function useUpdateHamper() {
       payload,
     }: {
       id: string;
-      payload: any;
+      payload:FieldValues;
     }) => {
       return apiRequest({
-        url: `/api/admin/hampers/${id}`,
+        url: `/api/admin/hamper/${id}`,
         method: "PUT",
         body: payload,
         authRequired: true,

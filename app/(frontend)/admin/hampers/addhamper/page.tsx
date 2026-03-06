@@ -32,7 +32,7 @@ export default function CreateHamperPage() {
 
   const { data: events = [] } = useAllEvents();
   const { mutate: createHamper, isPending } = useCreateHamper();
-console.log(events)
+
   // ---------------- Populate event dropdown dynamically ----------------
   const fields = initialFields.map((field) =>
     field.name === "eventId"

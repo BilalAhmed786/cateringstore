@@ -5,7 +5,7 @@ interface HamperItemInput{
   quantity: number;
 };
 
-export interface CreateHamperBody {
+export interface HamperBody {
   name: string;
   description?: string;
   eventId: string;
