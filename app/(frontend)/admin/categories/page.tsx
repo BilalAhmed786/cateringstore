@@ -40,7 +40,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="w-full flex justify-center py-10">
-      <div className="w-full max-w-5xl px-4 space-y-6">
+      <div className="w-full px-4 space-y-6">
         {/* Top bar */}
         <div className="flex flex-wrap gap-2 items-end justify-between">
           <BaseSearch

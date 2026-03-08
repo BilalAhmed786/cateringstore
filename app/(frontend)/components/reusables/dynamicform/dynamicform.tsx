@@ -34,8 +34,8 @@ export function DynamicShadcnForm({
   });
 
   return (
-    <Card className={className}>
-      <CardHeader>
+    <Card className="py-6">
+      <CardHeader className={className}>
         <CardTitle>{cardTitle}</CardTitle>
         {cardDescription && (
           <CardDescription>{cardDescription}</CardDescription>

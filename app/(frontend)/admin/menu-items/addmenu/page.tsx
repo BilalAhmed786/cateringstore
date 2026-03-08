@@ -24,6 +24,7 @@ export default function AddMenuItemPage() {
           categoryId: "",
           status: "true",
           images: [],
+          
         }}
         cardTitle="Menu Item Details"
         cardDescription="Create a new menu item"

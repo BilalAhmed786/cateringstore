@@ -52,7 +52,6 @@ export default function AddEventPage() {
           cardDescription="Create a new event"
           submitLabel={isPending ? "Creating..." : "Create Event"}
           reset="Reset"
-          className="bg-white shadow-lg p-6"
           onSubmit={(data: FieldValues) =>
             mutate({
               title: data.title,
