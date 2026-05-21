@@ -3,7 +3,10 @@ import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { HamperBody } from "../types/types";
 
-export async function GET(req: NextRequest,{ params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
     const auth = await requireRole(req, ["ADMIN"]);
     if (auth instanceof NextResponse) return auth;
@@ -13,18 +16,17 @@ export async function GET(req: NextRequest,{ params }: { params: Promise<{ id: s
     if (!id) {
       return NextResponse.json(
         { message: "Hamper ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const hamper = await prisma.hamper.findUnique({
       where: { id },
       include: {
-        event: true,
         items: {
           include: {
-            menuItem:{
-                select: {
+            menuItem: {
+              select: {
                 id: true,
                 title: true,
                 price: true,
@@ -39,7 +41,7 @@ export async function GET(req: NextRequest,{ params }: { params: Promise<{ id: s
     if (!hamper) {
       return NextResponse.json(
         { message: "Hamper not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -50,15 +52,12 @@ export async function GET(req: NextRequest,{ params }: { params: Promise<{ id: s
     return NextResponse.json(
       {
         message:
-          error instanceof Error
-            ? error.message
-            : "Failed to fetch hamper",
+          error instanceof Error ? error.message : "Failed to fetch hamper",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-
 
 export async function PATCH(req: NextRequest) {
   try {
@@ -66,11 +65,14 @@ export async function PATCH(req: NextRequest) {
     const auth = await requireRole(req, ["ADMIN"]);
     if (auth instanceof NextResponse) return auth;
 
-    const body = await req.json() as { id: string; available: boolean };
+    const body = (await req.json()) as { id: string; available: boolean };
     const { id, available } = body;
 
     if (!id) {
-      return NextResponse.json({ message: "Hamper ID is required" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Hamper ID is required" },
+        { status: 400 },
+      );
     }
 
     const hamper = await prisma.hamper.update({
@@ -82,13 +84,19 @@ export async function PATCH(req: NextRequest) {
   } catch (error) {
     console.error("Toggle Hamper Error:", error);
     return NextResponse.json(
-      { message: error instanceof Error ? error.message : "Failed to toggle hamper" },
-      { status: 500 }
+      {
+        message:
+          error instanceof Error ? error.message : "Failed to toggle hamper",
+      },
+      { status: 500 },
     );
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }>}) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
     const { id } = await params;
 
@@ -101,14 +109,14 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     console.error("Delete Hamper Error:", error);
     return NextResponse.json(
       { message: "Failed to delete hamper" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const auth = await requireRole(req, ["ADMIN"]);
@@ -120,10 +128,7 @@ export async function PUT(
     const { name, description, discount = 0, items } = body;
 
     if (!name || !items?.length) {
-      return NextResponse.json(
-        { message: "Invalid data" },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: "Invalid data" }, { status: 400 });
     }
 
     /* ---------------- GET MENU ITEM PRICES ---------------- */
@@ -171,11 +176,9 @@ export async function PUT(
     return NextResponse.json(
       {
         message:
-          error instanceof Error
-            ? error.message
-            : "Failed to update hamper",
+          error instanceof Error ? error.message : "Failed to update hamper",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

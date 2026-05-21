@@ -6,9 +6,11 @@ datasource db {
   provider = "postgresql"
 }
 
-/* =======================
-   ENUMS
-======================= */
+/**
+ * =======================
+ * ENUMS
+ * =======================
+ */
 
 enum Role {
   SUPER_ADMIN
@@ -36,9 +38,11 @@ enum DiscountType {
   FIXED
 }
 
-/* =======================
-   USER
-======================= */
+/**
+ * =======================
+ * USER
+ * =======================
+ */
 
 model User {
   id        String   @id
@@ -54,9 +58,11 @@ model User {
   eventReviews   EventReview[]
 }
 
-/* =======================
-   CATEGORY & MENU ITEMS
-======================= */
+/**
+ * =======================
+ * CATEGORY & MENU ITEMS
+ * =======================
+ */
 
 model Category {
   id        String   @id @default(uuid())
@@ -67,7 +73,7 @@ model Category {
 }
 
 model MenuItem {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
   description String?
   price       Float
@@ -76,17 +82,17 @@ model MenuItem {
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
 
-  images        MenuItemImage[]
+  images       MenuItemImage[]
   orderItems   OrderItem[]
   packageItems PackageItem[]
   hamperItems  HamperItem[]
   reviews      MenuItemReview[]
-
-  createdAt DateTime @default(now())
+  eventLinks   EventMenuItem[]
+  createdAt    DateTime         @default(now())
 }
 
 model MenuItemImage {
-  id         String   @id @default(uuid())
+  id         String @id @default(uuid())
   url        String
   publicId   String
   menuItemId String
@@ -96,9 +102,11 @@ model MenuItemImage {
   createdAt DateTime @default(now())
 }
 
-/* =======================
-   ORDERS
-======================= */
+/**
+ * =======================
+ * ORDERS
+ * =======================
+ */
 
 model Order {
   id        String      @id @default(uuid())
@@ -114,7 +122,7 @@ model Order {
 }
 
 model OrderItem {
-  id       String   @id @default(uuid())
+  id       String @id @default(uuid())
   orderId  String
   menuId   String
   quantity Int
@@ -145,27 +153,30 @@ model OrderHamper {
   hamper Hamper @relation(fields: [hamperId], references: [id])
 }
 
-/* =======================
-   PACKAGES (NO EVENTS)
-======================= */
+/**
+ * =======================
+ * PACKAGES (NO EVENTS)
+ * =======================
+ */
 
 model Package {
-  id            String   @id @default(uuid())
-  name          String
-  description   String?
+  id          String  @id @default(uuid())
+  name        String
+  description String?
 
   originalPrice Float
   discountType  DiscountType?
   discountValue Float?
   finalPrice    Float
 
-  image         String?
-  available     Boolean  @default(true)
-  createdAt     DateTime @default(now())
+  image     String?
+  available Boolean  @default(true)
+  createdAt DateTime @default(now())
 
   items         PackageItem[]
   orderPackages OrderPackage[]
   reviews       PackageReview[]
+  eventLinks    EventPackage[]
 }
 
 model PackageItem {
@@ -174,45 +185,68 @@ model PackageItem {
   menuItemId String
   quantity   Int    @default(1)
 
-  package  Package  @relation(fields: [packageId], references: [id],onDelete: Cascade)
+  package  Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
   menuItem MenuItem @relation(fields: [menuItemId], references: [id])
 }
 
-/* =======================
-   EVENTS (ADMIN CREATED)
-======================= */
+/**
+ * =======================
+ * EVENTS (ADMIN CREATED)
+ * =======================
+ */
 
 model Event {
   id          String      @id @default(uuid())
-  title       String
+  name        String
   description String?
   status      EventStatus @default(PENDING)
-  createdAt DateTime @default(now())
+  createdAt   DateTime    @default(now())
 
-  hampers Hamper[]
-  reviews EventReview[]
+  menuItems EventMenuItem[]
+  packages  EventPackage[]
+  reviews   EventReview[]
 }
 
-/* =======================
-   HAMPERS (EVENT-BASED)
-======================= */
+model EventMenuItem {
+  id         String @id @default(uuid())
+  eventId    String
+  menuItemId String
+
+  event    Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+
+  @@unique([eventId, menuItemId])
+}
+
+model EventPackage {
+  id        String @id @default(uuid())
+  eventId   String
+  packageId String
+
+  event   Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  package Package @relation(fields: [packageId], references: [id])
+
+  @@unique([eventId, packageId])
+}
+
+/**
+ * =======================
+ * HAMPERS (EVENT-BASED)
+ * =======================
+ */
 
 model Hamper {
-  id            String   @id @default(uuid())
-  name          String
-  description   String?
-
+  id          String  @id @default(uuid())
+  name        String
+  description String?
   originalPrice Float
   discountType  DiscountType?
   discountValue Float?
   finalPrice    Float
 
-  image         String?
-  available     Boolean  @default(true)
-  createdAt     DateTime @default(now())
-
-  eventId String
-  event   Event  @relation(fields: [eventId], references: [id])
+  image     String?
+  available Boolean  @default(true)
+  createdAt DateTime @default(now())
 
   items        HamperItem[]
   orderHampers OrderHamper[]
@@ -225,13 +259,15 @@ model HamperItem {
   menuItemId String
   quantity   Int    @default(1)
 
-  hamper   Hamper   @relation(fields: [hamperId], references: [id],onDelete: Cascade)
+  hamper   Hamper   @relation(fields: [hamperId], references: [id], onDelete: Cascade)
   menuItem MenuItem @relation(fields: [menuItemId], references: [id])
 }
 
-/* =======================
-   REVIEWS
-======================= */
+/**
+ * =======================
+ * REVIEWS
+ * =======================
+ */
 
 model MenuItemReview {
   id         String   @id @default(uuid())
@@ -248,12 +284,12 @@ model MenuItemReview {
 }
 
 model PackageReview {
-  id         String   @id @default(uuid())
-  userId     String
-  packageId  String
-  rating     Int
-  comment    String?
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  userId    String
+  packageId String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
 
   user    User    @relation(fields: [userId], references: [id])
   package Package @relation(fields: [packageId], references: [id])
@@ -262,12 +298,12 @@ model PackageReview {
 }
 
 model HamperReview {
-  id         String   @id @default(uuid())
-  userId     String
-  hamperId   String
-  rating     Int
-  comment    String?
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  userId    String
+  hamperId  String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
 
   user   User   @relation(fields: [userId], references: [id])
   hamper Hamper @relation(fields: [hamperId], references: [id])

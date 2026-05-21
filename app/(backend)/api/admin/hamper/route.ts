@@ -16,13 +16,12 @@ export async function POST(req: Request) {
     const {
       name,
       description,
-      eventId,
       discount = 0,
       image,
       items,
     } = body;
 
-    if (!name || !eventId || !items?.length) {
+    if (!name || !items?.length) {
       return NextResponse.json(
         { message: "Invalid data" },
         { status: 400 }
@@ -59,9 +58,7 @@ export async function POST(req: Request) {
       data: {
         name,
         description,
-        eventId,
         image,
-
         originalPrice,
         discountType: discount > 0 ? "PERCENTAGE" : null,
         discountValue: discount,
@@ -121,7 +118,6 @@ export async function GET(req: NextRequest) {
         take: limit,
         orderBy: { createdAt: "desc" },
         include: {
-          event: true,
           items: {
             include: {
               menuItem: true,

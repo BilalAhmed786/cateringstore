@@ -1,4 +1,4 @@
-export type GridItem = {
+export interface GridItem {
   id: string;
   title: string;
   name:string;
@@ -13,14 +13,14 @@ export type GridItem = {
   totalComments?: number;
   
 };
-export type DropdownAction = {
+export interface DropdownAction {
   label: string;
   icon?: React.ComponentType;
   onClick: () => void;
   variant?: "default" | "danger" | "secondary";
 }
 
-export type EntityGridProps = {
+export interface EntityGridProps {
   items: GridItem[];
   isLoading?: boolean;
   selectable?: boolean;

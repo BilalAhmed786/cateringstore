@@ -3,7 +3,7 @@ import { images } from "../../menu-items/types/types";
 export interface MenuItem {
   id: string;
   title:string;
-  name: string;
+  name?: string;
   price: number;
   images:images[]
   

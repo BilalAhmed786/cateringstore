@@ -68,8 +68,7 @@ export function EntityGrid({
               <h2 className="line-clamp-1 text-lg font-semibold">
                 {item.title ?? item.name}
               </h2>
-              {item.event && <p>{item.event.title}</p>}
-              <div className="mt-1">
+             <div className="mt-1">
                 <RatingSummary
                   rating={item.averageRating ?? 0}
                   count={item.totalReviews ?? 0}

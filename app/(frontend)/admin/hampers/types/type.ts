@@ -1,4 +1,5 @@
-import { MenuItem } from "../../menu-items/types/types";
+import { MenuItem } from "../../packages/types/type";
+
 
 export interface HamperFilters {
   status?: string;

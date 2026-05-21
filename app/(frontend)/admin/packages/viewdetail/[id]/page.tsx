@@ -8,6 +8,7 @@ import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { Menuitemdetail } from "../../../reusable/menuitemdetail/menuitemdetail";
 
 
+
 export default function ViewPackageItemsPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();

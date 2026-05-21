@@ -7,11 +7,11 @@ import { Package } from "../types/type";
 
 
 export function useGetPackageDetails(id: string) {
-  return useQuery<Package>({
+  return useQuery({
     queryKey: ["package", id],
     enabled: !!id,
     queryFn: async () =>
-      apiRequest({
+      apiRequest<Package>({
         url: `/api/admin/packages/${id}`,
         method: "GET",
         authRequired: true,

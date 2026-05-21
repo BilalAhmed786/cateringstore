@@ -8,7 +8,6 @@ interface HamperItemInput{
 export interface HamperBody {
   name: string;
   description?: string;
-  eventId: string;
   discount?: number;
   image?: string;
   items: HamperItemInput[];

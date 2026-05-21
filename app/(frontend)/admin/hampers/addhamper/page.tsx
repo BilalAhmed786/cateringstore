@@ -16,31 +16,22 @@ import { GridSelectableItem } from "../../reusable/types/type";
 import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
 import { EntityCart } from "../../reusable/cart/entitycart";
 import { useCreateHamper } from "../hooks/usecreatehampers";
-import { useAllEvents } from "../../events/hooks/usegetallevents";
+
 
 /* -------------------- FORM FIELDS -------------------- */
 const initialFields: FieldConfig[] = [
   { name: "name", label: "Hamper Name", type: "text", required: true },
   { name: "description", label: "Description", type: "textarea" },
-  { name: "eventId", label: "Select Event", type: "select", required: true, options: [] },
   { name: "discount", label: "Discount", type: "number" },
 ];
 
 export default function CreateHamperPage() {
   const [activeTab, setActiveTab] = useState("details");
   const [selectedItems, setSelectedItems] = useState<(GridSelectableItem & { quantity: number })[]>([]);
-
-  const { data: events = [] } = useAllEvents();
   const { mutate: createHamper, isPending } = useCreateHamper();
 
   // ---------------- Populate event dropdown dynamically ----------------
-  const fields = initialFields.map((field) =>
-    field.name === "eventId"
-      ? {
-          ...field,
-          options: events.map((e) => ({ label: e.title, value: e.id })),
-        }
-      : field
+  const fields = initialFields.map((field) => field
   );
 
   // ---------------- Generate schema dynamically ----------------
