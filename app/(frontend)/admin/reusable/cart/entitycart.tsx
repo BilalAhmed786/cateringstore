@@ -4,31 +4,28 @@ import Image from "next/image";
 import { Button } from "@/app/(frontend)/components/ui/button";
 import { EntityCartProps } from "../types/type";
 
-
-
-
 export function EntityCart({
   title = "Selected Items",
   items,
   onChange,
   showTotal = true,
 }: EntityCartProps) {
+  console.log(items);
   const removeItem = (id: string) => {
     onChange(items.filter((i) => i.id !== id));
   };
 
   const updateQty = (id: string, qty: number) => {
-    alert(id)
     onChange(
       items.map((i) =>
-        i.id === id ? { ...i, quantity: Math.max(1, qty) } : i
-      )
+        i.id === id ? { ...i, quantity: Math.max(1, qty) } : i,
+      ),
     );
   };
 
   const total = items.reduce(
-    (sum, i) => sum + (i.price ?? 0) * i.quantity,
-    0
+    (sum, i) => sum + ((i.price || i.finalPrice) ?? 0) * i.quantity,
+    0,
   );
 
   return (
@@ -36,9 +33,7 @@ export function EntityCart({
       <h3 className="text-lg font-semibold">{title}</h3>
 
       {!items.length && (
-        <p className="text-sm text-muted-foreground">
-          No items selected
-        </p>
+        <p className="text-sm text-muted-foreground">No items selected</p>
       )}
 
       {items.map((item) => (
@@ -48,25 +43,25 @@ export function EntityCart({
         >
           {/* Image */}
           <div className="h-14 w-14 bg-slate-100 rounded overflow-hidden">
-            {item.images?.[0]?.url && (
-              <Image
-                src={item.images[0].url}
-                alt={item.title}
-                width={56}
-                height={56}
-                className="object-cover"
-              />
-            )}
+            <Image
+              src={
+                item.images?.length
+                  ? item.images[0].url
+                  : item.image || "/placeholder.png"
+              }
+              alt={item.title || "Item image"}
+              width={56}
+              height={56}
+              className="object-cover"
+            />
           </div>
 
           {/* Info */}
           <div className="flex-1">
-            <p className="font-medium">{item.title}</p>
-            {item.price !== undefined && (
-              <p className="text-sm text-muted-foreground">
-                Rs {item.price}
-              </p>
-            )}
+            <p className="font-medium">{item.title || item.name}</p>
+            <p className="text-sm text-muted-foreground">
+              Rs {item.price || item.finalPrice}
+            </p>
 
             <div className="flex items-center gap-2 mt-1">
               <Button

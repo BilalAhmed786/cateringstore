@@ -3,20 +3,31 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash, Eye, EyeOff } from "lucide-react";
+
 import { EntityFilters } from "../../reusable/filters/entityfilters";
 import { EntityGrid } from "../../reusable/grid/entitygrid";
 import { RatingSummary } from "../../reusable/ratingsummary/ratingsummary";
-import { DropdownAction, GridItem } from "../../reusable/grid/gridtypes";
+
+import { GridItem } from "../../reusable/grid/gridtypes";
 import { useGetPackages } from "../hooks/usegetpackages";
 import { useDeletePackage } from "../hooks/usedeletepackage";
 import { useTogglePackage } from "../hooks/usetogglepackage";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
+import { DropdownAction } from "../../reusable/types/type";
+
+type PackageBrowserProps = {
+  showFilters?: boolean;
+  selectable?: boolean;
+  onSelectItem?: (item:GridItem) => void;
+};
 
 export default function PackageBrowser({
   showFilters = true,
   selectable = false,
-}) {
+  onSelectItem,
+}: PackageBrowserProps) {
   const router = useRouter();
+
 
   // Filter + Pagination State
   const [status, setStatus] = useState("all");
@@ -36,7 +47,7 @@ export default function PackageBrowser({
   const deleteMutation = useDeletePackage();
   const toggleMutation = useTogglePackage();
 
-  // ✅ Handlers to reset page on filter change
+  /* ---------------- FILTER HANDLERS ---------------- */
   const onStatusChange = (value: string) => {
     setStatus(value);
     setPage(1);
@@ -109,6 +120,7 @@ export default function PackageBrowser({
 
   return (
     <div className="space-y-6">
+      {/* ---------------- FILTERS ---------------- */}
       {showFilters && (
         <EntityFilters
           filters={filters}
@@ -116,11 +128,13 @@ export default function PackageBrowser({
         />
       )}
 
+      {/* ---------------- GRID ---------------- */}
       <EntityGrid
         items={data?.items ?? []}
         isLoading={isPending}
         actions={getActions}
         selectable={selectable}
+        onSelect={onSelectItem} 
         renderPrice={(i) => (
           <span>
             Rs {i.finalPrice}{" "}
@@ -139,6 +153,7 @@ export default function PackageBrowser({
         )}
       />
 
+      {/* ---------------- PAGINATION ---------------- */}
       <ItemsPagination
         page={page}
         limit={limit}

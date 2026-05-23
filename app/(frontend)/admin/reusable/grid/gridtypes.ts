@@ -1,9 +1,16 @@
 export interface GridItem {
   id: string;
   title: string;
-  name:string;
+  name: string;
   images?: { url: string }[];
-  event?:{id:string,status:string,title:string,description:string,createdAt:string}
+  image?: string;
+  event?: {
+    id: string;
+    status: string;
+    title: string;
+    description: string;
+    createdAt: string;
+  };
   available: boolean;
   price: number;
   originalPrice?: number;
@@ -11,8 +18,7 @@ export interface GridItem {
   averageRating?: number;
   totalReviews?: number;
   totalComments?: number;
-  
-};
+}
 export interface DropdownAction {
   label: string;
   icon?: React.ComponentType;

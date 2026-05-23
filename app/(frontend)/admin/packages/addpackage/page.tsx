@@ -13,7 +13,7 @@ import {
 
 import { generateSchema } from "../../../components/reusables/validation/valdiation";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
-import { GridSelectableItem } from "../../reusable/types/type";
+import { CartItem } from "../../reusable/types/type";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { useCreatePackage } from "../hooks/usecreatepackage";
 import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
@@ -41,15 +41,13 @@ export default function CreatePackagePage() {
     },
   });
 
-  const [selectedItems, setSelectedItems] = useState<
-    (GridSelectableItem & { quantity: number })[]
-  >([]);
+  const [selectedItems, setSelectedItems] = useState< CartItem[]>([]);
   const [activeTab, setActiveTab] = useState("details");
 
   const { mutate: createPackage, isPending } = useCreatePackage();
 
   /* -------------------- MENU ITEM SELECT -------------------- */
-  const handleSelectItem = (item: GridSelectableItem) => {
+  const handleSelectItem = (item: CartItem) => {
     setSelectedItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {

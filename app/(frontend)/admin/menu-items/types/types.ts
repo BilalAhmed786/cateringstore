@@ -1,5 +1,4 @@
-import { GridItem } from "../../reusable/grid/gridtypes"
-
+import { GridItem } from '../../reusable/grid/gridtypes';
 export interface Survey {
   id: string
   userId: string

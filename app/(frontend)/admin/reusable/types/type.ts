@@ -5,7 +5,10 @@ import { PackageMenuItem } from "../../packages/types/type";
   export type GridSelectableItem = {
   id: string;
   title: string;
+  name:string;
   price: number;
+  finalPrice?:number;
+  image?:string;
   images?: { url: string }[];
   available?: boolean;
   averageRating?: number; 

@@ -10,7 +10,7 @@ export type FilterConfig = {
   onChange: (value: string) => void;
 };
 export type EntityFiltersProps = {
-  filters: FilterConfig[];
+  filters?: FilterConfig[];
   search?: {
     value: string;
     onChange: (v: string) => void;
