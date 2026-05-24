@@ -13,10 +13,10 @@ export async function GET(req: NextRequest) {
     const skip = (page - 1) * limit;
 
     const [total, categories] = await Promise.all([
-      prisma.category.count({
+      prisma.menuCategory.count({
         where: { name: { contains: search, mode: "insensitive" } },
       }),
-      prisma.category.findMany({
+      prisma.menuCategory.findMany({
         where: { name: { contains: search, mode: "insensitive" } },
         skip,
         take: limit,

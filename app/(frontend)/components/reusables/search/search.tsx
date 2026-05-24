@@ -5,14 +5,14 @@ import { Input } from "../../ui/input"
 
 export function BaseSearch({ label, value, onChange, placeholder,className }: BaseSearchProps) {
   return (
-    <div className="flex flex-col">
+    <div className={className}>
       <Label className="mb-2">{label}</Label>
       <Input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder ?? `Search ${label}`}
-        className={className}
+        
       />
     </div>
   )

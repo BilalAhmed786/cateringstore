@@ -64,9 +64,10 @@ model User {
  * =======================
  */
 
-model Category {
+model MenuCategory {
   id        String   @id @default(uuid())
   name      String
+  image     String?
   createdAt DateTime @default(now())
 
   items MenuItem[]
@@ -80,8 +81,7 @@ model MenuItem {
   available   Boolean @default(true)
 
   categoryId String
-  category   Category @relation(fields: [categoryId], references: [id])
-
+  category      MenuCategory @relation(fields: [categoryId], references: [id])
   images       MenuItemImage[]
   orderItems   OrderItem[]
   packageItems PackageItem[]
@@ -159,6 +159,9 @@ model OrderHamper {
  * =======================
  */
 
+
+
+
 model Package {
   id          String  @id @default(uuid())
   name        String
@@ -195,13 +198,22 @@ model PackageItem {
  * =======================
  */
 
+ model EventCategory {
+  id        String   @id @default(uuid())
+  name      String
+  image     String?
+  createdAt DateTime @default(now())
+  items Event[]
+}
+
 model Event {
   id          String      @id @default(uuid())
   name        String
   description String?
-  status      EventStatus @default(PENDING)
+  available Boolean  @default(true)
+  categoryId String
+  category     EventCategory @relation(fields: [categoryId], references: [id])
   createdAt   DateTime    @default(now())
-
   menuItems EventMenuItem[]
   packages  EventPackage[]
   reviews   EventReview[]
@@ -234,7 +246,13 @@ model EventPackage {
  * HAMPERS (EVENT-BASED)
  * =======================
  */
-
+model HamperCategory {
+  id        String   @id @default(uuid())
+  name      String
+  image     String?
+  createdAt DateTime @default(now())
+  items Hamper[]
+}
 model Hamper {
   id          String  @id @default(uuid())
   name        String
@@ -243,8 +261,9 @@ model Hamper {
   discountType  DiscountType?
   discountValue Float?
   finalPrice    Float
-
   image     String?
+  categoryId String
+  category     HamperCategory @relation(fields: [categoryId], references: [id])
   available Boolean  @default(true)
   createdAt DateTime @default(now())
 

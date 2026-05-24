@@ -26,6 +26,7 @@ export function EntityFilters({ filters, search }: EntityFiltersProps) {
           value={search.value}
           onChange={search.onChange}
           placeholder={search.placeholder ?? "Search..."}
+          className={search.classname}
         />
       )}
     </div>

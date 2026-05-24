@@ -13,7 +13,7 @@ import { MenuItemBrowserProps } from "../types/types";
 import { useDeleteMenuItem } from "../hooks/usedeletemenuItem";
 import { useToggleMenuItem } from "../hooks/usetogglemenuItem";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
-
+import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 export default function MenuItemBrowser({
   showFilters = true,
   selectable = false,
@@ -26,13 +26,14 @@ export default function MenuItemBrowser({
   const [category, setCategory] = useState("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const debouncedSearch = useDebounce(search, 800);
   const limit = 5;
 
   const { data: categories = [] } = useAllCategories();
   const { data, isPending } = useGetMenuItems({
     status,
     category,
-    search,
+    search:debouncedSearch,
     page,
     limit,
   });
@@ -40,7 +41,7 @@ export default function MenuItemBrowser({
   const deleteMutation = useDeleteMenuItem();
   const toggleMutation = useToggleMenuItem();
 
-  // ✅ Wrapped handlers to reset page on filter change
+  //Wrapped handlers to reset page on filter change
   const onStatusChange = (value: string) => {
     setStatus(value);
     setPage(1);
@@ -109,7 +110,7 @@ export default function MenuItemBrowser({
       {showFilters && (
         <EntityFilters
           filters={filters}
-          search={{ value: search, onChange: onSearchChange }}
+          search={{ value: search, onChange: onSearchChange,classname:"w-3xl" }}
         />
       )}
 

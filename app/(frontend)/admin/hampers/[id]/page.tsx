@@ -15,7 +15,7 @@ import {
 
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
-import { EntityCart } from "../../reusable/cart/entitycart";
+import { EntityCart } from "../../../components/reusables/cart/entitycart";
 import { generateSchema } from "../../../components/reusables/validation/valdiation";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 import { GridSelectableItem } from "../../reusable/types/type";

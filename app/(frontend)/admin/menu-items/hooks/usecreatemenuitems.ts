@@ -13,7 +13,8 @@ export function useCreateMenuItemWithImages() {
  
       // 1️⃣ Separate files from JSON data
       const { image, ...rest } = data
-// console.log(data)
+      
+
       // Convert price & status
       const payload = {
         ...rest,

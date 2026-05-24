@@ -21,7 +21,7 @@ import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 
 import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
 import PackageBrowser from "../../packages/(component)/packagebrowser";
-import { EntityCart } from "../../reusable/cart/entitycart";
+import { EntityCart } from "../../../components/reusables/cart/entitycart";
 
 import { useCreateEvent } from "../hooks/usecreateevent";
 import { CartItem } from "../../reusable/types/type";
@@ -31,17 +31,7 @@ import { GridItem } from "../../reusable/grid/gridtypes";
 const eventFields: FieldConfig[] = [
   { name: "name", label: "Event Name", type: "text", required: true },
   { name: "description", label: "Description", type: "textarea" },
-  {
-    name: "status",
-    label: "Status",
-    type: "select",
-    required: true,
-    options: [
-      { label: "Pending", value: "PENDING" },
-      { label: "Active", value: "ACTIVE" },
-      { label: "Inactive", value: "INACTIVE" },
-    ],
-  },
+  
 ];
 
 export default function AddEventPage() {
@@ -59,7 +49,6 @@ export default function AddEventPage() {
     defaultValues: {
       name: "",
       description: "",
-      status: "PENDING",
     },
   });
 
@@ -100,23 +89,24 @@ export default function AddEventPage() {
   };
 
   /* -------------------- SUBMIT -------------------- */
-  const onSubmit = (data: FieldValues) => {
-    if (!selectedMenuItems.length && !selectedPackages.length) {
-      toast.error("Select at least one menu item or package");
-      setActiveTab("menu-items");
-      return;
-    }
+ const onSubmit = (data: FieldValues) => {
+  if (!selectedMenuItems.length && !selectedPackages.length) {
+    toast.error("Select at least one menu item or package");
+    setActiveTab("menu-items");
+    return;
+  }
 
-    createEvent({
-      ...data,
-      menuItems: selectedMenuItems.map((i) => ({
-        menuItemId: i.id,
-      })),
-      packages: selectedPackages.map((p) => ({
-        packageId: p.id,
-      })),
-    });
-  };
+  createEvent({
+    name: data.name,
+    description: data.description,
+    menuItems: selectedMenuItems.map((i) => ({
+      menuItemId: i.id,
+    })),
+    packages: selectedPackages.map((p) => ({
+      packageId: p.id,
+    })),
+  });
+};
 
   const onError = () => {
     toast.error("Please fill all required fields");

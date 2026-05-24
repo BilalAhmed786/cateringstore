@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
-import { Category } from "../../menu-items/types/types";
+import { Category } from "../../../menu-items/types/types";
 import { FieldValues } from "react-hook-form";
 
 
@@ -10,28 +10,32 @@ export function useCreateCategory() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  return useMutation<Category, unknown, FieldValues>({
-    mutationFn: ({ name }) =>
-      apiRequest<Category>({
-        url: "/api/admin/category",
+  return useMutation({
+    mutationFn: async (data: FieldValues) => {
+       const formData = new FormData();
+
+       formData.append("name", data.name);
+
+      if (data.image instanceof File) {
+        formData.append("image", data.image);
+      }
+
+      return apiRequest<Category>({
+        url: "/api/admin/category/menu",
         method: "POST",
-        body: { name },
+        body: formData,
         authRequired: true,
-      }),
+      });
+    },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
-      // Show success toast
       toast.success("Category created successfully!");
-
-      // Redirect to categories listing page
-      router.push("/admin/categories");
+      router.push("/admin/categories/menu");
     },
+
     onError: (error: unknown) => {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("Failed to create category");
-      }
+      toast.error(error instanceof Error ? error.message : "Failed to create category");
     },
   });
 }

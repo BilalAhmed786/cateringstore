@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
-import { Category } from "../../menu-items/types/types";
+import { Category } from "../../../menu-items/types/types";
 import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";

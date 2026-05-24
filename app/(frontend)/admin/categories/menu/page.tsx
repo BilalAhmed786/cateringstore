@@ -5,13 +5,13 @@ import Link from "next/link";
 import { Edit, Trash2 } from "lucide-react";
 
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
-import { BaseSearch } from "../../components/reusables/search/search";
-import { DataTable } from "../../components/reusables/table/table";
-import {ItemsPagination } from "../../components/reusables/pagination/pagination";
+import { BaseSearch } from "@/app/(frontend)/components/reusables/search/search";
+import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 import { useCategories } from "./hooks/usecategories";
 import { useDeleteCategory } from "./hooks/useDeleteCategory";
-import { FullScreenLoader } from "../../components/reusables/loader/loader";
-import { useDebounce } from "../../components/reusables/hooks/useDebounce";
+import { FullScreenLoader } from "@/app/(frontend)/components/reusables/loader/loader";
+import { DataTable } from "@/app/(frontend)/components/reusables/table/table";
+import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
 
 
 
@@ -32,8 +32,6 @@ export default function CategoriesPage() {
 
   const categories = data?.categories ?? [];
   const total = data?.total ?? 0;
-
-  /* ✅ Show fullscreen loader ONLY on first load */
   if (isPending && !data) {
     return <FullScreenLoader />;
   }
@@ -48,13 +46,13 @@ export default function CategoriesPage() {
             value={search}
             onChange={(value) => {
               setSearch(value);
-              setPage(1); // ✅ ESLint-safe, intentional
+              setPage(1); 
             }}
             placeholder="Search category"
             className="max-w-3xl sm:max-w-2xl lg:w-3xl py-2 px-5 rounded-3xl"
           />
 
-          <Link href="/admin/categories/addcategory">
+          <Link href="/admin/categories/menu/addcategory">
             <UniButton label="Add Category" />
           </Link>
         </div>
@@ -82,7 +80,7 @@ export default function CategoriesPage() {
                 header: "Actions",
                 accessor: (item) => (
                   <div className="flex gap-2">
-                    <Link href={`/admin/categories/${item.id}`}>
+                    <Link href={`/admin/categories/menu/${item.id}`}>
                       <UniButton
                         size="sm"
                         variant="outline"

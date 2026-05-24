@@ -7,7 +7,7 @@ export function useCategories({ page, limit, search }: UseCategoriesOptions) {
     queryKey: ["categories", page, limit, search || ""],
     queryFn: () =>
       apiRequest<CategoryResponse>({
-        url: `/api/admin/category/paginated?page=${page}&limit=${limit}&search=${search || ""}`,
+        url: `/api/admin/category/menu/paginated?page=${page}&limit=${limit}&search=${search || ""}`,
         method: "GET",
         authRequired: true,
       }),

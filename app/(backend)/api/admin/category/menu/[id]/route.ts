@@ -10,7 +10,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
 
-  const updated = await prisma.category.update({
+  const updated = await prisma.menuCategory.update({
     where: { id },
     data: { name },
   });
@@ -25,7 +25,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const { id } = await params
   
 
-  await prisma.category.delete({ where: { id } });
+  await prisma.menuCategory.delete({ where: { id } });
 
   return NextResponse.json({ success: true });
 }
@@ -41,7 +41,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: "ID is required" }, { status: 400 });
   }
 
-  const category = await prisma.category.findUnique({
+  const category = await prisma.menuCategory.findUnique({
     where: { id },
     select: { id: true, name: true, createdAt: true }, 
   });

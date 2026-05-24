@@ -17,7 +17,7 @@ import { CartItem } from "../../reusable/types/type";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { useCreatePackage } from "../hooks/usecreatepackage";
 import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
-import { EntityCart } from "../../reusable/cart/entitycart";
+import { EntityCart } from "../../../components/reusables/cart/entitycart";
 import { FieldGroup } from "@/app/(frontend)/components/ui/field";
 import { FormField } from "@/app/(frontend)/components/reusables/fields/fieldscase";
 

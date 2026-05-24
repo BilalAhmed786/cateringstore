@@ -6,7 +6,7 @@ export function useCategory(id: string) {
     queryKey: ["category", id],
     queryFn: () =>
       apiRequest<Category>({
-        url: `/api/admin/category/${id}`,
+        url: `/api/admin/category/menu/${id}`,
         authRequired: true,
       }),
     enabled: !!id, 

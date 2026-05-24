@@ -14,7 +14,7 @@ import { useDeletePackage } from "../hooks/usedeletepackage";
 import { useTogglePackage } from "../hooks/usetogglepackage";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
 import { DropdownAction } from "../../reusable/types/type";
-
+import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 type PackageBrowserProps = {
   showFilters?: boolean;
   selectable?: boolean;
@@ -34,12 +34,13 @@ export default function PackageBrowser({
   const [dateFilter, setDateFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const debouncedSearch = useDebounce(search, 800);
   const limit = 5;
 
   const { data, isPending } = useGetPackages({
     status,
     dateFilter,
-    search,
+    search:debouncedSearch,
     page,
     limit,
   });
@@ -124,7 +125,7 @@ export default function PackageBrowser({
       {showFilters && (
         <EntityFilters
           filters={filters}
-          search={{ value: search, onChange: onSearchChange }}
+          search={{ value: search, onChange: onSearchChange,classname:"w-3xl" }}
         />
       )}
 

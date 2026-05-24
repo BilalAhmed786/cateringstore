@@ -25,7 +25,7 @@ export async function DELETE(
       );
     }
 
-    // 1️⃣ Find image in DB
+    // 1 Find image in DB
     const image = await prisma.menuItemImage.findFirst({
       where: {
         id: imageid,
@@ -40,12 +40,12 @@ export async function DELETE(
       );
     }
 
-    // 2️⃣ Delete from Cloudinary
+    // 2 Delete from Cloudinary
     if (image.publicId) {
       await cloudinary.uploader.destroy(image.publicId);
     }
 
-    // 3️⃣ Delete from DB
+    // 3 Delete from DB
     await prisma.menuItemImage.delete({
       where: {
         id: image.id,

@@ -10,8 +10,9 @@ export interface Survey {
 }
 
 export interface Category {
-  id: string
+  id?: string
   name: string
+  image:string
 }
 
 export interface images {

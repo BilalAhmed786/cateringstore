@@ -15,6 +15,7 @@ export type EntityFiltersProps = {
     value: string;
     onChange: (v: string) => void;
     placeholder?: string;
+    classname?:string
   };
 };
 

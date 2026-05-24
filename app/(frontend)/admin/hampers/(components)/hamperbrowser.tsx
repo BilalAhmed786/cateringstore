@@ -9,10 +9,10 @@ import { EntityGrid } from "../../reusable/grid/entitygrid";
 import { RatingSummary } from "../../reusable/ratingsummary/ratingsummary";
 import { DropdownAction, GridItem } from "../../reusable/grid/gridtypes";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
-
 import { useGetHampers } from "../hooks/usegethampers";
 import { useDeleteHamper } from "../hooks/usedeletehamper";
 import { useToggleHamper } from "../hooks/usetogglehamper";
+import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 
 export default function HamperBrowser({
   showFilters = true,
@@ -25,12 +25,13 @@ export default function HamperBrowser({
   const [dateFilter, setDateFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const debouncedSearch = useDebounce(search, 800);
   const limit = 5;
 
   const { data, isPending } = useGetHampers({
     status,
     dateFilter,
-    search,
+    search:debouncedSearch,
    });
 
   const deleteMutation = useDeleteHamper();
@@ -113,7 +114,7 @@ export default function HamperBrowser({
       {showFilters && (
         <EntityFilters
           filters={filters}
-          search={{ value: search, onChange: onSearchChange }}
+          search={{ value: search, onChange: onSearchChange,classname:"w-3xl" }}
         />
       )}
 

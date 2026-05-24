@@ -10,7 +10,7 @@ export function useUploadMenuItemImages() {
       menuItemId,
       image,
     }: UploadMenuItemImagesPayload) => {
-      console.log(menuItemId,image)
+      
 
       const formData = new FormData();
 
