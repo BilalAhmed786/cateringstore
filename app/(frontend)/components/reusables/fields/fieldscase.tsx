@@ -29,6 +29,7 @@ export const FormField: React.FC<FieldProps> = ({ field }) => {
       return (
         <ImagePreviewField
           images={field.images || []}
+          image={field.image}   
           isDeleting={field.isDeleting}
           onDelete={field.onDelete || (() => {})}
         />

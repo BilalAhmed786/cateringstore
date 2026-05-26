@@ -1,6 +1,7 @@
 export interface Category {
   id: string
   name: string
+  image?:string
   createdAt: Date
 }
 export interface UseCategoriesOptions {

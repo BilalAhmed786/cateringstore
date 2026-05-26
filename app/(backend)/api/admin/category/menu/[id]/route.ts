@@ -42,9 +42,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 
   const category = await prisma.menuCategory.findUnique({
-    where: { id },
-    select: { id: true, name: true, createdAt: true }, 
-  });
+    where: { id }
+    });
 
   if (!category) {
     return NextResponse.json({ error: "Category not found" }, { status: 404 });

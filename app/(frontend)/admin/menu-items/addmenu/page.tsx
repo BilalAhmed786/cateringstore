@@ -4,6 +4,7 @@ import { useAllCategories } from "../hooks/usegetallcategories"
 import { getMenuItemFields } from "./fields"
 import { useCreateMenuItemWithImages } from "../hooks/usecreatemenuitems"
 import { FieldValues } from "react-hook-form"
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata"
 
 export default function AddMenuItemPage() {
   const { data: categories = [] } = useAllCategories()
@@ -13,7 +14,10 @@ export default function AddMenuItemPage() {
 
   return (
     <div className="space-y-6 m-6">
-      <h1 className="text-2xl font-bold">Add Menu Item</h1>
+      <Metadata
+       title="Add Menu items"
+       desc="Add food item"
+      />
 
       <DynamicShadcnForm
         fields={fields}

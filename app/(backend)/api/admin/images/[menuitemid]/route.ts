@@ -51,7 +51,7 @@ export async function POST(
       });
     }
 
-    await prisma.menuItemImage.createMany({
+    await prisma.itemImage.createMany({
       data: uploadedImages,
     });
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Edit, Trash2 } from "lucide-react";
-
+import Image from "next/image";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { BaseSearch } from "@/app/(frontend)/components/reusables/search/search";
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
@@ -12,15 +12,14 @@ import { useDeleteCategory } from "./hooks/useDeleteCategory";
 import { FullScreenLoader } from "@/app/(frontend)/components/reusables/loader/loader";
 import { DataTable } from "@/app/(frontend)/components/reusables/table/table";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
-
-
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 export default function CategoriesPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const limit = 4;
 
-  const debouncedSearch = useDebounce(search,1000);
+  const debouncedSearch = useDebounce(search, 1000);
 
   const { data, isPending, isFetching } = useCategories({
     page,
@@ -39,14 +38,17 @@ export default function CategoriesPage() {
   return (
     <div className="w-full flex justify-center py-10">
       <div className="w-full px-4 space-y-6">
-        {/* Top bar */}
+        <Metadata
+        title="Categories"
+        desc="menu item categories"
+        />
         <div className="flex flex-wrap gap-2 items-end justify-between">
           <BaseSearch
-            label="Categories"
+            label=""
             value={search}
             onChange={(value) => {
               setSearch(value);
-              setPage(1); 
+              setPage(1);
             }}
             placeholder="Search category"
             className="max-w-3xl sm:max-w-2xl lg:w-3xl py-2 px-5 rounded-3xl"
@@ -70,6 +72,20 @@ export default function CategoriesPage() {
               {
                 header: "Name",
                 accessor: (item) => item.name,
+              },
+              {
+                header: "Image",
+                accessor: (item) => (
+                  <div className="relative w-12 h-12">
+                    <Image
+                      src={item.image??""}
+                      alt={item.name}
+                      fill
+                      className="object-cover rounded"
+                      sizes="48px"
+                    />
+                  </div>
+                ),
               },
               {
                 header: "Created At",

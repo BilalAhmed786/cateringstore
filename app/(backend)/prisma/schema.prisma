@@ -68,6 +68,7 @@ model MenuCategory {
   id        String   @id @default(uuid())
   name      String
   image     String?
+  publicId  String?
   createdAt DateTime @default(now())
 
   items MenuItem[]
@@ -82,7 +83,7 @@ model MenuItem {
 
   categoryId String
   category      MenuCategory @relation(fields: [categoryId], references: [id])
-  images       MenuItemImage[]
+  images       ItemImage[]
   orderItems   OrderItem[]
   packageItems PackageItem[]
   hamperItems  HamperItem[]
@@ -91,7 +92,7 @@ model MenuItem {
   createdAt    DateTime         @default(now())
 }
 
-model MenuItemImage {
+model ItemImage {
   id         String @id @default(uuid())
   url        String
   publicId   String
@@ -198,11 +199,13 @@ model PackageItem {
  * =======================
  */
 
- model EventCategory {
-  id        String   @id @default(uuid())
-  name      String
-  image     String?
-  createdAt DateTime @default(now())
+model EventCategory {
+  id         String   @id @default(uuid())
+  name       String
+  image      String?
+  publicId   String?  
+  createdAt  DateTime @default(now())
+
   items Event[]
 }
 

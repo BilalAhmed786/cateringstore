@@ -5,6 +5,8 @@ import { useUpdateCategory } from "../hooks/useUpdateCategory";
 import { useCategory } from "../hooks/usegetcategory";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 import { FullScreenLoader } from "@/app/(frontend)/components/reusables/loader/loader";
+import { useUpdateCategoryImage } from "../hooks/useUpdateCategoryImage";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 export default function UpdateCategoryPage() {
   const params = useParams();
@@ -12,20 +14,47 @@ export default function UpdateCategoryPage() {
 
   const { data: category, isLoading } = useCategory(categoryId);
   const { mutate, isPending } = useUpdateCategory();
+  const { mutate:updateImage } = useUpdateCategoryImage();
+  
+  if (isLoading) return <FullScreenLoader />;
 
-  if (isLoading) return <FullScreenLoader/>;
+  const fields: FieldConfig[] = [
+    {
+      name: "name",
+      label: "Category Name",
+      type: "text",
+      placeholder: "Enter category name",
+    },
+    {
+      name: "image",
+      label: "Image",
+      type: "imagepreview",
+      image: category?.image,
+    },
 
-const fields:FieldConfig[]= [
-  {
-    name: "name",
-    label: "Category Name",
-    type: "text",
-    placeholder: "Enter category name",
-  },
-];
+    {
+      name: "newImage",
+      label: "Replace Image",
+      type: "file",
+      required: false,
+      className:"relative",
+      onUpload: (files) => {
+        const file = files?.[0];
+
+        updateImage({
+          id: categoryId,
+          image: file,
+        });
+      },
+    },
+  ];
   return (
     <div className="space-y-6 m-6">
-      <h1 className="text-2xl font-bold">Update Category</h1>
+      <Metadata
+        title="Update Category"
+        desc="update menu-item category"
+        classname="ml-3"
+      />
 
       <DynamicShadcnForm
         fields={fields}

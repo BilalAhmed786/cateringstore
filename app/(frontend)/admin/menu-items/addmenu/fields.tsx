@@ -34,6 +34,6 @@
       label: "Image",
       type: "file",
       className:"w-[200] relative h-32 rounded" ,// image preview classes
-      dragdrop:"border-4 border-blue-500 p-12 rounded-xl" // drag area classes
+      dragdrop:"border-4 border-blue-500 p-12 rounded-xl", // drag area classes 
     },
   ]

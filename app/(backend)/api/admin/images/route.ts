@@ -10,7 +10,8 @@ export async function POST(req: Request) {
     const formData = await req.formData();
     const menuItemId = formData.get("menuItemId") as string;
     const images = formData.getAll("images") as File[];
-
+console.log(images)
+console.log(menuItemId)
     if (!menuItemId || images.length === 0) {
       throw new Error("Invalid data");
     }
@@ -41,7 +42,7 @@ export async function POST(req: Request) {
       });
     }
 
-    await prisma.menuItemImage.createMany({
+    await prisma.itemImage.createMany({
       data: uploadedImages,
     });
 

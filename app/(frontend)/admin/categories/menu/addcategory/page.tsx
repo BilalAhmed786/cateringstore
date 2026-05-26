@@ -3,6 +3,7 @@ import { FieldValues } from "react-hook-form";
 import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamicform/dynamicform";
 import { useCreateCategory } from "../hooks/useCreateCategory";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 export default function AddCategoryPage() {
   const { mutate, isPending } = useCreateCategory();
@@ -25,11 +26,14 @@ export default function AddCategoryPage() {
 
   return (
     <div className="space-y-6 m-6">
-      <h1 className="text-2xl font-bold">Add Category</h1>
+      <Metadata
+      title="Add category"
+      desc="add menu item category"
+      />
 
       <DynamicShadcnForm
         fields={fields}
-        defaultvalues={{ name: "",images:[]}}
+        defaultvalues={{ name: "",image:[]}}
         cardTitle="Category Details"
         cardDescription="Create a new category"
         submitLabel={isPending ? "Creating..." : "Create Category"}

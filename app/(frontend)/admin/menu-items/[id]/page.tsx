@@ -8,6 +8,7 @@ import { useGetMenuItemById } from "../hooks/usegetmenuitembyid";
 import { useUploadMenuItemImages } from "../hooks/useuploadmenuItemimages";
 import { getEditMenuItemFields } from "./fields";
 import { useDeleteMenuItemImage } from "../hooks/usedeletemenuitemimage ";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 export default function EditMenuItemPage() {
   const { id } = useParams<{ id: string }>();
@@ -50,7 +51,11 @@ export default function EditMenuItemPage() {
 
   return (
     <div className="space-y-6 m-6">
-      <h1 className="text-2xl font-bold">Edit Menu Item</h1>
+      <Metadata
+      title="Menu item"
+      desc="update your menu item "
+      
+      />
 
       <DynamicShadcnForm
         key={menuItemData.id}

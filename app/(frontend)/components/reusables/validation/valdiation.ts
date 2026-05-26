@@ -21,7 +21,9 @@ export const generateSchema = (fields: FieldConfig[]) => {
 
       /* ================= PASSWORD ================= */
       case "password": {
-        const base = z.string().min(6, "Password must be at least 6 characters");
+        const base = z
+          .string()
+          .min(6, "Password must be at least 6 characters");
 
         shape[field.name] = isRequired
           ? base.nonempty(`${field.label} is required`)
@@ -47,11 +49,11 @@ export const generateSchema = (fields: FieldConfig[]) => {
 
       /* ================= NUMBER ================= */
       case "number": {
-        const base = z.coerce.number().min(1, `${field.label} must be greater than 0`);
+        const base = z.coerce
+          .number()
+          .min(1, `${field.label} must be greater than 0`);
 
-        shape[field.name] = isRequired
-          ? base
-          : base.optional();
+        shape[field.name] = isRequired ? base : base.optional();
 
         break;
       }
@@ -72,13 +74,13 @@ export const generateSchema = (fields: FieldConfig[]) => {
               (files) =>
                 files.length === 0 ||
                 files.every((f) => f.type.startsWith("image/")),
-              "Only image files are allowed"
+              "Only image files are allowed",
             )
             .refine(
               (files) =>
                 files.length === 0 ||
                 files.every((f) => f.size <= 2 * 1024 * 1024),
-              "Each file must be ≤ 2MB"
+              "Each file must be ≤ 2MB",
             );
 
           shape[field.name] = isRequired
@@ -89,16 +91,25 @@ export const generateSchema = (fields: FieldConfig[]) => {
         // SINGLE FILE
         else {
           const base = z
-            .instanceof(File)
-            .refine((f) => f.type.startsWith("image/"), "Only image files are allowed")
-            .refine((f) => f.size <= 2 * 1024 * 1024, "File must be ≤ 2MB");
-
+            .array(z.instanceof(File))
+            .min(0) // optional base safety
+            .refine(
+              (files) => files.every((f) => f.type.startsWith("image/")),
+              "Only image files allowed",
+            )
+            .refine(
+              (files) => files.every((f) => f.size <= 2 * 1024 * 1024),
+              "Each file must be ≤ 2MB",
+            )
+            .transform((files) => files ?? []);
           shape[field.name] = isRequired
-            ? base
-            : base.optional();
-        }
+            ? base.refine((files) => files.length > 0, {
+                message: `${field.label} is required`,
+              })
+            : base;
 
-        break;
+          break;
+        }
       }
 
       /* ================= IMAGE PREVIEW (NO VALIDATION) ================= */

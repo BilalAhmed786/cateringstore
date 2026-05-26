@@ -12,7 +12,7 @@ export function useUpdateCategory() {
   return useMutation<Category, unknown,FieldValues>({
     mutationFn: ({ id, name }) =>
       apiRequest({
-        url: `/api/admin/category/${id}`,
+        url: `/api/admin/category/menu/${id}`,
         method: "PUT",
         body: { name },
         authRequired: true,
@@ -20,7 +20,7 @@ export function useUpdateCategory() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
       toast.success("Category updated successfully!");
-      router.push("/admin/categories");
+      router.push("/admin/categories/menu");
     },
     onError: (error:unknown) => {
       console.error(error);

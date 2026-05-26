@@ -34,8 +34,7 @@ export async function POST(req: Request) {
     try {
       await requireRole(req, ["admin"]);
 
-      const { searchParams } = new URL(req.url);
-
+      const { searchParams } = new URL(req.url); 
       const page = Number(searchParams.get("page") ?? 1);
       const limit = Number(searchParams.get("limit") ?? 10);
       const skip = (page - 1) * limit;

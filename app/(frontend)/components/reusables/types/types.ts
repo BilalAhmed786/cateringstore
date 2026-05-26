@@ -16,6 +16,7 @@ export type FieldConfig = {
   className?:string;
   dragdrop?:string;
   images?: { id: string; url: string }[];
+  image?:string;
   onDelete?: (id: string) => void;
   onUpload?: (files: File[]) => void;
   isDeleting?: boolean;
@@ -23,10 +24,19 @@ export type FieldConfig = {
 
 };
 
+export interface metadataprop{
+
+  title?:string
+  desc?:string
+  classname?:string
+
+}
+
 export interface ImagePreviewFieldProps {
-  images: { id: string; url: string }[];
-  onDelete: (imageId: string) => void;
-  isDeleting?: boolean;
+   images: { id: string; url: string }[];
+   image?: string; 
+   onDelete: (imageId: string) => void;
+   isDeleting?: boolean;
 }
 
 

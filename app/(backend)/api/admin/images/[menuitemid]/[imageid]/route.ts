@@ -26,7 +26,7 @@ export async function DELETE(
     }
 
     // 1 Find image in DB
-    const image = await prisma.menuItemImage.findFirst({
+    const image = await prisma.itemImage.findFirst({
       where: {
         id: imageid,
         menuItemId:menuitemid,
@@ -46,7 +46,7 @@ export async function DELETE(
     }
 
     // 3 Delete from DB
-    await prisma.menuItemImage.delete({
+    await prisma.itemImage.delete({
       where: {
         id: image.id,
       },

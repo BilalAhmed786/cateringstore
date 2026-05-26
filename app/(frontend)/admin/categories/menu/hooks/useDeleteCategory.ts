@@ -7,10 +7,8 @@ export function useDeleteCategory() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      alert(id) 
-
-      return apiRequest<{ success: boolean }>({
-        url: `/api/admin/category/${id}`,
+     return apiRequest<{ success: boolean }>({
+        url: `/api/admin/category/menu/${id}`,
         method: "DELETE",
         authRequired: true,
       });

@@ -29,7 +29,7 @@ export function useCreateMenuItemWithImages() {
         body: payload,
         authRequired: true,
       })
-
+console.log(menuItem)
       // 3️⃣ Upload images if exist
     if (image && image.length !== 0) {
         await uploadImages(
