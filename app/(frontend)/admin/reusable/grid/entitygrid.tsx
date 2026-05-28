@@ -30,7 +30,7 @@ export function EntityGrid({
       </div>
     );
   }
-
+console.log(items)
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {items.map((item) => (
@@ -48,18 +48,23 @@ export function EntityGrid({
 
           {/* Image */}
           <CardHeader className="relative h-40 bg-black rounded-t-xl overflow-hidden">
-            {item.images?.[0]?.url ? (
+            {item.images?.[0]?.url ?(
               <Image
                 src={item.images[0].url}
                 alt={item.title ?? item.name ?? "Item"}
                 fill
                 className="object-cover rounded-t-xl"
               />
-            ) : (
+            ) : item.image?(
               <div className="h-full w-full flex items-center justify-center bg-black rounded-t-xl">
-                <span className="text-sm text-gray-300">No Image</span>
+                 <Image
+                src={item.image}
+                alt={item.title ?? item.name ?? "Item"}
+                fill
+                className="object-cover rounded-t-xl"
+              />
               </div>
-            )}
+            ):<div className="flex h-40 justify-center items-center  text-white">no image</div>}
           </CardHeader>
 
           {/* Content */}

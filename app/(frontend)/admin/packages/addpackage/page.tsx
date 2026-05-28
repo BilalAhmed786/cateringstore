@@ -20,12 +20,22 @@ import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
 import { EntityCart } from "../../../components/reusables/cart/entitycart";
 import { FieldGroup } from "@/app/(frontend)/components/ui/field";
 import { FormField } from "@/app/(frontend)/components/reusables/fields/fieldscase";
+import { GridItem } from "../../reusable/grid/gridtypes";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 /* -------------------- FORM FIELDS -------------------- */
 const fields: FieldConfig[] = [
   { name: "name", label: "Package Name", type: "text", required: true },
   { name: "description", label: "Description", type: "textarea" },
   { name: "discount", label: "Discount", type: "number" },
+  {
+    name: "image",
+    label: "Image",
+    type: "file",
+    className: "w-[200] relative h-32 rounded", // image preview classes
+    dragdrop: "border-4 border-blue-500 p-12 rounded-xl", // drag area classes
+    
+  },
 ];
 
 const schema = generateSchema(fields);
@@ -38,16 +48,17 @@ export default function CreatePackagePage() {
       name: "",
       description: "",
       discount: 0,
+      image:[]
     },
   });
 
-  const [selectedItems, setSelectedItems] = useState< CartItem[]>([]);
+  const [selectedItems, setSelectedItems] = useState<CartItem[]>([]);
   const [activeTab, setActiveTab] = useState("details");
 
   const { mutate: createPackage, isPending } = useCreatePackage();
 
   /* -------------------- MENU ITEM SELECT -------------------- */
-  const handleSelectItem = (item: CartItem) => {
+  const handleSelectItem = (item: GridItem) => {
     setSelectedItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
@@ -61,6 +72,8 @@ export default function CreatePackagePage() {
 
   /* -------------------- SUBMIT -------------------- */
   const onSubmit = (data: FieldValues) => {
+
+   
     if (!selectedItems.length) {
       toast.error("Please select at least one menu item.");
       setActiveTab("items");
@@ -71,6 +84,7 @@ export default function CreatePackagePage() {
       name: data.name,
       description: data.description,
       discount: Number(data.discount ?? 0),
+      image:data.image,
       items: selectedItems.map((i) => ({
         menuItemId: i.id,
         quantity: i.quantity,
@@ -86,7 +100,7 @@ export default function CreatePackagePage() {
   /* -------------------- UI -------------------- */
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 p-6">
-      <h1 className="text-2xl font-bold">Add Packages</h1>
+      <Metadata title="Add Packages" desc="select menu item for packages" />
 
       <FormProvider {...form}>
         <form className="w-full space-y-6 bg-white p-8 rounded-xl shadow-lg">

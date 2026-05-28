@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { FieldValues, useForm, FormProvider } from "react-hook-form";
@@ -19,28 +19,57 @@ import { EntityCart } from "../../../components/reusables/cart/entitycart";
 
 import { generateSchema } from "../../../components/reusables/validation/valdiation";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
-import { GridSelectableItem } from "../../reusable/types/type";
+
+import { CartItem } from "../../reusable/types/type";
 
 import { useUpdatePackage } from "../hooks/useupdatepackage";
 import { useGetPackageDetails } from "../hooks/usegetsinglepackage";
+import { useUploadPackageImage } from "../hooks/useuploadpackageimage";
 
 import { FieldGroup } from "@/app/(frontend)/components/ui/field";
 import { FormField } from "@/app/(frontend)/components/reusables/fields/fieldscase";
+import { GridItem } from "../../reusable/grid/gridtypes";
 
-/* ---------------- FORM CONFIG ---------------- */
-const fields: FieldConfig[] = [
-  { name: "name", label: "Package Name", type: "text", required: true },
-  { name: "description", label: "Description", type: "textarea" },
-  { name: "discount", label: "Discount", type: "number" },
-];
-
-const schema = generateSchema(fields);
-
-/* ---------------- COMPONENT ---------------- */
 export default function EditPackagePage() {
   const { id } = useParams<{ id: string }>();
 
   const { data, isPending } = useGetPackageDetails(id!);
+  const { mutate: updateImage } = useUploadPackageImage();
+  const { mutate: updatePackage, isPending: isUpdating } = useUpdatePackage();
+
+  const [selectedItems, setSelectedItems] = useState<CartItem[]>([]);
+  const [activeTab, setActiveTab] = useState("details");
+
+  const initializedRef = useRef(false);
+
+  /* ---------------- FORM FIELDS ---------------- */
+  const fields: FieldConfig[] = [
+    { name: "name", label: "Package Name", type: "text", required: true },
+    { name: "description", label: "Description", type: "textarea" },
+    { name: "discount", label: "Discount", type: "number" },
+    {
+      name: "image",
+      label: "Image",
+      type: "imagepreview",
+      image: data?.image,
+    },
+    {
+      name: "newImage",
+      label: "Replace Image",
+      type: "file",
+      required:false,
+      className: "relative",
+      onUpload: (files) => {
+        const file = files[0]
+        updateImage({
+          packageId: data?.id as string,
+          image: file,
+        });
+      },
+    },
+  ];
+
+  const schema = generateSchema(fields);
 
   const form = useForm({
     resolver: zodResolver(schema),
@@ -48,35 +77,11 @@ export default function EditPackagePage() {
       name: "",
       description: "",
       discount: 0,
+      
     },
   });
 
-  const { mutate: updatePackage, isPending: isUpdating } = useUpdatePackage();
-
-  const [selectedItems, setSelectedItems] = useState<
-    (GridSelectableItem & { quantity: number })[]
-  >([]);
-
-  const [activeTab, setActiveTab] = useState("details");
-
-  const initializedRef = useRef(false);
-
-  /* ---------------- DERIVED API ITEMS ---------------- */
-  const apiItems = useMemo<
-    (GridSelectableItem & { quantity: number })[]
-  >(() => {
-    if (!data) return [];
-
-    return data.items.map((i) => ({
-      id: i.menuItem.id,
-      title: i.menuItem.title,
-      price: i.menuItem.price,
-      images: i.menuItem.images,
-      quantity: i.quantity,
-    }));
-  }, [data]);
-
-  /* ---------------- PREFILL FORM ---------------- */
+  /* ---------------- FORM PREFILL ---------------- */
   useEffect(() => {
     if (!data) return;
 
@@ -87,24 +92,35 @@ export default function EditPackagePage() {
     });
   }, [data, form]);
 
-  /* ---------------- INIT SELECTED ITEMS ---------------- */
+  /* ---------------- MENU ITEMS PREFILL ---------------- */
   useEffect(() => {
-    if (!apiItems.length || initializedRef.current) return;
+    if (!data) return;
+    if (initializedRef.current) return;
+  
+     const items = data?.items;
 
-    setTimeout(() => {
-      setSelectedItems(apiItems);
-      initializedRef.current = true;
-    }, 0);
-  }, [apiItems]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSelectedItems(
+      items?.map((i) => ({
+        id: i.menuItem.id,
+        name: i.menuItem.title,
+        price: i.menuItem.price,
+        images: i.menuItem.images,
+        quantity: i.quantity,
+      })),
+    );
+
+    initializedRef.current = true;
+  }, [data]);
 
   /* ---------------- SELECT ITEM ---------------- */
-  const handleSelectItem = (item: GridSelectableItem) => {
+  const handleSelectItem = (item: GridItem) => {
     setSelectedItems((prev) => {
-      const existing = prev.find((i) => i.id === item.id);
+      const exists = prev?.find((i) => i.id === item.id);
 
-      if (existing) {
+      if (exists) {
         return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i,
         );
       }
 
@@ -167,10 +183,10 @@ export default function EditPackagePage() {
             <TabsContent value="items">
               <div
                 className={`grid gap-6 ${
-                  selectedItems.length ? "lg:grid-cols-3" : ""
+                  selectedItems?.length ? "lg:grid-cols-3" : ""
                 }`}
               >
-                <div className={selectedItems.length ? "lg:col-span-2" : ""}>
+                <div className={selectedItems?.length ? "lg:col-span-2" : ""}>
                   <MenuItemBrowser
                     selectable={false}
                     showFilters
@@ -178,7 +194,7 @@ export default function EditPackagePage() {
                   />
                 </div>
 
-                {selectedItems.length > 0 && (
+                {selectedItems?.length > 0 && (
                   <EntityCart
                     title="Package Items"
                     items={selectedItems}

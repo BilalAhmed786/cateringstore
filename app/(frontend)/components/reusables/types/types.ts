@@ -16,7 +16,7 @@ export type FieldConfig = {
   className?:string;
   dragdrop?:string;
   images?: { id: string; url: string }[];
-  image?:string;
+  image?:string | null;
   onDelete?: (id: string) => void;
   onUpload?: (files: File[]) => void;
   isDeleting?: boolean;

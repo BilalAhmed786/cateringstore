@@ -66,50 +66,31 @@ export const generateSchema = (fields: FieldConfig[]) => {
 
       /* ================= FILE ================= */
       case "file": {
-        // MULTIPLE FILES
-        if (field.multiple) {
-          const base = z
-            .array(z.instanceof(File))
-            .refine(
-              (files) =>
-                files.length === 0 ||
-                files.every((f) => f.type.startsWith("image/")),
-              "Only image files are allowed",
-            )
-            .refine(
-              (files) =>
-                files.length === 0 ||
-                files.every((f) => f.size <= 2 * 1024 * 1024),
-              "Each file must be ≤ 2MB",
-            );
+        const base = z
+          .array(z.instanceof(File))
+          .optional()
+          .refine(
+            (files) =>
+              !files ||
+              files.length === 0 ||
+              files.every((f) => f.type.startsWith("image/")),
+            "Only image files allowed",
+          )
+          .refine(
+            (files) =>
+              !files ||
+              files.length === 0 ||
+              files.every((f) => f.size <= 2 * 1024 * 1024),
+            "Each file must be ≤ 2MB",
+          );
 
-          shape[field.name] = isRequired
-            ? base.nonempty(`${field.label} is required`)
-            : base.optional();
-        }
+        shape[field.name] = isRequired
+          ? base.refine((files) => files && files.length > 0, {
+              message: `${field.label} is required`,
+            })
+          : base;
 
-        // SINGLE FILE
-        else {
-          const base = z
-            .array(z.instanceof(File))
-            .min(0) // optional base safety
-            .refine(
-              (files) => files.every((f) => f.type.startsWith("image/")),
-              "Only image files allowed",
-            )
-            .refine(
-              (files) => files.every((f) => f.size <= 2 * 1024 * 1024),
-              "Each file must be ≤ 2MB",
-            )
-            .transform((files) => files ?? []);
-          shape[field.name] = isRequired
-            ? base.refine((files) => files.length > 0, {
-                message: `${field.label} is required`,
-              })
-            : base;
-
-          break;
-        }
+        break;
       }
 
       /* ================= IMAGE PREVIEW (NO VALIDATION) ================= */

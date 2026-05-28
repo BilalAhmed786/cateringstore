@@ -31,7 +31,7 @@ export async function apiRequest<TResponse = unknown, TBody = unknown>({
   let token: string | null = null;
 
   if (authRequired) {
-    // ✅ Use async listener instead of auth.currentUser directly
+    // Use async listener instead of auth.currentUser directly
     token = await getCurrentUserToken();
 
     if (!token) {

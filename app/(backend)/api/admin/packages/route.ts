@@ -53,7 +53,7 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(createdPackage, { status: 201 });
+    return NextResponse.json(createdPackage.id, { status: 201 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

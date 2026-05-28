@@ -39,6 +39,8 @@ export default function UpdateCategoryPage() {
       required: false,
       className:"relative",
       onUpload: (files) => {
+
+        console.log(files)
         const file = files?.[0];
 
         updateImage({
