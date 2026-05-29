@@ -23,7 +23,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   if (userOrResponse instanceof NextResponse) return userOrResponse;
   
   const { id } = await params
-  
+  console.log(id)
 
   await prisma.menuCategory.delete({ where: { id } });
 

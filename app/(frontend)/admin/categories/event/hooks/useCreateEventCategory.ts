@@ -19,7 +19,7 @@ export function useCreateEventCategory() {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["eventcategories"] });
-      router.push("/admin/categories/hamper");
+      router.push("/admin/categories/event");
     },
   });
 }

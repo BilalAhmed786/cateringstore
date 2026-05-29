@@ -55,7 +55,7 @@ export default function CategoriesPage() {
           />
 
           <Link href="/admin/categories/menu/addcategory">
-            <UniButton label="Add Category" />
+            <UniButton label="Add menu Category" />
           </Link>
         </div>
 
