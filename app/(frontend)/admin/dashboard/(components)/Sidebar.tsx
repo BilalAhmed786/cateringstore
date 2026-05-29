@@ -102,8 +102,8 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
         {categoryOpen && open && (
           <div className="ml-6 space-y-1">
             <SubNav label="Food Categories" icon={Utensils} href="/admin/categories/menu" />
-            <SubNav label="Event Categories" icon={Calendar} href="/admin/categories/events" />
-            <SubNav label="Hamper Categories" icon={Gift} href="/admin/categories/hampers" />
+            <SubNav label="Event Categories" icon={Calendar} href="/admin/categories/event" />
+            <SubNav label="Hamper Categories" icon={Gift} href="/admin/categories/hamper" />
           </div>
         )}
 

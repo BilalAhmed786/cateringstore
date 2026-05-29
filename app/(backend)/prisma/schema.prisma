@@ -254,6 +254,7 @@ model HamperCategory {
   id        String   @id @default(uuid())
   name      String
   image     String?
+  publicId  String?
   createdAt DateTime @default(now())
   items Hamper[]
 }
@@ -266,6 +267,7 @@ model Hamper {
   discountValue Float?
   finalPrice    Float
   image     String?
+  publicId  String?
   categoryId String
   category     HamperCategory @relation(fields: [categoryId], references: [id])
   available Boolean  @default(true)

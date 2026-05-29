@@ -23,6 +23,14 @@ const initialFields: FieldConfig[] = [
   { name: "name", label: "Hamper Name", type: "text", required: true },
   { name: "description", label: "Description", type: "textarea" },
   { name: "discount", label: "Discount", type: "number" },
+    {
+    name: "image",
+    label: "Image",
+    type: "file",
+    className: "w-[200] relative h-32 rounded", // image preview classes
+    dragdrop: "border-4 border-blue-500 p-12 rounded-xl", // drag area classes
+    
+  },
 ];
 
 export default function CreateHamperPage() {

@@ -36,7 +36,7 @@ export default function HamperBrowser({
 
   const deleteMutation = useDeleteHamper();
   const toggleMutation = useToggleHamper();
-
+console.log(data)
   /* ---------------- FILTER HANDLERS ---------------- */
   const onStatusChange = (value: string) => {
     setStatus(value);
