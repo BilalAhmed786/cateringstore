@@ -22,11 +22,11 @@ export function useCreateHamper() {
     },
 
     onSuccess: async (hamperId, variables) => {
-   
-      if (variables.image instanceof File) {
+  
+      if (variables.image) {
         await uploadImage.mutateAsync({
           hamperId,
-          image: variables.image,
+          image: variables.image[0],
         });
       }
 

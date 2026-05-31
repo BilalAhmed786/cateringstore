@@ -23,7 +23,11 @@ const Selectinput: React.FC<SelectInputProps> = ({ name, label, options }) => {
         render={({ field, fieldState }) => {
          return (
             <>
-              <Select onValueChange={field.onChange} value={field.value ?? ""}>
+              <Select
+               key={field.value}
+               onValueChange={field.onChange} 
+               value={field.value ?? ""}>
+               
                 <SelectTrigger
                   className={fieldState.error ? "border-red-500" : ""}
                 >
@@ -31,7 +35,7 @@ const Selectinput: React.FC<SelectInputProps> = ({ name, label, options }) => {
                 </SelectTrigger>
                 <SelectContent>
                   {options?.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
+                    <SelectItem key={option.value} value={option?.value}>
                       {option.label}
                     </SelectItem>
                   ))}

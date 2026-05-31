@@ -4,14 +4,14 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { Menuitemdetail } from "../../../reusable/menuitemdetail/menuitemdetail";
-import { useGetHamperDetails } from "../../hooks/usegetsinglehamper";
+import { useGetSingleHamperDetails } from "../../hooks/usegetsinglehamper";
 
 
 export default function ViewHamperItemsPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
-  const { data, isPending } = useGetHamperDetails(id);
+  const { data, isPending } = useGetSingleHamperDetails(id);
 
   if (isPending) return <div className="p-6">Loading...</div>;
   if (!data) return <div className="p-6">No data</div>;

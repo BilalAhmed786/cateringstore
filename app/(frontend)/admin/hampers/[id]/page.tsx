@@ -18,75 +18,102 @@ import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
 import { EntityCart } from "../../../components/reusables/cart/entitycart";
 import { generateSchema } from "../../../components/reusables/validation/valdiation";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
-import { GridSelectableItem } from "../../reusable/types/type";
+import { CartItem, GridSelectableItem } from "../../reusable/types/type";
 import { useUpdateHamper } from "../hooks/useupdatehamper";
-import { useGetHamperDetails } from "../hooks/usegetsinglehamper";
 import { FieldGroup } from "@/app/(frontend)/components/ui/field";
 import { FormField } from "@/app/(frontend)/components/reusables/fields/fieldscase";
+import { useGetSingleHamperDetails } from "../hooks/usegetsinglehamper";
+import { useHamperCategories } from "../../categories/hamper/hooks/useHamperCategories";
+import { useUploadHamperImage } from "../hooks/useuploadhamperimage";
+/* ---------------- COMPONENT ---------------- */
 
-/* ---------------- FORM CONFIG ---------------- */
+export default function EditHamperPage() {
+  const { id } = useParams<{ id: string }>();
+  const {data:singleHamper,isPending} = useGetSingleHamperDetails(id)
+  const {data:categories} = useHamperCategories({page:1,limit:100})
+  const {mutate:updateImage}  =useUploadHamperImage()
+  const isReady = singleHamper && categories?.categories?.length !== 0;
+  const { mutate: updateHamper, isPending: isUpdating } = useUpdateHamper();
+  const [selectedItems, setSelectedItems] = useState<CartItem[]>([]); 
+  const [activeTab, setActiveTab] = useState("details");
+  const initializedRef = useRef(false);
+
+ /* ---------------- FORM CONFIG ---------------- */
 
 const fields: FieldConfig[] = [
   { name: "name", label: "Hamper Name", type: "text", required: true },
   { name: "description", label: "Description", type: "textarea" },
   { name: "discount", label: "Discount", type: "number" },
+  {
+    type: "select",
+    name: "categoryId",
+    label: "Category",
+    options: categories?.categories?.map((c) => ({ label: c.name, value: c.id })),
+  },
+  {
+    type: "imagepreview",
+    name: "images",
+    label: "Existing Images",
+    image: singleHamper?.image,
+  },
+  {
+    type: "file",
+    name: "image",
+    label: "Upload New Images",
+    multiple: true,
+    required:false,
+    accept: "image/*",
+    onUpload: (files) => {
+        const file = files?.[0];
+        updateImage({
+          hamperId: id,
+          image: file,
+        });
+      },
+    className: "w-[200] relative h-32 rounded",
+    dragdrop: "border-4 border-blue-500 p-12 rounded-xl",
+  },
 ];
 
 const schema = generateSchema(fields);
-
-/* ---------------- COMPONENT ---------------- */
-
-export default function EditHamperPage() {
-  const { id } = useParams<{ id: string }>();
-
-  const { data, isPending } = useGetHamperDetails(id!);
-
-  const form = useForm({
+const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: "",
-      description: "",
-      discount: 0,
-    },
+    name: "",
+    description: "",
+    discount: 0,
+    categoryId: "",
+  },
   });
 
-  const { mutate: updateHamper, isPending: isUpdating } = useUpdateHamper();
+  useEffect(() => {
+    if (!isReady) return;
 
-  const [selectedItems, setSelectedItems] = useState<
-    (GridSelectableItem & { quantity: number })[]
-  >([]);
+    form.reset({
+    name: singleHamper.name ?? "",
+    description: singleHamper.description ?? "",
+    discount: singleHamper.discountValue ?? 0,
+    categoryId:singleHamper.categoryId??"",
+  });
+  }, [isReady,form,singleHamper]);
 
-  const [activeTab, setActiveTab] = useState("details");
-
-  const initializedRef = useRef(false);
+   
 
   /* ---------------- API ITEMS ---------------- */
 
-  const apiItems = useMemo<
-    (GridSelectableItem & { quantity: number })[]
-  >(() => {
-    if (!data) return [];
+  const apiItems = useMemo<CartItem[]>(() => {
+    if (!singleHamper) return [];
 
-    return data.items.map((i) => ({
+    return singleHamper.items.map((i) => ({
       id: i.menuItem.id,
       title: i.menuItem.title,
       price: i.menuItem.price,
       images: i.menuItem.images,
       quantity: i.quantity,
     }));
-  }, [data]);
+  }, [singleHamper]);
 
-  /* ---------------- PREFILL FORM ---------------- */
 
-  useEffect(() => {
-    if (!data) return;
-
-    form.reset({
-      name: data.name,
-      description: data.description,
-      discount: data.discountValue ?? 0,
-    });
-  }, [data, form]);
 
   /* ---------------- INIT ITEMS ---------------- */
 
@@ -98,6 +125,8 @@ export default function EditHamperPage() {
       initializedRef.current = true;
     }, 0);
   }, [apiItems]);
+
+
 
   /* ---------------- SELECT ITEM ---------------- */
 
@@ -145,7 +174,9 @@ export default function EditHamperPage() {
 
   /* ---------------- UI ---------------- */
 
-  if (isPending) return <div className="p-6">Loading hamper data...</div>;
+  if (isPending || !categories) {
+  return <div className="p-6">Loading...</div>;
+}
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 p-6">

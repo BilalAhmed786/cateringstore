@@ -258,25 +258,25 @@ model HamperCategory {
   createdAt DateTime @default(now())
   items Hamper[]
 }
-model Hamper {
-  id          String  @id @default(uuid())
-  name        String
-  description String?
-  originalPrice Float
-  discountType  DiscountType?
-  discountValue Float?
-  finalPrice    Float
-  image     String?
-  publicId  String?
-  categoryId String
-  category     HamperCategory @relation(fields: [categoryId], references: [id])
-  available Boolean  @default(true)
-  createdAt DateTime @default(now())
+  model Hamper {
+    id          String  @id @default(uuid())
+    name        String
+    description String?
+    originalPrice Float
+    discountType  DiscountType?
+    discountValue Float?
+    finalPrice    Float
+    image     String?
+    publicId  String?
+    categoryId String
+    category     HamperCategory @relation(fields: [categoryId], references: [id])
+    available Boolean  @default(true)
+    createdAt DateTime @default(now())
 
-  items        HamperItem[]
-  orderHampers OrderHamper[]
-  reviews      HamperReview[]
-}
+    items        HamperItem[]
+    orderHampers OrderHamper[]
+    reviews      HamperReview[]
+  }
 
 model HamperItem {
   id         String @id @default(uuid())

@@ -67,6 +67,7 @@ export default function CreateHamperPage() {
     defaultValues: {
       name: "",
       description: "",
+      categoryid:"",
       eventId: "",
       discount: 0,
     },

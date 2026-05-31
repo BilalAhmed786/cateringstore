@@ -10,7 +10,7 @@ export function EntityCart({
   onChange,
   showTotal = true,
 }: EntityCartProps) {
-  console.log(items);
+ 
   const removeItem = (id: string) => {
     onChange(items.filter((i) => i.id !== id));
   };

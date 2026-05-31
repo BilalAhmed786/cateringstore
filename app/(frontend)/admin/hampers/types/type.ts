@@ -14,11 +14,20 @@ export interface HampereMenuItem {
   quantity: number;      
   menuItem: MenuItem;    
 }
+export interface Hampercategory{
+createdAt:string
+id:string
+image:string
+name:string 
+publicId:string
 
+}
 export interface Hampers {
   id: string;
   name: string;
   description: string;
+  categoryId:string;
+  category:Hampercategory;
   available: boolean;
   createdAt: string;
   discountType: string;

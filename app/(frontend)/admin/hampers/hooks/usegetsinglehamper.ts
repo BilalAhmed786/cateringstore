@@ -3,7 +3,7 @@ import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq"
 import { Hampers } from "../types/type";
 
 
-export function useGetHamperDetails(id?: string) {
+export function useGetSingleHamperDetails(id?: string) {
   return useQuery<Hampers>({
     queryKey: ["hamper", id],
     queryFn: () =>

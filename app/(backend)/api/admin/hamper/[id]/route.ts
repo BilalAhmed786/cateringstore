@@ -23,6 +23,7 @@ export async function GET(
     const hamper = await prisma.hamper.findUnique({
       where: { id },
       include: {
+        category:true,
         items: {
           include: {
             menuItem: {
@@ -31,6 +32,7 @@ export async function GET(
                 title: true,
                 price: true,
                 images: true,
+                
               },
             },
           },
