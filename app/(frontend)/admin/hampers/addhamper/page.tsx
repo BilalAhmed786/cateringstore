@@ -5,7 +5,12 @@ import { FieldValues, useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/(frontend)/components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/app/(frontend)/components/ui/tabs";
 import { FieldGroup } from "@/app/(frontend)/components/ui/field";
 import { FormField } from "@/app/(frontend)/components/reusables/fields/fieldscase";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
@@ -16,31 +21,43 @@ import { GridSelectableItem } from "../../reusable/types/type";
 import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
 import { EntityCart } from "../../../components/reusables/cart/entitycart";
 import { useCreateHamper } from "../hooks/usecreatehampers";
-
-
-/* -------------------- FORM FIELDS -------------------- */
-const initialFields: FieldConfig[] = [
-  { name: "name", label: "Hamper Name", type: "text", required: true },
-  { name: "description", label: "Description", type: "textarea" },
-  { name: "discount", label: "Discount", type: "number" },
-    {
-    name: "image",
-    label: "Image",
-    type: "file",
-    className: "w-[200] relative h-32 rounded", // image preview classes
-    dragdrop: "border-4 border-blue-500 p-12 rounded-xl", // drag area classes
-    
-  },
-];
+import { useHamperCategories } from "../../categories/hamper/hooks/useHamperCategories";
 
 export default function CreateHamperPage() {
   const [activeTab, setActiveTab] = useState("details");
   const [selectedItems, setSelectedItems] = useState<(GridSelectableItem & { quantity: number })[]>([]);
   const { mutate: createHamper, isPending } = useCreateHamper();
+  const { data } = useHamperCategories({
+    page: 1,
+    limit: 100,
+  });
+
+  /* -------------------- FORM FIELDS -------------------- */
+  const initialFields: FieldConfig[] = [
+    { name: "name", label: "Hamper Name", type: "text", required: true },
+    { name: "description", label: "Description", type: "textarea" },
+    { name: "discount", label: "Discount", type: "number" },
+    {
+      name: "categoryId",
+      label: "Category",
+      type: "select",
+      options: data?.categories.map((c) => ({
+        label: c.name,
+        value: c.id,
+      })),
+    },
+    {
+      name: "image",
+      label: "Image",
+      type: "file",
+      className: "w-[200] relative h-32 rounded", // image preview classes
+      dragdrop: "border-4 border-blue-500 p-12 rounded-xl",
+      
+    },
+  ];
 
   // ---------------- Populate event dropdown dynamically ----------------
-  const fields = initialFields.map((field) => field
-  );
+  const fields = initialFields.map((field) => field);
 
   // ---------------- Generate schema dynamically ----------------
   const schema = generateSchema(fields);
@@ -63,7 +80,7 @@ export default function CreateHamperPage() {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
         return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i,
         );
       }
       return [...prev, { ...item, quantity: 1 }];
@@ -80,7 +97,10 @@ export default function CreateHamperPage() {
 
     createHamper({
       ...data,
-      items: selectedItems.map((i) => ({ menuItemId: i.id, quantity: i.quantity })),
+      items: selectedItems.map((i) => ({
+        menuItemId: i.id,
+        quantity: i.quantity,
+      })),
     });
   };
 
@@ -113,8 +133,14 @@ export default function CreateHamperPage() {
 
             {/* ---------------- Items Tab ---------------- */}
             <TabsContent value="items">
-              <div className={`grid gap-6 ${selectedItems.length ? "lg:grid-cols-3" : "lg:grid-cols-1"}`}>
-                <div className={selectedItems.length ? "lg:col-span-2" : "lg:col-span-1"}>
+              <div
+                className={`grid gap-6 ${selectedItems.length ? "lg:grid-cols-3" : "lg:grid-cols-1"}`}
+              >
+                <div
+                  className={
+                    selectedItems.length ? "lg:col-span-2" : "lg:col-span-1"
+                  }
+                >
                   <MenuItemBrowser
                     selectable={false}
                     showFilters

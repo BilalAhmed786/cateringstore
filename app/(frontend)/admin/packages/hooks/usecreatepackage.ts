@@ -12,7 +12,7 @@ export function useCreatePackage() {
 
   return useMutation<string, Error, FieldValues>({
     mutationFn: async (data) => {
-      const { image:_image,...rest } = data;
+      const {image:_image,...rest } = data;
         
       return apiRequest({
         url: "/api/admin/packages",
@@ -23,14 +23,12 @@ export function useCreatePackage() {
     },
 
     onSuccess: async (response, variables) => {
-
-     
-      if (variables.image?.length) {
-        await uploadImage.mutateAsync({
+      
+      await uploadImage.mutateAsync({
           packageId: response,
-          images: variables.image,
+          image: variables.image[0],
         });
-      }
+      
 
       toast.success("Package created successfully");
       router.push("/admin/packages");

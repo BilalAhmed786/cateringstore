@@ -12,7 +12,7 @@ export function useDeleteMenuItemImage() {
       imageId: string;
     }) => {
       return apiRequest({
-        url: `/api/admin/images/${menuItemId}/${imageId}`,
+        url: `/api/admin/menuitem/images/${menuItemId}/${imageId}`,
         method: "DELETE",
         authRequired: true,
       });

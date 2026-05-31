@@ -21,7 +21,7 @@ export function useUploadMenuItemImages() {
       });
 
       return apiRequest({
-        url: `/api/admin/images/${menuItemId}`,
+        url: `/api/admin/menuitem/images/${menuItemId}`,
         method: "POST",
         authRequired: true,
         body: formData,

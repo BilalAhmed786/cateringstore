@@ -18,6 +18,7 @@ export async function POST(req: Request) {
       description,
       discount = 0,
       image,
+      categoryId,
       items,
     } = body;
 
@@ -59,6 +60,7 @@ export async function POST(req: Request) {
         name,
         description,
         image,
+        categoryId,
         originalPrice,
         discountType: discount > 0 ? "PERCENTAGE" : null,
         discountValue: discount,
@@ -73,7 +75,7 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(createdHamper, { status: 201 });
+    return NextResponse.json(createdHamper.id, { status: 201 });
 
   } catch (error) {
     console.error("Hamper create error:", error);
