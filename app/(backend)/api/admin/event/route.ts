@@ -1,81 +1,74 @@
-import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
-import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
-  // Role check
-  const userOrResponse = await requireRole(req, ["ADMIN"]);
-  if (userOrResponse instanceof NextResponse) return userOrResponse;
+import { Prisma } from "@prisma/client";
+import prisma from "@/app/(backend)/lib/prisma/prisma";
+import { buildFilter } from "../../reusables/filters/filters";
+import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 
+export async function GET(req: NextRequest) {
   try {
-    const body = await req.json();
+    await requireRole(req, ["admin"]);
 
-    const {
-      name,
-      description,
-      menuItems = [],
-      packages = [],
-    } = body;
+    const { searchParams } = new URL(req.url);
 
-    // Validation
-    if (!name) {
-      return NextResponse.json(
-        { error: "Event name is required" },
-        { status: 400 }
-      );
-    }
+    const page = Number(searchParams.get("page") ?? 1);
+    const limit = Number(searchParams.get("limit") ?? 10);
+    const skip = (page - 1) * limit;
 
-    if (!menuItems.length && !packages.length) {
-      return NextResponse.json(
-        { error: "Select at least one menu item or package" },
-        { status: 400 }
-      );
-    }
-
-    // Create event with relations
-    const newEvent = await prisma.event.create({
-      data: {
-        name,
-        description: description ?? null,
-        menuItems: {
-          create: menuItems.map((m: { menuItemId: string }) => ({
-            menuItemId: m.menuItemId,
-          })),
-        },
-        packages: {
-          create: packages.map((p: { packageId: string }) => ({
-            packageId: p.packageId,
-          })),
-        },
+    const where = buildFilter<Prisma.EventWhereInput>(
+      {
+        status: searchParams.get("status"),
+        category: searchParams.get("category"),
+        search: searchParams.get("search"),
+        dateFilter: searchParams.get("dateFilter"),
       },
-      include: {
-        menuItems: true,
-        packages: true,
-      },
+      {
+        hasCategory: true,
+        searchFields: ["name", "description"],
+      }
+    );
+
+    const [items, total] = await Promise.all([
+      prisma.event.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          category: true,
+          reviews: true,
+        },
+      }),
+      prisma.event.count({ where }),
+    ]);
+
+    // Optional: rating aggregation (same style as MenuItem)
+    const itemsWithRatings = items.map((event) => {
+      const totalReviews = event.reviews.length;
+      const averageRating =
+        totalReviews > 0
+          ? event.reviews.reduce((sum, r) => sum + r.rating, 0) /
+            totalReviews
+          : 0;
+
+      return {
+        ...event,
+        averageRating,
+        totalReviews,
+      };
     });
 
-    return NextResponse.json(newEvent, { status: 201 });
+    return NextResponse.json({ items: itemsWithRatings, total });
   } catch (error) {
-    console.error("CREATE EVENT ERROR:", error);
+    console.error("Event GET error:", error);
     return NextResponse.json(
-      { error: "Failed to create event" },
+      {
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch events",
+      },
       { status: 500 }
     );
   }
 }
-
-// export async function GET() {
-//   const events = await prisma.event.findMany({
-//     orderBy: { createdAt: "desc" },
-//     select: {
-//       id: true,
-//       title: true,
-//       description: true,
-//       status: true,
-//       createdAt: true,
-//     },
-//   });
-
-//   return NextResponse.json(events);
-// }
-
