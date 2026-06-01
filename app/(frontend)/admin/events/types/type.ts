@@ -9,3 +9,11 @@ export interface EventsResponse {
   events: Event[];
 }
 
+export interface eventFilters {
+  status?: string;
+  search?: string;
+  category?:string;
+  dateFilter?: string;
+  page?:number;
+  limit?:number
+}

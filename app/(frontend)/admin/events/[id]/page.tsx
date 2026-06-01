@@ -4,8 +4,9 @@ import { useParams } from "next/navigation";
 import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamicform/dynamicform";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 import { FullScreenLoader } from "@/app/(frontend)/components/reusables/loader/loader";
-import { useEvent } from "../hooks/usegetsingleevent";
+;
 import { useUpdateEvent } from "../hooks/useupdateevent";
+import { useGetEvents } from "../hooks/usegetEvents";
 
 
 
@@ -41,7 +42,7 @@ export default function UpdateEventPage() {
   const params = useParams();
   const eventId = params.id as string;
 
-  const { data: event, isLoading } = useEvent(eventId);
+  const { data: event, isLoading } = useGetEvents(eventId);
   const { mutate, isPending } = useUpdateEvent();
 
   if (isLoading) return <FullScreenLoader />;

@@ -81,8 +81,8 @@ model MenuItem {
   price       Float
   available   Boolean @default(true)
 
-  categoryId String
-  category      MenuCategory @relation(fields: [categoryId], references: [id])
+  categoryId   String
+  category     MenuCategory     @relation(fields: [categoryId], references: [id])
   images       ItemImage[]
   orderItems   OrderItem[]
   packageItems PackageItem[]
@@ -160,9 +160,6 @@ model OrderHamper {
  * =======================
  */
 
-
-
-
 model Package {
   id          String  @id @default(uuid())
   name        String
@@ -201,26 +198,28 @@ model PackageItem {
  */
 
 model EventCategory {
-  id         String   @id @default(uuid())
-  name       String
-  image      String?
-  publicId   String?  
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  name      String
+  image     String?
+  publicId  String?
+  createdAt DateTime @default(now())
 
   items Event[]
 }
 
 model Event {
-  id          String      @id @default(uuid())
+  id          String          @id @default(uuid())
   name        String
   description String?
-  available Boolean  @default(true)
-  categoryId String
-  category     EventCategory @relation(fields: [categoryId], references: [id])
-  createdAt   DateTime    @default(now())
-  menuItems EventMenuItem[]
-  packages  EventPackage[]
-  reviews   EventReview[]
+  image       String?
+  publicId    String?
+  available   Boolean         @default(true)
+  categoryId  String
+  category    EventCategory   @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime        @default(now())
+  menuItems   EventMenuItem[]
+  packages    EventPackage[]
+  reviews     EventReview[]
 }
 
 model EventMenuItem {
@@ -256,27 +255,28 @@ model HamperCategory {
   image     String?
   publicId  String?
   createdAt DateTime @default(now())
-  items Hamper[]
+  items     Hamper[]
 }
-  model Hamper {
-    id          String  @id @default(uuid())
-    name        String
-    description String?
-    originalPrice Float
-    discountType  DiscountType?
-    discountValue Float?
-    finalPrice    Float
-    image     String?
-    publicId  String?
-    categoryId String
-    category     HamperCategory @relation(fields: [categoryId], references: [id])
-    available Boolean  @default(true)
-    createdAt DateTime @default(now())
 
-    items        HamperItem[]
-    orderHampers OrderHamper[]
-    reviews      HamperReview[]
-  }
+model Hamper {
+  id            String         @id @default(uuid())
+  name          String
+  description   String?
+  originalPrice Float
+  discountType  DiscountType?
+  discountValue Float?
+  finalPrice    Float
+  image         String?
+  publicId      String?
+  categoryId    String
+  category      HamperCategory @relation(fields: [categoryId], references: [id])
+  available     Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+
+  items        HamperItem[]
+  orderHampers OrderHamper[]
+  reviews      HamperReview[]
+}
 
 model HamperItem {
   id         String @id @default(uuid())

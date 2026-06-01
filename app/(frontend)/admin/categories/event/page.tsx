@@ -14,18 +14,16 @@ import { DataTable } from "@/app/(frontend)/components/reusables/table/table";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
 import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 import { useDeleteEventCategory } from "./hooks/useDeleteEventCategory";
-import { useEveCategories } from "./hooks/useEventCategories";
+import { useEventCategories } from "./hooks/useEventCategories";
+
 
 
 export default function EventCategoriesPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-
   const limit = 4;
-
   const debouncedSearch = useDebounce(search, 1000);
-
-  const { data, isPending, isFetching } = useEveCategories({
+  const { data, isPending, isFetching } = useEventCategories({
     page,
     limit,
     search: debouncedSearch,

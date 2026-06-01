@@ -30,73 +30,73 @@ export async function POST(req: Request) {
   }
 }
 
-  export async function GET(req: NextRequest) {
-    try {
-      await requireRole(req, ["admin"]);
+    export async function GET(req: NextRequest) {
+      try {
+        await requireRole(req, ["admin"]);
 
-      const { searchParams } = new URL(req.url); 
-      const page = Number(searchParams.get("page") ?? 1);
-      const limit = Number(searchParams.get("limit") ?? 10);
-      const skip = (page - 1) * limit;
+        const { searchParams } = new URL(req.url); 
+        const page = Number(searchParams.get("page") ?? 1);
+        const limit = Number(searchParams.get("limit") ?? 10);
+        const skip = (page - 1) * limit;
 
-      // Build reusable filters
-  const where = buildFilter<Prisma.MenuItemWhereInput>(
-    {
-      status: searchParams.get("status"),
-      category: searchParams.get("category"),
-      search: searchParams.get("search"),
-      dateFilter: searchParams.get("dateFilter"),
-    },
-    {
-      hasCategory: true,
-      searchFields: ["title", "description"],
-    }
-  );
+        // Build reusable filters
+    const where = buildFilter<Prisma.MenuItemWhereInput>(
+      {
+        status: searchParams.get("status"),
+        category: searchParams.get("category"),
+        search: searchParams.get("search"),
+        dateFilter: searchParams.get("dateFilter"),
+      },
+      {
+        hasCategory: true,
+        searchFields: ["title", "description"],
+      }
+    );
 
-      // Fetch menu items with category, images, and aggregated reviews
-      const [items, total] = await Promise.all([
-        prisma.menuItem.findMany({
-          where,
-          skip,
-          take: limit,
-          orderBy: { createdAt: "desc" },
-          include: {
-            category: true,
-            images: true,
-            reviews: true, // Include all reviews for aggregation
+        // Fetch menu items with category, images, and aggregated reviews
+        const [items, total] = await Promise.all([
+          prisma.menuItem.findMany({
+            where,
+            skip,
+            take: limit,
+            orderBy: { createdAt: "desc" },
+            include: {
+              category: true,
+              images: true,
+              reviews: true, // Include all reviews for aggregation
+            },
+          }),
+          prisma.menuItem.count({ where }),
+        ]);
+
+        // Map items to include averageRating and totalComments
+        const itemsWithRatings = items.map((item) => {
+          const totalReviews = item.reviews.length;
+          const averageRating =
+            totalReviews > 0
+              ? item.reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
+              : 0;
+
+          return {
+            ...item,
+            averageRating,
+            totalReviews,
+            totalComments: totalReviews,
+          };
+        });
+
+        return NextResponse.json({ items: itemsWithRatings, total });
+      } catch (error) {
+        console.error("MenuItem GET error:", error);
+        return NextResponse.json(
+          {
+            message:
+              error instanceof Error
+                ? error.message
+                : "Failed to fetch menu items",
           },
-        }),
-        prisma.menuItem.count({ where }),
-      ]);
-
-      // Map items to include averageRating and totalComments
-      const itemsWithRatings = items.map((item) => {
-        const totalReviews = item.reviews.length;
-        const averageRating =
-          totalReviews > 0
-            ? item.reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
-            : 0;
-
-        return {
-          ...item,
-          averageRating,
-          totalReviews,
-          totalComments: totalReviews,
-        };
-      });
-
-      return NextResponse.json({ items: itemsWithRatings, total });
-    } catch (error) {
-      console.error("MenuItem GET error:", error);
-      return NextResponse.json(
-        {
-          message:
-            error instanceof Error
-              ? error.message
-              : "Failed to fetch menu items",
-        },
-        { status: 500 }
-      );
+          { status: 500 }
+        );
+      }
     }
-  }
 

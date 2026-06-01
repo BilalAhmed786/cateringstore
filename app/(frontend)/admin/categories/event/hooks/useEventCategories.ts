@@ -6,7 +6,7 @@ import { EventcategoryParams, EventCategoryResponse } from "../types/type";
 ;
 
 
-export const useEveCategories = ({
+export const useEventCategories = ({
   page,
   limit,
   search,

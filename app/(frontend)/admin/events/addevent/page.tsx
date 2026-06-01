@@ -15,33 +15,52 @@ import {
 import { FieldGroup } from "@/app/(frontend)/components/ui/field";
 import { FormField } from "@/app/(frontend)/components/reusables/fields/fieldscase";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
-
 import { generateSchema } from "@/app/(frontend)/components/reusables/validation/valdiation";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
-
 import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
 import PackageBrowser from "../../packages/(component)/packagebrowser";
 import { EntityCart } from "../../../components/reusables/cart/entitycart";
-
 import { useCreateEvent } from "../hooks/usecreateevent";
 import { CartItem } from "../../reusable/types/type";
 import { GridItem } from "../../reusable/grid/gridtypes";
+import { useEventCategories } from "../../categories/event/hooks/useEventCategories";
 
-/* -------------------- EVENT FIELDS -------------------- */
-const eventFields: FieldConfig[] = [
-  { name: "name", label: "Event Name", type: "text", required: true },
-  { name: "description", label: "Description", type: "textarea" },
-  
-];
 
 export default function AddEventPage() {
   const [activeTab, setActiveTab] = useState("details");
-
   const [selectedMenuItems, setSelectedMenuItems] = useState<CartItem[]>([]);
   const [selectedPackages, setSelectedPackages] = useState<CartItem[]>([]);
-
   const { mutate: createEvent, isPending } = useCreateEvent();
-
+  const {data} =  useEventCategories({page:1,limit:100})
+  
+  
+  /* -------------------- EVENT FIELDS -------------------- */
+const eventFields: FieldConfig[] = [
+  { name: "name", label: "Event Name", type: "text", required: true },
+  { name: "description", label: "Description", type: "textarea" },
+    {
+      name: "categoryId",
+      label: "Category",
+      type: "select",
+      options: data?.categories.map((c) => ({
+        label: c.name,
+        value: c.id,
+      })),
+    
+    },
+    {
+      name: "image",
+      label: "Image",
+      type: "file",
+      className: "w-[200] relative h-32 rounded", // image preview classes
+      dragdrop: "border-4 border-blue-500 p-12 rounded-xl",
+      
+    },
+  
+];
+  
+  
+  
   const schema = generateSchema(eventFields);
 
   const form = useForm({
@@ -99,6 +118,8 @@ export default function AddEventPage() {
   createEvent({
     name: data.name,
     description: data.description,
+    categoryId:data.categoryId,
+    image:data.image,
     menuItems: selectedMenuItems.map((i) => ({
       menuItemId: i.id,
     })),
