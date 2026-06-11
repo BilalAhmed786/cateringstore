@@ -10,11 +10,11 @@ export function useUpdateEvent() {
   const router = useRouter();
 
   return useMutation<Event, unknown, FieldValues>({
-    mutationFn: ({ id, title, description, status }) =>
+    mutationFn: ({ id, ...data }) =>
       apiRequest<Event>({
         url: `/api/admin/event/${id}`,
         method: "PUT",
-        body: { title, description, status },
+        body: data,
         authRequired: true,
       }),
     onSuccess: () => {

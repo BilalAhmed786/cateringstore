@@ -171,7 +171,7 @@ const eventFields: FieldConfig[] = [
                 {/* MENU ITEMS */}
                 <TabsContent value="menu-items">
                   <MenuItemBrowser
-                    selectable
+                    selectable={false}
                     showFilters
                     onSelectItem={handleSelectMenuItem}
                   />
@@ -180,7 +180,7 @@ const eventFields: FieldConfig[] = [
                 {/* PACKAGES */}
                 <TabsContent value="packages">
                   <PackageBrowser
-                    selectable
+                    selectable ={false}
                     onSelectItem={handleSelectPackage}
                   />
                 </TabsContent>

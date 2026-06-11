@@ -12,7 +12,8 @@ export function useToggleEvent() {
 
   return useMutation<void, Error, ToggleEventPayload>({
     mutationFn: async ({ id, available }) => {
-      await apiRequest({
+   
+     await apiRequest({
         url: `/api/admin/event/${id}/toggle`,
         method: "PATCH",
         body: {

@@ -17,3 +17,52 @@ export interface eventFilters {
   page?:number;
   limit?:number
 }
+
+export type EventMenuItem = {
+  id: string;
+  eventId: string;
+  menuItemId: string;
+  quantity: number;
+  menuItem: {
+    id: string;
+    title: string;
+    description: string;
+    price: number;
+    available: boolean;
+    images: any[];
+  };
+};
+
+export type EventPackage = {
+  id: string;
+  eventId: string;
+  packageId: string;
+  quantity: number;
+  package: {
+    id: string;
+    title: string;
+    price: number;
+  };
+};
+
+export type Event = {
+  id: string;
+  name: string;
+  description: string | null;
+  image: string | null;
+  publicId: string | null;
+  available: boolean;
+  categoryId: string;
+  createdAt: string;
+
+  category: {
+    id: string;
+    name: string;
+    image: string;
+    publicId: string;
+    createdAt: string;
+  };
+
+  menuItems: EventMenuItem[];
+  packages: EventPackage[];
+};

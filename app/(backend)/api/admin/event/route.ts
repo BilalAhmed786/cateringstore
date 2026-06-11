@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
       prisma.event.count({ where }),
     ]);
 
-    // Optional: rating aggregation (same style as MenuItem)
+  
     const itemsWithRatings = items.map((event) => {
       const totalReviews = event.reviews.length;
       const averageRating =
@@ -68,6 +68,69 @@ export async function GET(req: NextRequest) {
             ? error.message
             : "Failed to fetch events",
       },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  
+  const userOrResponse = await requireRole(req, ["ADMIN"]);
+  if (userOrResponse instanceof NextResponse) return userOrResponse;
+
+  try {
+    const body = await req.json();
+
+    const {
+      name,
+      description,
+      categoryId,
+      menuItems = [],
+      packages = [],
+    } = body;
+
+    
+    if (!name) {
+      return NextResponse.json(
+        { error: "Event name is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!menuItems.length && !packages.length) {
+      return NextResponse.json(
+        { error: "Select at least one menu item or package" },
+        { status: 400 }
+      );
+    }
+
+    const newEvent = await prisma.event.create({
+      data: {
+        name,
+        description: description ?? null,
+        categoryId,
+        menuItems: {
+          create: menuItems.map((m: { menuItemId: string }) => ({
+            menuItemId: m.menuItemId,
+          })),
+        },
+        packages: {
+          create: packages.map((p: { packageId: string }) => ({
+            packageId: p.packageId,
+          })),
+        },
+      },
+      include: {
+        menuItems: true,
+        packages: true,
+      },
+    });
+
+    return NextResponse.json(newEvent.id, { status: 201 });
+  } catch (error) {
+    console.error("CREATE EVENT ERROR:", error);
+    return NextResponse.json(
+      { error: "Failed to create event" },
       { status: 500 }
     );
   }
