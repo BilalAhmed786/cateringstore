@@ -213,6 +213,7 @@ model Event {
   description String?
   image       String?
   publicId    String?
+  price       Float           @default(0)
   available   Boolean         @default(true)
   categoryId  String
   category    EventCategory   @relation(fields: [categoryId], references: [id])

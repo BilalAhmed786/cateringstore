@@ -74,7 +74,6 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  
   const userOrResponse = await requireRole(req, ["ADMIN"]);
   if (userOrResponse instanceof NextResponse) return userOrResponse;
 
@@ -89,10 +88,16 @@ export async function POST(req: NextRequest) {
       packages = [],
     } = body;
 
-    
     if (!name) {
       return NextResponse.json(
         { error: "Event name is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!categoryId) {
+      return NextResponse.json(
+        { error: "Category is required" },
         { status: 400 }
       );
     }
@@ -104,22 +109,99 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // ---------------- Fetch Menu Item Prices ----------------
+
+    const menuItemIds = menuItems.map(
+      (m: { menuItemId: string }) => m.menuItemId
+    );
+
+    const dbMenuItems = await prisma.menuItem.findMany({
+      where: {
+        id: {
+          in: menuItemIds,
+        },
+      },
+      select: {
+        id: true,
+        price: true,
+      },
+    });
+
+    // ---------------- Fetch Package Prices ----------------
+
+    const packageIds = packages.map(
+      (p: { packageId: string }) => p.packageId
+    );
+
+    const dbPackages = await prisma.package.findMany({
+      where: {
+        id: {
+          in: packageIds,
+        },
+      },
+      select: {
+        id: true,
+        finalPrice: true,
+      },
+    });
+
+    // ---------------- Calculate Event Price ----------------
+
+    const menuTotal = menuItems.reduce(
+      (
+        total: number,
+        item: { menuItemId: string; quantity: number }
+      ) => {
+        const dbItem = dbMenuItems.find(
+          (m) => m.id === item.menuItemId
+        );
+
+        return total + (dbItem?.price ?? 0) * item.quantity;
+      },
+      0
+    );
+
+    const packageTotal = packages.reduce(
+      (
+        total: number,
+        item: { packageId: string; quantity: number }
+      ) => {
+        const dbPackage = dbPackages.find(
+          (p) => p.id === item.packageId
+        );
+
+        return total + (dbPackage?.finalPrice ?? 0) * item.quantity;
+      },
+      0
+    );
+
+    const totalPrice = menuTotal + packageTotal;
+
+    // ---------------- Create Event ----------------
+
     const newEvent = await prisma.event.create({
       data: {
         name,
         description: description ?? null,
         categoryId,
+        price: totalPrice,
+
         menuItems: {
-          create: menuItems.map((m: { menuItemId: string,quantity:number }) => ({
-            menuItemId: m.menuItemId,
-            quantity: m.quantity,
-          })),
+          create: menuItems.map(
+            (m: { menuItemId: string; quantity: number }) => ({
+              menuItemId: m.menuItemId,
+              quantity: m.quantity,
+            })
+          ),
         },
+
         packages: {
-          create: packages.map((p: { packageId: string,quantity:number  }) => ({
-            packageId: p.packageId,
-            quantity: p.quantity,
-          })),
+          create: packages.map(
+            (p: { packageId: string; quantity: number }) => ({
+              packageId: p.packageId,
+              quantity: p.quantity,
+            })
+          ),
         },
       },
       include: {
@@ -131,9 +213,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(newEvent.id, { status: 201 });
   } catch (error) {
     console.error("CREATE EVENT ERROR:", error);
+
     return NextResponse.json(
-      { error: "Failed to create event" },
-      { status: 500 }
+      {
+        error: "Failed to create event",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }
