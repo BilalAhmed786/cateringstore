@@ -40,16 +40,12 @@ export default function EditEventPage() {
 
   const { data: singleEvent, isPending } = useGetSingleEvent(id);
   const { data: categories } = useEventCategories({ page: 1, limit: 100 });
-
   const { mutate: updateEvent, isPending: isUpdating } = useUpdateEvent();
   const { mutate: updateImage } = useUploadEventImage();
-
   const isReady = singleEvent && categories?.categories?.length !== 0;
-
   const [selectedMenuItems, setSelectedMenuItems] = useState<CartItem[]>([]);
   const [selectedPackages, setSelectedPackages] = useState<CartItem[]>([]);
   const [activeTab, setActiveTab] = useState("details");
-
   const initializedRef = useRef(false);
 
   /* ---------------- FIELDS ---------------- */
@@ -137,11 +133,12 @@ export default function EditEventPage() {
     if (!singleEvent?.packages) return [];
     return singleEvent.packages.map((p) => ({
       id: p.package.id,
-      title: p.package.title,
-      price: p.package.price,
+      title: p.package.name,
+      price: p.package.finalPrice,
+      image: p.package.image,
       quantity: p.quantity,
     }));
-  }, [singleEvent]);
+  }, [singleEvent])
 
   useEffect(() => {
     if (initializedRef.current) return;
@@ -252,7 +249,7 @@ export default function EditEventPage() {
               <div className="grid gap-6 lg:grid-cols-3">
                 <div className="lg:col-span-2">
                   <MenuItemBrowser
-                    selectable
+                    selectable={false}
                     showFilters
                     onSelectItem={handleSelectMenuItem}
                   />
@@ -273,7 +270,7 @@ export default function EditEventPage() {
               <div className="grid gap-6 lg:grid-cols-3">
                 <div className="lg:col-span-2">
                   <PackageBrowser
-                    selectable
+                    selectable={false}
                     onSelectItem={handleSelectPackage}
                   />
                 </div>

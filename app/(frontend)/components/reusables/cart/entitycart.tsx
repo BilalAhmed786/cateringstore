@@ -37,6 +37,7 @@ export function EntityCart({
       )}
 
       {items.map((item) => (
+    
         <div
           key={item.id}
           className="flex items-center gap-3 rounded-lg border p-2"
@@ -100,7 +101,7 @@ export function EntityCart({
 
       {showTotal && (
         <div className="border-t pt-3 text-right font-semibold">
-          Total: Rs {total}
+          Total: Rs {Math.floor(total * 10) / 10}
         </div>
       )}
     </div>

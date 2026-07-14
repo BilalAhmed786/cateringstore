@@ -226,6 +226,7 @@ model EventMenuItem {
   id         String @id @default(uuid())
   eventId    String
   menuItemId String
+  quantity   Int    @default(1)
 
   event    Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   menuItem MenuItem @relation(fields: [menuItemId], references: [id])
@@ -237,6 +238,7 @@ model EventPackage {
   id        String @id @default(uuid())
   eventId   String
   packageId String
+  quantity  Int    @default(1)
 
   event   Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
   package Package @relation(fields: [packageId], references: [id])

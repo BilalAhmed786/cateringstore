@@ -1,3 +1,4 @@
+import { images } from "../../menu-items/types/types";
 export interface UseEventsOptions {
   page: number;
   limit: number;
@@ -29,7 +30,7 @@ export type EventMenuItem = {
     description: string;
     price: number;
     available: boolean;
-    images: any[];
+    images: images[];
   };
 };
 
@@ -40,8 +41,10 @@ export type EventPackage = {
   quantity: number;
   package: {
     id: string;
-    title: string;
-    price: number;
+    name:string;
+    finalPrice:number;
+    image:string    
+
   };
 };
 

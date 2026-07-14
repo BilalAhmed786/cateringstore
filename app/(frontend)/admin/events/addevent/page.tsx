@@ -122,9 +122,11 @@ const eventFields: FieldConfig[] = [
     image:data.image,
     menuItems: selectedMenuItems.map((i) => ({
       menuItemId: i.id,
+      quantity: i.quantity,
     })),
     packages: selectedPackages.map((p) => ({
       packageId: p.id,
+      quantity: p.quantity,
     })),
   });
 };

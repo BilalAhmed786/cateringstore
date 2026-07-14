@@ -110,13 +110,15 @@ export async function POST(req: NextRequest) {
         description: description ?? null,
         categoryId,
         menuItems: {
-          create: menuItems.map((m: { menuItemId: string }) => ({
+          create: menuItems.map((m: { menuItemId: string,quantity:number }) => ({
             menuItemId: m.menuItemId,
+            quantity: m.quantity,
           })),
         },
         packages: {
-          create: packages.map((p: { packageId: string }) => ({
+          create: packages.map((p: { packageId: string,quantity:number  }) => ({
             packageId: p.packageId,
+            quantity: p.quantity,
           })),
         },
       },

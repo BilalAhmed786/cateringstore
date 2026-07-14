@@ -27,7 +27,7 @@ export async function GET(
           include: {
             menuItem: {
               include: {
-                images: true,
+                images: true
               },
             },
           },
