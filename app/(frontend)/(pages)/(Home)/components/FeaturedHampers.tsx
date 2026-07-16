@@ -1,58 +1,48 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Gift } from "lucide-react";
-import { Button } from "../../../components/ui/button";
+import { ArrowRight } from "lucide-react";
 
-const featuredHampers = [
-  {
-    id: 1,
-    name: "Wedding Hamper",
-    image: "/images/hampers/wedding.jpg",
-    price: "$149",
-    badge: "Best Seller",
-    description:
-      "A premium gift hamper filled with delicious treats for weddings and engagements.",
-  },
-  {
-    id: 2,
-    name: "Corporate Hamper",
-    image: "/images/hampers/corporate.jpg",
-    price: "$99",
-    badge: "Popular",
-    description:
-      "A thoughtful gift for clients, employees, and corporate celebrations.",
-  },
-  {
-    id: 3,
-    name: "Birthday Hamper",
-    image: "/images/hampers/birthday.jpg",
-    price: "$79",
-    badge: "New",
-    description:
-      "Celebrate birthdays with a beautifully arranged hamper full of sweet surprises.",
-  },
-];
+import { Button } from "@/app/(frontend)/components/ui/button";
+import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
+import { useHamperCategories } from "../hooks/useHamperCategories";
+
 
 export default function FeaturedHampers() {
+  const { data: categories, isLoading } =useHamperCategories();
+
+  if (isLoading) {
+    return (
+      <section className="py-24">
+        <div className="container mx-auto px-4">
+          <p>Loading...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (!categories?.length) return null;
+
   return (
     <section className="py-24">
       <div className="container mx-auto px-4">
 
         {/* Header */}
-        <div className="mb-14 flex flex-col items-center justify-between gap-6 md:flex-row">
+        <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
 
           <div>
-            <span className="text-sm font-semibold uppercase tracking-widest text-primary">
+            <p className="text-sm font-semibold uppercase tracking-[4px] text-primary">
               Gift Hampers
-            </span>
+            </p>
 
             <h2 className="mt-2 text-4xl font-bold">
               Beautiful Hampers For Every Celebration
             </h2>
 
             <p className="mt-4 max-w-2xl text-muted-foreground">
-              Surprise your loved ones, friends, or business partners with
-              carefully curated premium gift hampers.
+              Discover premium hamper categories perfect for birthdays,
+              weddings, corporate gifting and every special occasion.
             </p>
           </div>
 
@@ -65,67 +55,41 @@ export default function FeaturedHampers() {
 
         </div>
 
-        {/* Cards */}
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <AppCarousel
+          items={categories}
+          delay={3000}
+          showArrows={false}
+          itemClassName="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+          renderItem={(category) => (
+            <div className="overflow-hidden rounded-2xl bg-white shadow transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
 
-          {featuredHampers.map((hamper) => (
-            <div
-              key={hamper.id}
-              className="group overflow-hidden rounded-2xl border bg-background shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
-            >
-              {/* Image */}
-              <div className="relative h-72 overflow-hidden">
-
+              <div className="group relative h-64 overflow-hidden">
                 <Image
-                  src={hamper.image}
-                  alt={hamper.name}
+                  src={category.image || "/placeholder.jpg"}
+                  alt={category.name}
                   fill
-                  className="object-cover transition duration-500 group-hover:scale-110"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
+              </div>
 
-                {/* Badge */}
-                <div className="absolute left-4 top-4 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
-                  {hamper.badge}
-                </div>
+              <div className="p-5">
+
+                <h3 className="text-xl font-semibold">
+                  {category.name}
+                </h3>
+
+                <Link
+                  href={`/hampers?category=${category.id}`}
+                  className="mt-3 inline-flex items-center text-sm font-medium text-primary hover:underline"
+                >
+                  Explore →
+                </Link>
 
               </div>
 
-              {/* Content */}
-              <div className="p-6">
-
-                <div className="mb-3 flex items-center justify-between">
-
-                  <h3 className="text-2xl font-bold">
-                    {hamper.name}
-                  </h3>
-
-                  <Gift className="h-5 w-5 text-primary" />
-
-                </div>
-
-                <p className="mb-6 text-sm leading-7 text-muted-foreground">
-                  {hamper.description}
-                </p>
-
-                <div className="flex items-center justify-between">
-
-                  <span className="text-2xl font-bold text-primary">
-                    {hamper.price}
-                  </span>
-
-                  <Button asChild>
-                    <Link href={`/hampers/${hamper.id}`}>
-                      View Details
-                    </Link>
-                  </Button>
-
-                </div>
-
-              </div>
             </div>
-          ))}
-
-        </div>
+          )}
+        />
 
       </div>
     </section>

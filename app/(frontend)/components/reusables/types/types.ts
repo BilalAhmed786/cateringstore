@@ -136,3 +136,18 @@ export interface BaseSearchProps {
 }
 
 
+export interface AppCarouselProps<T> {
+  items: T[];
+  renderItem: (item: T) => React.ReactNode;
+
+  itemClassName?: string;
+  className?: string;
+
+  autoplay?: boolean;
+  delay?: number;
+  loop?: boolean;
+
+  showArrows?: boolean;
+  previousClassName?: string;
+  nextClassName?: string;
+}

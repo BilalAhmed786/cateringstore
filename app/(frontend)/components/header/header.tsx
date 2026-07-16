@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import Cateringlogo from "../../assets/saif catering.png";
 
 const navItems = [
-  { name: "Home", href: "localhost:3000" },
+  { name: "Home", href: "/" },
   { name: "Menu Items", href: "/menu-items" },
   { name: "Packages", href: "/packages" },
   { name: "Events", href: "/events" },
@@ -17,12 +17,43 @@ const navItems = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
-  // Replace with your auth state
+  // Replace with auth state
   const isLoggedIn = false;
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Always show at the top
+      if (currentScrollY < 20) {
+        setShowHeader(true);
+      } else if (currentScrollY > lastScrollY) {
+        // Scrolling down
+        setShowHeader(false);
+      } else {
+        // Scrolling up
+        setShowHeader(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
+
   return (
-    <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
+    <header
+      className={`fixed inset-x-0 top-0 z-50 border-b bg-white/90 backdrop-blur-md shadow-sm transition-transform duration-300 ${
+        showHeader ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center">
@@ -33,20 +64,21 @@ export default function Header() {
             priority
           />
         </Link>
+
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-8 md:flex">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-gray-700 transition hover:text-amber-600"
+              className="transition hover:text-primary"
             >
               {item.name}
             </Link>
           ))}
         </nav>
 
-        {/* Right Side */}
+        {/* Right */}
         <div className="hidden items-center gap-3 md:flex">
           {isLoggedIn ? (
             <>
@@ -66,13 +98,15 @@ export default function Header() {
           )}
         </div>
 
-        {/* Mobile Button */}
-        <button className="md:hidden" onClick={() => setOpen(!open)}>
+        {/* Mobile */}
+        <button
+          className="md:hidden"
+          onClick={() => setOpen((prev) => !prev)}
+        >
           {open ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {open && (
         <div className="border-t bg-white md:hidden">
           <nav className="flex flex-col p-4">
@@ -81,29 +115,20 @@ export default function Header() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="rounded-md px-3 py-3 text-gray-700 hover:bg-gray-100 hover:text-amber-600"
+                className="rounded-md px-3 py-3 hover:bg-muted"
               >
                 {item.name}
               </Link>
             ))}
 
             <div className="mt-4 flex flex-col gap-2">
-              {isLoggedIn ? (
-                <>
-                  <Button variant="outline">Profile</Button>
-                  <Button variant="destructive">Logout</Button>
-                </>
-              ) : (
-                <>
-                  <Button variant="ghost" asChild>
-                    <Link href="/login">Login</Link>
-                  </Button>
+              <Button variant="ghost" asChild>
+                <Link href="/auth/login">Login</Link>
+              </Button>
 
-                  <Button asChild>
-                    <Link href="/register">Register</Link>
-                  </Button>
-                </>
-              )}
+              <Button asChild>
+                <Link href="/auth/register">Register</Link>
+              </Button>
             </div>
           </nav>
         </div>

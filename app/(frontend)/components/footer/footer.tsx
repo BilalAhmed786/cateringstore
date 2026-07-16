@@ -26,7 +26,7 @@ export default function Footer() {
               </svg>
 
               <span className="text-2xl font-bold text-white">
-                CateringStore
+                Saif Catering
               </span>
             </Link>
 
