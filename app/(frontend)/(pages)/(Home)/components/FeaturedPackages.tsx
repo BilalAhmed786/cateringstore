@@ -55,6 +55,7 @@ export default function FeaturedPackages() {
         <AppCarousel
           items={packages}
           delay={3500}
+          showArrows={false}
           itemClassName="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
           renderItem={(pkg) => (
             <div className="group h-full overflow-hidden rounded-2xl border bg-background shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
@@ -82,7 +83,7 @@ export default function FeaturedPackages() {
 
                 <Button className="mt-6 w-full" asChild>
                   <Link href={`/packages/${pkg.id}`}>
-                    View Package
+                    Customize Package
                   </Link>
                 </Button>
               </div>

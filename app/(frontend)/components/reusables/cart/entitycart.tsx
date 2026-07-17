@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { Button } from "@/app/(frontend)/components/ui/button";
-import { EntityCartProps } from "../../../admin/reusable/types/type";
+import { EntityCartProps } from "../types/types";
+
 
 export function EntityCart({
   title = "Selected Items",

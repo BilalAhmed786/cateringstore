@@ -43,7 +43,7 @@ export default function EventsSection() {
 
           <Button asChild>
             <Link href="/events">
-              View All
+              View All Events
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
@@ -96,11 +96,11 @@ export default function EventsSection() {
                     </>
                   ) : (
                     <Link
-  href={`/events?category=${event.id}`}
-  className="mt-3 inline-flex items-center text-sm font-medium text-white hover:underline lg:translate-y-4 lg:opacity-0 lg:transition-all lg:duration-500 lg:group-hover:translate-y-0 lg:group-hover:opacity-100"
->
-  View Event →
-</Link>
+                      href={`/events?category=${event.id}`}
+                      className="mt-3 inline-flex items-center text-sm font-medium text-white hover:underline lg:translate-y-4 lg:opacity-0 lg:transition-all lg:duration-500 lg:group-hover:translate-y-0 lg:group-hover:opacity-100"
+                    >
+                      Explore Event →
+                    </Link>
                   )}
                 </div>
               </div>

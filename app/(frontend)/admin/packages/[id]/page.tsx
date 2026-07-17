@@ -28,7 +28,7 @@ import { useUploadPackageImage } from "../hooks/useuploadpackageimage";
 
 import { FieldGroup } from "@/app/(frontend)/components/ui/field";
 import { FormField } from "@/app/(frontend)/components/reusables/fields/fieldscase";
-import { GridItem } from "../../reusable/grid/gridtypes";
+import { GridItem } from "../../../components/reusables/grid/gridtypes";
 
 export default function EditPackagePage() {
   const { id } = useParams<{ id: string }>();

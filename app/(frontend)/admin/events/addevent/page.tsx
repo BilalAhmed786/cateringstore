@@ -22,7 +22,7 @@ import PackageBrowser from "../../packages/(component)/packagebrowser";
 import { EntityCart } from "../../../components/reusables/cart/entitycart";
 import { useCreateEvent } from "../hooks/usecreateevent";
 import { CartItem } from "../../reusable/types/type";
-import { GridItem } from "../../reusable/grid/gridtypes";
+import { GridItem } from "../../../components/reusables/grid/gridtypes";
 import { useEventCategories } from "../../categories/event/hooks/useEventCategories";
 
 

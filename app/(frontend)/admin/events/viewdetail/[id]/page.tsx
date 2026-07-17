@@ -5,8 +5,8 @@ import { ArrowLeft } from "lucide-react";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/app/(frontend)/components/ui/tabs";
 import { useGetSingleEvent } from "../../hooks/usegetsingleevent";
-import { Menuitemdetail } from "../../../reusable/menuitemdetail/menuitemdetail";
-import { Packagedetail } from "../../../reusable/packagedetail/packagedetail";
+import { Menuitemdetail } from "../../../../components/reusables/menuitemdetail/menuitemdetail";
+import { Packagedetail } from "../../../../components/reusables/packagedetail/packagedetail";
 
 
 export default function ViewEventDetailsPage() {

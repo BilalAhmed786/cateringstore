@@ -33,7 +33,7 @@ export default function FeaturedHampers() {
 
           <div>
             <p className="text-sm font-semibold uppercase tracking-[4px] text-primary">
-              Gift Hampers
+              Featured Hampers
             </p>
 
             <h2 className="mt-2 text-4xl font-bold">

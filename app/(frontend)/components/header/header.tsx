@@ -9,7 +9,7 @@ import Cateringlogo from "../../assets/saif catering.png";
 
 const navItems = [
   { name: "Home", href: "/" },
-  { name: "Menu Items", href: "/menu-items" },
+  { name: "Menu Items", href: "/menuitem" },
   { name: "Packages", href: "/packages" },
   { name: "Events", href: "/events" },
   { name: "Hampers", href: "/hampers" },

@@ -4,11 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash, Eye, EyeOff } from "lucide-react";
 
-import { EntityFilters } from "../../reusable/filters/entityfilters";
-import { EntityGrid } from "../../reusable/grid/entitygrid";
-import { RatingSummary } from "../../reusable/ratingsummary/ratingsummary";
+import { EntityFilters } from "../../../components/reusables/filters/entityfilters";
+import { EntityGrid } from "../../../components/reusables/grid/entitygrid";
+import { RatingSummary } from "../../../components/reusables/ratingsummary/ratingsummary";
 
-import { GridItem } from "../../reusable/grid/gridtypes";
+import { GridItem } from "../../../components/reusables/grid/gridtypes";
 import { useGetPackages } from "../hooks/usegetpackages";
 import { useDeletePackage } from "../hooks/usedeletepackage";
 import { useTogglePackage } from "../hooks/usetogglepackage";

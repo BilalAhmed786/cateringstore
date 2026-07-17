@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { Card, CardContent, CardFooter, CardHeader } from "@/app/(frontend)/components/ui/card";
 import { Badge } from "@/app/(frontend)/components/ui/badge";
-import { PackageMenuItem } from "../../packages/types/type";
-import { HampereMenuItem } from "../../hampers/types/type";
+import { PackageMenuItem } from "../../../admin/packages/types/type";
+import { HampereMenuItem } from "../../../admin/hampers/types/type";
 
 
 

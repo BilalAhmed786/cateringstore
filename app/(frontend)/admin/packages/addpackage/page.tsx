@@ -20,7 +20,7 @@ import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
 import { EntityCart } from "../../../components/reusables/cart/entitycart";
 import { FieldGroup } from "@/app/(frontend)/components/ui/field";
 import { FormField } from "@/app/(frontend)/components/reusables/fields/fieldscase";
-import { GridItem } from "../../reusable/grid/gridtypes";
+import { GridItem } from "../../../components/reusables/grid/gridtypes";
 import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 /* -------------------- FORM FIELDS -------------------- */

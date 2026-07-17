@@ -1,5 +1,5 @@
 import { Star, MessageCircle } from "lucide-react";
-import { RatingSummaryProps } from "../types/type";
+import { RatingSummaryProps } from "../../../admin/reusable/types/type";
 
 
 

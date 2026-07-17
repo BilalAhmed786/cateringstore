@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash, Eye, EyeOff } from "lucide-react";
 
-import { EntityFilters } from "../../reusable/filters/entityfilters";
-import { EntityGrid } from "../../reusable/grid/entitygrid";
-import { RatingSummary } from "../../reusable/ratingsummary/ratingsummary";
-import { DropdownAction, GridItem } from "../../reusable/grid/gridtypes";
+import { EntityFilters } from "../../../components/reusables/filters/entityfilters";
+import { EntityGrid } from "../../../components/reusables/grid/entitygrid";
+import { RatingSummary } from "../../../components/reusables/ratingsummary/ratingsummary";
+import { DropdownAction, GridItem } from "../../../components/reusables/grid/gridtypes";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
 import { useGetHampers } from "../hooks/usegethampers";
 import { useDeleteHamper } from "../hooks/usedeletehamper";

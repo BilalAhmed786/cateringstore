@@ -5,6 +5,8 @@ import Link from "next/link";
 
 import { useMenuCategories } from "../hooks/useMenuCategories";
 import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
+import { Button } from "@/app/(frontend)/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 export default function FeaturedMenuCategories() {
   const { data: categories, isLoading } = useMenuCategories();
@@ -27,17 +29,24 @@ export default function FeaturedMenuCategories() {
         {/* Heading */}
         <div className="mb-10">
           <p className="text-sm font-semibold uppercase tracking-[4px] text-primary">
-            Featured Categories
+            Menu Categories
           </p>
 
           <h2 className="mt-2 text-4xl font-bold">
             Explore Our Menu Categories
           </h2>
-
-          <p className="mt-3 max-w-2xl text-muted-foreground">
-            Browse our delicious catering categories crafted for weddings,
-            birthdays, corporate events, and family gatherings.
-          </p>
+          <div className="flex justify-between items-center">
+            <p className="mt-3 max-w-2xl text-muted-foreground">
+              Browse our delicious catering categories crafted for weddings,
+              birthdays, corporate events, and family gatherings.
+            </p>
+            <Button asChild>
+              <Link href="/packages">
+                View All Menu
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
 
         <AppCarousel

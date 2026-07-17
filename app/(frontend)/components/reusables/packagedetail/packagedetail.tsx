@@ -7,7 +7,7 @@ import {
   CardHeader,
 } from "@/app/(frontend)/components/ui/card";
 import { Badge } from "@/app/(frontend)/components/ui/badge";
-import { EventPackage } from "../../events/types/type";
+import { EventPackage } from "../../../admin/events/types/type";
 
 export function Packagedetail({
   packages,

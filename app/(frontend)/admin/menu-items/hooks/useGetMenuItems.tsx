@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq"
 import { MenuItemsFilters } from "../types/types"
-import { GridItem } from "../../reusable/grid/gridtypes";
+import { GridItem } from "../../../components/reusables/grid/gridtypes";
 
 
 export function useGetMenuItems(filters?: MenuItemsFilters) {

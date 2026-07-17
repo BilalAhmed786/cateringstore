@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { useGetPackageDetails } from "../../hooks/usegetsinglepackage";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
-import { Menuitemdetail } from "../../../reusable/menuitemdetail/menuitemdetail";
+import { Menuitemdetail } from "../../../../components/reusables/menuitemdetail/menuitemdetail";
 
 
 

@@ -31,7 +31,7 @@ import { useEventCategories } from "../../categories/event/hooks/useEventCategor
 
 import { CartItem } from "../../reusable/types/type";
 import { useUploadEventImage } from "../hooks/useuploadeventimage";
-import { GridItem } from "../../reusable/grid/gridtypes";
+import { GridItem } from "../../../components/reusables/grid/gridtypes";
 
 /* ---------------- COMPONENT ---------------- */
 

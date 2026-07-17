@@ -14,7 +14,7 @@ export function EntityGrid({
   onSelect,
   actions,
 }: EntityGridProps) {
-console.log(items)
+
   if (isLoading) {
     return (
       <div className="py-16 text-center text-muted-foreground">

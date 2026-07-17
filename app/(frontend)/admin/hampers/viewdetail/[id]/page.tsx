@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
-import { Menuitemdetail } from "../../../reusable/menuitemdetail/menuitemdetail";
+import { Menuitemdetail } from "../../../../components/reusables/menuitemdetail/menuitemdetail";
 import { useGetSingleHamperDetails } from "../../hooks/usegetsinglehamper";
 
 
