@@ -5,6 +5,7 @@ export type FilterOption = {
 export type FilterConfig = {
   key: string;
   label: string;
+  classname?:string;
   value: string;
   options: FilterOption[];
   onChange: (value: string) => void;

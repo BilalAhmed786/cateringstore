@@ -2,6 +2,7 @@ export interface GridItem {
   id: string;
   title: string;
   name: string;
+  description?:string;
   images?: { url: string }[];
   image?: string;
   event?: {

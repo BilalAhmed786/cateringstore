@@ -1,37 +1,37 @@
-import { GridItem } from '../../../components/reusables/grid/gridtypes';
+import { GridItem } from "../../../components/reusables/grid/gridtypes";
 export interface Survey {
-  id: string
-  userId: string
-  menuItemId: string
-  rating: number
-  comment?: string
-  orderId?: string
-  createdAt: string
+  id: string;
+  userId: string;
+  menuItemId: string;
+  rating: number;
+  comment?: string;
+  orderId?: string;
+  createdAt: string;
 }
 
 export interface Category {
-  id: string
-  name: string
-  image:string
+  id: string;
+  name: string;
+  image: string;
 }
 
 export interface images {
-id:string
-url:string
-menuItemId:string
-publicId:string
+  id: string;
+  url: string;
+  menuItemId: string;
+  publicId: string;
 }
 
 export interface MenuItem {
-  id: string
-  title: string
-  description?: string
-  price: number
-  images: images[]
-  available: boolean
-  category: Category
-  surveys?: Survey[] 
-  createdAt: string
+  id: string;
+  title: string;
+  description?: string;
+  price: number;
+  images: images[];
+  available: boolean;
+  category: Category;
+  surveys?: Survey[];
+  createdAt: string;
 }
 
 export type existingimage = {
@@ -41,25 +41,30 @@ export type existingimage = {
 };
 
 export interface CreateMenuItemPayload {
-  title: string
-  price: number
-  categoryId: string
-  available: boolean
+  title: string;
+  price: number;
+  categoryId: string;
+  available: boolean;
 }
 
 export interface MenuItemsFilters {
-  status?: string
-  category?: string
-  search?: string
-  dateFilter?: string 
-  page?: number
-  limit?: number
+  status?: string;
+  category?: string;
+  search?: string;
+  dateFilter?: string;
+
+  page?: number;
+  limit?: number;
+
+  // New
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: "asc" | "desc";
 }
 export interface UploadMenuItemImagesPayload {
-  menuItemId: string
-  image: File[]
+  menuItemId: string;
+  image: File[];
 }
-
 
 export interface MenuItemBrowserProps {
   showFilters?: boolean;
@@ -67,5 +72,5 @@ export interface MenuItemBrowserProps {
   onSelectItem?: (item: GridItem) => void;
 }
 
-export type StatusFilter = "all" | "active" | "inactive"
-export type DateFilter = "all" | "7days"
+export type StatusFilter = "all" | "active" | "inactive";
+export type DateFilter = "all" | "7days";

@@ -6,6 +6,7 @@ import { PackageMenuItem } from "@/app/(frontend)/admin/packages/types/type";
 import { Category } from "@/app/(frontend)/admin/menu-items/types/types";
 
 
+
 export type FieldConfig = {
   type: "email" | "password" |"text" | "number" | "select" | "checkbox" | "radio" | "date" | "file" | "textarea" | "imagepreview";
   name: string;
@@ -187,6 +188,7 @@ export interface EntityCartProps {
   items: CartItem[];
   onChange: (items: CartItem[]) => void;
   showTotal?: boolean;
+  Collapsible?:boolean
 }
 
 export interface DynamicFormFieldsProps {
@@ -255,4 +257,13 @@ export interface Etitygrid{
 
 export interface MenuItemDetailProps {
   items: PackageMenuItem[] | undefined;
+}
+
+export interface PriceFilterProps {
+  label?: string;
+  value: [number, number];
+  min: number;
+  max: number;
+  step?: number;
+  onChange: (value: [number, number]) => void;
 }
