@@ -9,7 +9,7 @@ export function useGetMenuItemById(id?: string) {
     queryFn: () =>
       apiRequest({
         url: `/api/admin/menuitem/${id}`,
-        authRequired: true,
+        authRequired: false,
       }),
   });
 }

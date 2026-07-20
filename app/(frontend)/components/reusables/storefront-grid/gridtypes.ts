@@ -8,9 +8,11 @@ export interface QuantitySelectorProps {
 
 export interface ProductCardProps {
   item: GridItem;
+  onClick?: () => void;
 }
 
 export interface StorefrontGridProps {
   items: GridItem[];
-  isLoading?: boolean;
+  isLoading: boolean;
+  onItemClick?: (item: GridItem) => void;
 }

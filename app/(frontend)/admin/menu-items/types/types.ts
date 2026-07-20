@@ -22,15 +22,33 @@ export interface images {
   publicId: string;
 }
 
+export interface ReviewUser {
+  id: string;
+  name: string;
+}
+
+export interface MenuItemReview {
+  id: string;
+  rating: number;
+  comment?: string | null;
+  createdAt: string;
+  user: ReviewUser;
+}
+
 export interface MenuItem {
   id: string;
   title: string;
-  description?: string;
+  description?: string | null;
   price: number;
   images: images[];
   available: boolean;
   category: Category;
-  surveys?: Survey[];
+
+  reviews: MenuItemReview[];
+  averageRating: number;
+  totalReviews: number;
+  canReview: boolean;
+
   createdAt: string;
 }
 

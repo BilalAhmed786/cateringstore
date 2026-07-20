@@ -1,30 +1,97 @@
 // app/api/admin/menu-items/[id]/route.ts
 import cloudinary from "@/app/(backend)/lib/cloudinary/cloudinary";
+import { getCurrentUser } from "@/app/(backend)/lib/guard/getCurrentuser";
 import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const auth = await requireRole(req, ["ADMIN"]);
-  if (auth instanceof NextResponse) return auth;
+  try {
+    const { id } = await params;
 
-  const { id } = await params;
-  const menuItem = await prisma.menuItem.findUnique({
-    where: { id },
-    include: {
-      category: true,
-      images: true,
-    },
-  });
+    const menuItem = await prisma.menuItem.findUnique({
+      where: { id },
+      include: {
+        category: true,
+        images: true,
+        reviews: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
-  if (!menuItem) {
-    return NextResponse.json({ message: "Not found" }, { status: 404 });
+    if (!menuItem) {
+      return NextResponse.json(
+        { message: "Menu item not found" },
+        { status: 404 },
+      );
+    }
+
+    // -----------------------------
+    // Calculate rating
+    // -----------------------------
+    const totalReviews = menuItem.reviews.length;
+
+    const averageRating =
+      totalReviews > 0
+        ? menuItem.reviews.reduce((sum, review) => sum + review.rating, 0) /
+          totalReviews
+        : 0;
+
+    let canReview = false;
+
+    // -----------------------------
+    // Check logged in user
+    // -----------------------------
+    const user = await getCurrentUser(req);
+
+   if (user) {
+        const purchased = await prisma.orderItem.findFirst({
+          where: {
+            menuItemId: id,
+            order: {
+              userId: user.id,
+              status: "DELIVERED", // Change if needed
+            },
+          },
+        });
+
+        const alreadyReviewed = await prisma.menuItemReview.findUnique({
+          where: {
+            userId_menuItemId: {
+              userId: user.id,
+              menuItemId: id,
+            },
+          },
+        });
+
+        canReview = !!purchased && !alreadyReviewed;
+      }
+     
+      return NextResponse.json({
+      ...menuItem,
+      averageRating,
+      totalReviews,
+      canReview,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 },
+    );
   }
-
-  return NextResponse.json(menuItem);
 }
 
 export async function PUT(
@@ -133,3 +200,5 @@ export async function PATCH(
     }
   }
 }
+
+

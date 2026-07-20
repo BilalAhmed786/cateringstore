@@ -69,7 +69,7 @@ export default function FeaturedMenuCategories() {
                 <h3 className="text-xl font-semibold">{category.name}</h3>
 
                 <Link
-                  href={`/menuitems?category=${category.id}`}
+                  href={`/menuitem/category/${category.id}`}
                   className="mt-3 inline-flex items-center text-sm font-medium text-primary hover:underline"
                 >
                   Explore →

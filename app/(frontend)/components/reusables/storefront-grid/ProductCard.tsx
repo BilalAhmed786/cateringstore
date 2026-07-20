@@ -11,16 +11,16 @@ import { ProductCardProps } from "./gridtypes";
 import { UniButton } from "../button/button";
 import { ShoppingCart } from "lucide-react";
 
-
-export function ProductCard({ item }: ProductCardProps) {
+export function ProductCard({ item, onClick }: ProductCardProps) {
   const { items, addItem, increase, decrease } = useCartStore();
 
   const cartItem = items.find((i) => i.id === item.id);
 
   return (
-    <Card className="overflow-hidden rounded-xl transition hover:shadow-xl">
-      {/* Image */}
-
+    <Card
+      onClick={onClick}
+      className="cursor-pointer overflow-hidden rounded-xl transition hover:shadow-xl"
+    >
       <div className="relative h-52">
         <Image
           src={item.images?.[0]?.url ?? item.image ?? "/placeholder.png"}
@@ -30,7 +30,10 @@ export function ProductCard({ item }: ProductCardProps) {
         />
 
         {!item.available && (
-          <Badge variant="secondary" className="absolute left-3 top-3">
+          <Badge
+            variant="secondary"
+            className="absolute left-3 top-3"
+          >
             Out of Stock
           </Badge>
         )}
@@ -62,18 +65,26 @@ export function ProductCard({ item }: ProductCardProps) {
           </span>
 
           {cartItem ? (
-            <QuantitySelector
-              quantity={cartItem.quantity}
-              onIncrease={() => increase(item.id)}
-              onDecrease={() => decrease(item.id)}
-            />
+            <div
+              onClick={(e) => e.stopPropagation()}
+            >
+              <QuantitySelector
+                quantity={cartItem.quantity}
+                onIncrease={() => increase(item.id)}
+                onDecrease={() => decrease(item.id)}
+              />
+            </div>
           ) : (
-            <UniButton
-              label="Add to Cart"
-              icon={<ShoppingCart className="h-4 w-4" />}
-              onClick={() => addItem(item)}
-              disabled={!item.available}
-            />
+            <div
+              onClick={(e) => e.stopPropagation()}
+            >
+              <UniButton
+                label="Add to Cart"
+                icon={<ShoppingCart className="h-4 w-4" />}
+                onClick={() => addItem(item)}
+                disabled={!item.available}
+              />
+            </div>
           )}
         </div>
       </CardContent>

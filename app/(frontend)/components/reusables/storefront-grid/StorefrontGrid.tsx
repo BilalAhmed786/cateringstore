@@ -3,11 +3,10 @@
 import { ProductCard } from "./ProductCard";
 import { StorefrontGridProps } from "./gridtypes";
 
-
-
 export function StorefrontGrid({
   items,
   isLoading,
+  onItemClick,
 }: StorefrontGridProps) {
   if (isLoading) {
     return (
@@ -16,7 +15,6 @@ export function StorefrontGrid({
       </div>
     );
   }
-
 
   if (!items.length) {
     return (
@@ -27,20 +25,12 @@ export function StorefrontGrid({
   }
 
   return (
-    <div
-      className="
-        grid
-        grid-cols-1
-        sm:grid-cols-2
-        lg:grid-cols-3
-        xl:grid-cols-4
-        gap-6
-      "
-    >
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {items.map((item) => (
         <ProductCard
           key={item.id}
           item={item}
+          onClick={() => onItemClick?.(item)}
         />
       ))}
     </div>
