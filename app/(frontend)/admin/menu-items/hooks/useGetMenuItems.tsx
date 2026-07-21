@@ -29,7 +29,6 @@ export function useGetMenuItems(filters?: MenuItemsFilters) {
         authRequired: false,
       }),
 
-    placeholderData: (prev) => prev,
-    staleTime: 1000 * 10,
+      staleTime: 1000 * 10,
   });
 }

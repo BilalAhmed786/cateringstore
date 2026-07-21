@@ -41,7 +41,7 @@ export default function FeaturedMenuCategories() {
               birthdays, corporate events, and family gatherings.
             </p>
             <Button asChild>
-              <Link href="/packages">
+              <Link href="/menuitem ">
                 View All Menu
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

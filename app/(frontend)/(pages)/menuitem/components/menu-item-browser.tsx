@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import { EntityFilters } from "@/app/(frontend)/components/reusables/filters/entityfilters";
 import { PriceFilter } from "@/app/(frontend)/components/reusables/filters/pricefilter";
 import { StorefrontGrid } from "@/app/(frontend)/components/reusables/storefront-grid/StorefrontGrid";
@@ -8,6 +9,8 @@ import { useAllCategories } from "@/app/(frontend)/admin/menu-items/hooks/useget
 import { useGetMenuItems } from "@/app/(frontend)/admin/menu-items/hooks/useGetMenuItems";
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 import { ProductDetailsSheet } from "@/app/(frontend)/components/reusables/storefront-grid/ProductDetailsSheet";
+import { useInfiniteScroll } from "@/app/(frontend)/components/reusables/hooks/useInfiniteScroll";
+import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
 
 export function MenuItemBrowser() {
   const [category, setCategory] = useState("all");
@@ -17,19 +20,62 @@ export function MenuItemBrowser() {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
+  const [page, setPage] = useState(1);
+  const [items, setItems] = useState<GridItem[]>([]);
   const debouncedSearch = useDebounce(search, 500);
   const debouncedPriceRange = useDebounce(priceRange, 500);
-
-  const { data, isLoading } = useGetMenuItems({
+  const { data, isLoading, isFetching } = useGetMenuItems({
+    page,
+    limit:4,
     category,
     search: debouncedSearch,
     minPrice: debouncedPriceRange[0],
     maxPrice: debouncedPriceRange[1],
   });
 
-  const menuItems = data?.items ?? [];
-
   const { data: categories = [] } = useAllCategories();
+  const hasMore = items.length < (data?.total ?? 0);
+  
+//handlers
+  const handleCategoryChange = (value: string) => {
+  setCategory(value);
+  setPage(1);
+  setItems([]);
+};
+const handleSearchChange = (value: string) => {
+  setSearch(value);
+  setPage(1);
+  setItems([]);
+};
+
+const handlePriceChange = (value: [number, number]) => {
+  setPriceRange(value);
+  setPage(1);
+  setItems([]);
+};
+  
+// Append new data
+useEffect(() => {
+    function updateItems() {
+    if (!data || !page) return;
+
+    if (page === 1) {
+      setItems(data.items);
+    } else {
+      setItems((prev) => [...prev, ...data.items]);
+    }
+  
+  }
+  updateItems();
+}, [data, page]);
+
+//infinite scroll 
+  
+  useInfiniteScroll({
+    loading: isFetching,
+    hasMore,
+    onLoadMore: () => setPage((prev) => prev + 1),
+  });
 
   return (
     <div className="space-y-8 pt-28">
@@ -42,7 +88,7 @@ export function MenuItemBrowser() {
                 key: "category",
                 label: "Category",
                 value: category,
-                onChange: setCategory,
+                onChange: handleCategoryChange,
                 options: [
                   {
                     label: "All",
@@ -60,7 +106,7 @@ export function MenuItemBrowser() {
           <div className="w-full max-w-xs">
             <PriceFilter
               value={priceRange}
-              onChange={setPriceRange}
+              onChange={handlePriceChange }
               min={0}
               max={5000}
               step={100}
@@ -71,7 +117,7 @@ export function MenuItemBrowser() {
         <EntityFilters
           search={{
             value: search,
-            onChange: setSearch,
+            onChange: handleSearchChange,
             placeholder: "Search menu items...",
             classname: "lg:w-5xl sm:w-xl",
           }}
@@ -81,8 +127,8 @@ export function MenuItemBrowser() {
       {/* Grid */}
       <div className="relative mx-7">
         <StorefrontGrid
-          items={menuItems}
-          isLoading={isLoading}
+          items={items}
+          isLoading={isLoading && page === 1}
           onItemClick={(item) => {
             setSelectedItemId(item.id);
             setOpen(true);
@@ -90,10 +136,8 @@ export function MenuItemBrowser() {
         />
       </div>
 
-      {/* Shopping Cart */}
       <ShoppingCart />
 
-      {/* Product Details Sheet */}
       <ProductDetailsSheet
         open={open}
         onOpenChange={setOpen}

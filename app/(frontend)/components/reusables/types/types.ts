@@ -267,3 +267,9 @@ export interface PriceFilterProps {
   step?: number;
   onChange: (value: [number, number]) => void;
 }
+export interface UseInfiniteScrollProps {
+  loading: boolean;
+  hasMore: boolean;
+  onLoadMore: () => void;
+  offset?: number;
+}

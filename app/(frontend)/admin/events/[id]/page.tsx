@@ -22,14 +22,14 @@ import PackageBrowser from "../../packages/(component)/packagebrowser";
 import { EntityCart } from "../../../components/reusables/cart/entitycart";
 
 import { generateSchema } from "../../../components/reusables/validation/valdiation";
-import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
+import { CartItem, FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 
 import { useGetSingleEvent } from "../hooks/usegetsingleevent";
 import { useUpdateEvent } from "../hooks/useupdateevent";
 
 import { useEventCategories } from "../../categories/event/hooks/useEventCategories";
 
-import { CartItem } from "../../reusable/types/type";
+
 import { useUploadEventImage } from "../hooks/useuploadeventimage";
 import { GridItem } from "../../../components/reusables/grid/gridtypes";
 
