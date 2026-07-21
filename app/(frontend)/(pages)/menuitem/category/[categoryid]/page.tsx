@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
 import { EntityFilters } from "@/app/(frontend)/components/reusables/filters/entityfilters";
@@ -9,7 +9,9 @@ import { StorefrontGrid } from "@/app/(frontend)/components/reusables/storefront
 import { ShoppingCart } from "@/app/(frontend)/components/reusables/shopping-cart/ShoppingCart";
 import { ProductDetailsSheet } from "@/app/(frontend)/components/reusables/storefront-grid/ProductDetailsSheet";
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
+import { useInfiniteScroll } from "@/app/(frontend)/components/reusables/hooks/useInfiniteScroll";
 import { useGetMenuItems } from "@/app/(frontend)/admin/menu-items/hooks/useGetMenuItems";
+import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
 
 export default function CategoryMenuItemsPage() {
   const params = useParams();
@@ -21,21 +23,56 @@ export default function CategoryMenuItemsPage() {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
+  const [page, setPage] = useState(1);
+  const [items, setItems] = useState<GridItem[]>([]);
+
   const debouncedSearch = useDebounce(search, 500);
   const debouncedPriceRange = useDebounce(priceRange, 500);
 
-  const { data, isLoading } = useGetMenuItems({
+  const { data, isLoading, isFetching } = useGetMenuItems({
+    page,
+    limit:4,
     category: categoryId,
     search: debouncedSearch,
     minPrice: debouncedPriceRange[0],
     maxPrice: debouncedPriceRange[1],
   });
 
-  const menuItems = data?.items ?? [];
+  const hasMore = items.length < (data?.total ?? 0);
+
+  // Reset when filters change
+  useEffect(() => {
+    const reset = () => {
+      setPage(1);
+      setItems([]);
+    };
+
+    reset();
+  }, [categoryId, debouncedSearch, debouncedPriceRange]);
+
+  // Append new page
+  useEffect(() => {
+    const updateItems = () => {
+      if (!data) return;
+
+      if (page === 1) {
+        setItems(data.items);
+      } else {
+        setItems((prev) => [...prev, ...data.items]);
+      }
+    };
+
+    updateItems();
+  }, [data, page]);
+
+  useInfiniteScroll({
+    loading: isFetching,
+    hasMore,
+    onLoadMore: () => setPage((prev) => prev + 1),
+  });
 
   return (
     <div className="space-y-8 pt-28">
-      {/* Heading */}
       <div className="text-center">
         <h1 className="text-3xl font-bold">Category Menu Items</h1>
         <p className="mt-2 text-muted-foreground">
@@ -43,7 +80,6 @@ export default function CategoryMenuItemsPage() {
         </p>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col items-center space-y-8">
         <div className="w-full max-w-xs">
           <PriceFilter
@@ -65,11 +101,10 @@ export default function CategoryMenuItemsPage() {
         />
       </div>
 
-      {/* Grid */}
       <div className="relative mx-7">
         <StorefrontGrid
-          items={menuItems}
-          isLoading={isLoading}
+          items={items}
+          isLoading={isLoading && page === 1}
           onItemClick={(item) => {
             setSelectedItemId(item.id);
             setOpen(true);
@@ -77,10 +112,8 @@ export default function CategoryMenuItemsPage() {
         />
       </div>
 
-      {/* Shopping Cart */}
       <ShoppingCart />
 
-      {/* Product Details */}
       <ProductDetailsSheet
         open={open}
         onOpenChange={setOpen}

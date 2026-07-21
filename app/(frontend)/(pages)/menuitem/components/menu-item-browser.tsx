@@ -70,7 +70,7 @@ useEffect(() => {
 }, [data, page]);
 
 //infinite scroll 
-  
+
   useInfiniteScroll({
     loading: isFetching,
     hasMore,
