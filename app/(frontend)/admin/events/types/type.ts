@@ -69,3 +69,8 @@ export type Event = {
   menuItems: EventMenuItem[];
   packages: EventPackage[];
 };
+
+export interface ToggleEventPayload{
+  id: string;
+  available?: boolean;
+};

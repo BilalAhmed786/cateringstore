@@ -1,17 +1,22 @@
 "use client";
 
 import Image from "next/image";
+import { ShoppingCart } from "lucide-react";
 
 import { Card, CardContent } from "@/app/(frontend)/components/ui/card";
 import { Badge } from "@/app/(frontend)/components/ui/badge";
 import { RatingSummary } from "../ratingsummary/ratingsummary";
 import { QuantitySelector } from "./QuantitySelector";
-import { useCartStore } from "@/app/(frontend)/store/useCartStore";
-import { ProductCardProps } from "./gridtypes";
 import { UniButton } from "../button/button";
-import { ShoppingCart } from "lucide-react";
+import { useCartStore } from "@/app/(frontend)/store/useCartStore";
+import { ProductCardProps } from "./types";
 
-export function ProductCard({ item, onClick }: ProductCardProps) {
+export function ProductCard({
+  item,
+  onClick,
+  renderSubtitle,
+  renderActions,
+}: ProductCardProps) {
   const { items, addItem, increase, decrease } = useCartStore();
 
   const cartItem = items.find((i) => i.id === item.id);
@@ -45,10 +50,16 @@ export function ProductCard({ item, onClick }: ProductCardProps) {
             {item.title ?? item.name}
           </h3>
 
-          {item.description && (
-            <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-              {item.description}
-            </p>
+          {renderSubtitle ? (
+            <div className="mt-1 text-sm text-muted-foreground">
+              {renderSubtitle(item)}
+            </div>
+          ) : (
+            item.description && (
+              <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                {item.description}
+              </p>
+            )
           )}
 
           <div className="mt-2">
@@ -64,28 +75,24 @@ export function ProductCard({ item, onClick }: ProductCardProps) {
             Rs {item.price ?? item.finalPrice}
           </span>
 
-          {cartItem ? (
-            <div
-              onClick={(e) => e.stopPropagation()}
-            >
+          <div onClick={(e) => e.stopPropagation()}>
+            {renderActions ? (
+              renderActions(item)
+            ) : cartItem ? (
               <QuantitySelector
                 quantity={cartItem.quantity}
                 onIncrease={() => increase(item.id)}
                 onDecrease={() => decrease(item.id)}
               />
-            </div>
-          ) : (
-            <div
-              onClick={(e) => e.stopPropagation()}
-            >
+            ) : (
               <UniButton
-                label="Add to Cart"
+                label="Add To Cart"
                 icon={<ShoppingCart className="h-4 w-4" />}
                 onClick={() => addItem(item)}
                 disabled={!item.available}
               />
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

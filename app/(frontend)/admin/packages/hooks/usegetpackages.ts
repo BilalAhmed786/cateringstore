@@ -5,10 +5,10 @@ import { GridItem } from "../../../components/reusables/grid/gridtypes";
 
 
 export function useGetPackages(filters?: PackageFilters) {
-  return useQuery<{ items: GridItem[]; total: number }>({
+  return useQuery({
     queryKey: ["packages", filters],
     queryFn: () =>
-      apiRequest({
+      apiRequest<{ items: GridItem[]; total: number }>({
           url: `/api/admin/packages?${new URLSearchParams({
           status: filters?.status ?? "",
           search: filters?.search ?? "",

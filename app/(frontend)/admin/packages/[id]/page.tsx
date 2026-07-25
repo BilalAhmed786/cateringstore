@@ -18,10 +18,7 @@ import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
 import { EntityCart } from "../../../components/reusables/cart/entitycart";
 
 import { generateSchema } from "../../../components/reusables/validation/valdiation";
-import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
-
-import { CartItem } from "../../reusable/types/type";
-
+import { CartItem, FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 import { useUpdatePackage } from "../hooks/useupdatepackage";
 import { useGetPackageDetails } from "../hooks/usegetsinglepackage";
 import { useUploadPackageImage } from "../hooks/useuploadpackageimage";

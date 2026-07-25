@@ -1,17 +1,20 @@
 "use client";
-
-import { ProductCard } from "./ProductCard";
-import { StorefrontGridProps } from "./gridtypes";
 import { motion } from "framer-motion";
+import { ProductCard } from "./ProductCard";
+import { StorefrontGridProps } from "./types";
+
+
 export function StorefrontGrid({
   items,
   isLoading,
   onItemClick,
+  renderSubtitle,
+  renderActions,
 }: StorefrontGridProps) {
   if (isLoading) {
     return (
       <div className="py-20 text-center text-muted-foreground">
-        Loading menu items...
+        Loading items...
       </div>
     );
   }
@@ -19,7 +22,7 @@ export function StorefrontGrid({
   if (!items.length) {
     return (
       <div className="py-20 text-center text-muted-foreground">
-        No menu items found
+        No items found.
       </div>
     );
   }
@@ -31,9 +34,14 @@ export function StorefrontGrid({
           key={item.id}
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration:2 }}
+          transition={{ duration: 0.35 }}
         >
-          <ProductCard item={item} onClick={() => onItemClick?.(item)} />
+          <ProductCard
+            item={item}
+            onClick={() => onItemClick?.(item)}
+            renderSubtitle={renderSubtitle}
+            renderActions={renderActions}
+          />
         </motion.div>
       ))}
     </div>

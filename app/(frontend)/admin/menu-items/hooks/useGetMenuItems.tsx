@@ -5,9 +5,9 @@ import { GridItem } from "../../../components/reusables/grid/gridtypes";
 
 
 export function useGetMenuItems(filters?: MenuItemsFilters) {
+   
   return useQuery<{ items: GridItem[]; total: number }>({
     queryKey: ["menu-items", filters],
-
     queryFn: () =>
       apiRequest({
         url: `/api/admin/menuitem?${new URLSearchParams({
@@ -15,10 +15,10 @@ export function useGetMenuItems(filters?: MenuItemsFilters) {
           category: filters?.category ?? "",
           search: filters?.search ?? "",
           dateFilter: filters?.dateFilter ?? "",
-
+          
           page: filters?.page?.toString() ?? "1",
           limit: filters?.limit?.toString() ?? "10",
-
+          
           // NEW
           minPrice: filters?.minPrice?.toString() ?? "",
           maxPrice: filters?.maxPrice?.toString() ?? "",

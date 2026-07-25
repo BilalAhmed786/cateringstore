@@ -6,6 +6,7 @@ import { Package } from "../types/type";
 
 
 
+
 export function useGetPackageDetails(id: string) {
   return useQuery({
     queryKey: ["package", id],
@@ -14,7 +15,7 @@ export function useGetPackageDetails(id: string) {
       apiRequest<Package>({
         url: `/api/admin/packages/${id}`,
         method: "GET",
-        authRequired: true,
+        authRequired: false,
       }),
   });
 }

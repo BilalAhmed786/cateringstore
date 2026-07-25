@@ -4,7 +4,8 @@ export interface MenuItem {
   id: string;
   title:string;
   name?: string;
-  price: number;
+  description?:string;
+  price?: number;
   images:images[]
   
 }
@@ -13,19 +14,12 @@ export interface PackageItemsFieldProps {
   name: string;
 }
 
-export interface SelectedItem extends MenuItem {
-  quantity: number;
-}
-
-
 export interface SelectedItem {
   id: string;
   name: string;
   price: number;
   quantity: number;
 }
-
-
 
 export interface PackageFilters{
   status?: string;
@@ -43,6 +37,16 @@ export interface PackageMenuItem {
   quantity: number;      
   menuItem: MenuItem;    
 }
+export interface PackageReview {
+  id: string;
+  rating: number;
+  comment?: string;
+
+  user: {
+    id: string;
+    name: string;
+  };
+}
 
 export interface Package {
   id: string;
@@ -51,9 +55,13 @@ export interface Package {
   available: boolean;
   createdAt: string;
   discountType: string;
-  discountValue: number;
-  finalPrice: number;
+  discountValue: number; 
   originalPrice: number;
-  image: string | null;
+  finalPrice: number;
+  image: string;
   items: PackageMenuItem[];
+  averageRating: number;
+  totalReviews: number;
+  canReview: boolean;
+  reviews: PackageReview[];
 }

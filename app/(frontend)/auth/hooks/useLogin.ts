@@ -12,10 +12,10 @@ export function useLogin() {
 
   return useMutation<AuthResponse, Error,FieldValues >({
     mutationFn: async (data) => {
-      // 1️⃣ Login via Firebase
+      // 1  Login via Firebase
       const cred = await signInWithEmailAndPassword(auth, data.email, data.password);
 
-      // 2️⃣ Call backend to generate app JWT
+      // 2 Call backend to generate app JWT
       return apiRequest({
         url: "/api/auth/login",
         method: "POST",

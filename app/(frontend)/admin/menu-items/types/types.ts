@@ -43,12 +43,10 @@ export interface MenuItem {
   images: images[];
   available: boolean;
   category: Category;
-
   reviews: MenuItemReview[];
   averageRating: number;
   totalReviews: number;
   canReview: boolean;
-
   createdAt: string;
 }
 

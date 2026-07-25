@@ -8,6 +8,7 @@ import {
 } from "@/app/(frontend)/components/ui/dropdown-menu";
 
 import { Button } from "@/app/(frontend)/components/ui/button"; // Correct
+import { MenuItemDropdownProps } from "../types/types";
 
 export function MenuItemDropdown({ actions }: MenuItemDropdownProps) {
   const visibleActions = actions.filter((action) => action.show !== false);

@@ -7,11 +7,15 @@ import { EntityFilters } from "@/app/(frontend)/components/reusables/filters/ent
 import { PriceFilter } from "@/app/(frontend)/components/reusables/filters/pricefilter";
 import { StorefrontGrid } from "@/app/(frontend)/components/reusables/storefront-grid/StorefrontGrid";
 import { ShoppingCart } from "@/app/(frontend)/components/reusables/shopping-cart/ShoppingCart";
-import { ProductDetailsSheet } from "@/app/(frontend)/components/reusables/storefront-grid/ProductDetailsSheet";
+
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 import { useInfiniteScroll } from "@/app/(frontend)/components/reusables/hooks/useInfiniteScroll";
+
 import { useGetMenuItems } from "@/app/(frontend)/admin/menu-items/hooks/useGetMenuItems";
+
 import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
+import { MenuItemDetailsSheet } from "../../components/MenuItemDetailsSheet";
+
 
 export default function CategoryMenuItemsPage() {
   const params = useParams();
@@ -21,7 +25,8 @@ export default function CategoryMenuItemsPage() {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
 
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
+
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<GridItem[]>([]);
@@ -31,7 +36,7 @@ export default function CategoryMenuItemsPage() {
 
   const { data, isLoading, isFetching } = useGetMenuItems({
     page,
-    limit:4,
+    limit: 4,
     category: categoryId,
     search: debouncedSearch,
     minPrice: debouncedPriceRange[0],
@@ -40,31 +45,29 @@ export default function CategoryMenuItemsPage() {
 
   const hasMore = items.length < (data?.total ?? 0);
 
-  // Reset when filters change
+  // Reset page when filters change
   useEffect(() => {
-    const reset = () => {
+    function pageSet() {
       setPage(1);
-      setItems([]);
-    };
-
-    reset();
+    }
+    pageSet();
   }, [categoryId, debouncedSearch, debouncedPriceRange]);
 
-  // Append new page
+  // Update items
   useEffect(() => {
-    const updateItems = () => {
-      if (!data) return;
+    if (!data) return;
 
+    function Dataretreive(data: GridItem[]) {
       if (page === 1) {
-        setItems(data.items);
+        setItems(data);
       } else {
-        setItems((prev) => [...prev, ...data.items]);
+        setItems((prev) => [...prev, ...data]);
       }
-    };
-
-    updateItems();
+    }
+    Dataretreive(data.items);
   }, [data, page]);
 
+  // Infinite Scroll
   useInfiniteScroll({
     loading: isFetching,
     hasMore,
@@ -73,13 +76,16 @@ export default function CategoryMenuItemsPage() {
 
   return (
     <div className="space-y-8 pt-28">
+      {/* Header */}
       <div className="text-center">
         <h1 className="text-3xl font-bold">Category Menu Items</h1>
+
         <p className="mt-2 text-muted-foreground">
           Browse all menu items in this category.
         </p>
       </div>
 
+      {/* Filters */}
       <div className="flex flex-col items-center space-y-8">
         <div className="w-full max-w-xs">
           <PriceFilter
@@ -101,23 +107,25 @@ export default function CategoryMenuItemsPage() {
         />
       </div>
 
+      {/* Grid */}
       <div className="relative mx-7">
         <StorefrontGrid
           items={items}
           isLoading={isLoading && page === 1}
           onItemClick={(item) => {
             setSelectedItemId(item.id);
-            setOpen(true);
+            setDetailsOpen(true);
           }}
         />
       </div>
 
       <ShoppingCart />
 
-      <ProductDetailsSheet
-        open={open}
-        onOpenChange={setOpen}
-        menuItemId={selectedItemId}
+      {/* Details Sheet */}
+      <MenuItemDetailsSheet
+        id={selectedItemId}
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
       />
     </div>
   );

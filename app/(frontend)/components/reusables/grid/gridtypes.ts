@@ -1,3 +1,5 @@
+import { MenuItem } from "@/app/(frontend)/admin/menu-items/types/types";
+
 export interface GridItem {
   id: string;
   title: string;
@@ -5,6 +7,7 @@ export interface GridItem {
   description?:string;
   images?: { url: string }[];
   image?: string;
+  items?:MenuItem[];
   event?: {
     id: string;
     status: string;
@@ -12,7 +15,7 @@ export interface GridItem {
     description: string;
     createdAt: string;
   };
-  available: boolean;
+  available?: boolean;
   price: number;
   originalPrice?: number;
   finalPrice?: number;
@@ -24,7 +27,7 @@ export interface DropdownAction {
   label: string;
   icon?: React.ComponentType;
   onClick: () => void;
-  variant?: "default" | "danger" | "secondary";
+  variant?: "default" | "danger";
 }
 
 export interface EntityGridProps {

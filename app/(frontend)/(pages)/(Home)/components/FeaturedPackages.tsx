@@ -7,10 +7,13 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/app/(frontend)/components/ui/button";
 import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
 import { useFeaturedPackages } from "../hooks/useFeaturedPackages";
+import { PackageCustomizeSheet } from "../../packages/components/PackageCustomizeSheet";
+import { useState } from "react";
 
 export default function FeaturedPackages() {
   const { data: packages, isLoading } = useFeaturedPackages();
-
+  const [customizeOpen, setCustomizeOpen] = useState(false);
+   const [selectedPackageId, setSelectedPackageId] = useState<string | null>(null);
   if (isLoading) {
     return (
       <section className="py-24">
@@ -81,16 +84,28 @@ export default function FeaturedPackages() {
                   {pkg.description}
                 </p>
 
-                <Button className="mt-6 w-full" asChild>
-                  <Link href={`/packages/${pkg.id}`}>
-                    Customize Package
-                  </Link>
+                <Button 
+                
+                className="mt-6 w-full"
+                onClick={()=>{
+                  setSelectedPackageId(pkg.id)
+                  setCustomizeOpen(true)
+                }}
+                >
+                  Customize Package
                 </Button>
               </div>
             </div>
           )}
         />
+
+      <PackageCustomizeSheet
+        packageId={selectedPackageId}
+        open={customizeOpen}
+        onOpenChange={setCustomizeOpen}
+      />
       </div>
+  
     </section>
   );
 }

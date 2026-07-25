@@ -16,12 +16,12 @@ import { FieldGroup } from "@/app/(frontend)/components/ui/field";
 import { FormField } from "@/app/(frontend)/components/reusables/fields/fieldscase";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { generateSchema } from "@/app/(frontend)/components/reusables/validation/valdiation";
-import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
+import { CartItem, FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
 import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
 import PackageBrowser from "../../packages/(component)/packagebrowser";
 import { EntityCart } from "../../../components/reusables/cart/entitycart";
 import { useCreateEvent } from "../hooks/usecreateevent";
-import { CartItem } from "../../reusable/types/type";
+
 import { GridItem } from "../../../components/reusables/grid/gridtypes";
 import { useEventCategories } from "../../categories/event/hooks/useEventCategories";
 

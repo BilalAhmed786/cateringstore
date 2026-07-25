@@ -10,7 +10,7 @@ export function useToggleHamper() {
       available,
     }: {
       id: string;
-      available: boolean;
+      available?: boolean;
     }) => {
       return apiRequest({
         url: "/api/admin/hamper/toggle",

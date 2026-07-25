@@ -1,4 +1,5 @@
 "use client";
+
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { CartStore } from "./types/type";
@@ -55,7 +56,8 @@ export const useCartStore = create<CartStore>()(
 
       decrease: (id) =>
         set((state) => ({
-          items: state.items.map((i) =>
+          items: state.items
+            .map((i) =>
               i.id === id
                 ? {
                     ...i,
@@ -69,6 +71,38 @@ export const useCartStore = create<CartStore>()(
       clearCart: () => ({
         items: [],
       }),
+
+      addCustomizedPackage: (
+        packageData,
+        selectedItems,
+        totalPrice,
+      ) =>
+        set((state) => {
+          // Find existing package in cart
+          const existing = state.items.find(
+            (item) => item?.id === packageData?.id
+          );
+
+          return {
+            items: [
+              // Remove previous version
+              ...state.items.filter((item) => item.id !== packageData.id),
+
+              // Add customized version
+              {
+                ...packageData,
+
+                quantity: existing?.quantity ?? 1,
+
+                customized: true,
+
+                selectedItems,
+
+                finalPrice: totalPrice,
+              },
+            ],
+          };
+        }),
     }),
     {
       name: "shopping-cart",
@@ -76,8 +110,8 @@ export const useCartStore = create<CartStore>()(
   )
 );
 
+// Useful selectors
 
-//usefull function use anywhere
 export const useCartItems = () =>
   useCartStore((state) => state.items);
 

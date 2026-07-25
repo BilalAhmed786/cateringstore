@@ -12,8 +12,8 @@ import {
 } from "@/app/(frontend)/components/ui/tabs";
 
 import { generateSchema } from "../../../components/reusables/validation/valdiation";
-import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
-import { CartItem } from "../../reusable/types/type";
+import { CartItem, FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
+
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { useCreatePackage } from "../hooks/usecreatepackage";
 import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";

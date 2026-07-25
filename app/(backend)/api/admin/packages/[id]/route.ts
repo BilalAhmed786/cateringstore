@@ -2,6 +2,7 @@ import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { CreatePackageBody } from "../types/type";
+import { getCurrentUser } from "@/app/(backend)/lib/guard/getCurrentuser";
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -89,13 +90,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 export async function GET(
-  _req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const id = await params
+    const { id } = await params;
+
     const packageData = await prisma.package.findUnique({
-      where: id,
+      where: { id },
       include: {
         items: {
           include: {
@@ -109,22 +111,80 @@ export async function GET(
             },
           },
         },
+
+        reviews: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
 
     if (!packageData) {
       return NextResponse.json(
         { message: "Package not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
-    return NextResponse.json(packageData);
+    // Calculate rating
+
+    const totalReviews = packageData.reviews.length;
+
+    const averageRating =
+      totalReviews > 0
+        ? packageData.reviews.reduce(
+            (sum, review) => sum + review.rating,
+            0,
+          ) / totalReviews
+        : 0;
+
+    let canReview = false;
+
+    // Logged in user
+
+    const user = await getCurrentUser(req);
+
+    if (user) {
+      const purchased = await prisma.orderPackage.findFirst({
+        where: {
+          packageId: id,
+          order: {
+            userId: user.id,
+            status: "DELIVERED",
+          },
+        },
+      });
+
+      const alreadyReviewed = await prisma.packageReview.findUnique({
+        where: {
+          userId_packageId: {
+            userId: user.id,
+            packageId: id,
+          },
+        },
+      });
+
+      canReview = !!purchased && !alreadyReviewed;
+    }
+
+    return NextResponse.json({
+      ...packageData,
+      averageRating,
+      totalReviews,
+      canReview,
+    });
   } catch (error) {
     console.error(error);
+
     return NextResponse.json(
       { message: "Failed to fetch package details" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

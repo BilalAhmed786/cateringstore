@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
 import { DynamicShadcnForm } from '@/app/(frontend)/components/reusables/dynamicform/dynamicform';
-import { generateSchema } from '@/app/(frontend)/components/reusables/validation/valdiation';
 import { FieldConfig } from '@/app/(frontend)/components/reusables/types/types';
 import { useForgotPassword } from '@/app/(frontend)/auth/hooks/useForgotPassword';
 import Link from 'next/link';
@@ -9,7 +8,6 @@ import Link from 'next/link';
 export default function ForgotPasswordPage() {
 
   const { mutate: forgotMutate, isPending } = useForgotPassword();
-
   const [defaultValues, setDefaultValues] = useState({ email: '' });
 
   const fields: FieldConfig[] = [
@@ -21,27 +19,16 @@ export default function ForgotPasswordPage() {
     },
   ];
 
-  const schema = generateSchema(fields);
-
-  const handleSubmit = (data: { email: string }) => {
-    forgotMutate(data.email, {
-      onSuccess: () => {
-        setDefaultValues({ email: '' });
-      },
-    });
-  };
-
   return (
     <div className="space-y-6 max-w-md mx-auto mt-10">
       <DynamicShadcnForm
-        schema={schema}
         fields={fields}
         defaultvalues={defaultValues}
         cardTitle="Forgot Password"
         cardDescription="Enter your email to reset your password"
         submitLabel={isPending ? 'Sending...' : 'Send Reset Link'}
         reset="Reset"
-        onSubmit={handleSubmit}
+        onSubmit={(data) => forgotMutate(data)}
       />
 
       <div className="flex justify-between text-sm text-blue-600 mt-2">

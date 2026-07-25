@@ -12,7 +12,7 @@ export function useTogglePackage() {
       available,
     }: {
       id: string;
-      available: boolean;
+      available?: boolean;
     }) =>
       apiRequest({
         url: `/api/admin/packages/${id}`,

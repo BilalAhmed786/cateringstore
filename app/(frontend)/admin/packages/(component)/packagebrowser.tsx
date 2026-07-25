@@ -8,12 +8,12 @@ import { EntityFilters } from "../../../components/reusables/filters/entityfilte
 import { EntityGrid } from "../../../components/reusables/grid/entitygrid";
 import { RatingSummary } from "../../../components/reusables/ratingsummary/ratingsummary";
 
-import { GridItem } from "../../../components/reusables/grid/gridtypes";
+import { DropdownAction, GridItem } from "../../../components/reusables/grid/gridtypes";
 import { useGetPackages } from "../hooks/usegetpackages";
 import { useDeletePackage } from "../hooks/usedeletepackage";
 import { useTogglePackage } from "../hooks/usetogglepackage";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
-import { DropdownAction } from "../../reusable/types/type";
+
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 type PackageBrowserProps = {
   showFilters?: boolean;

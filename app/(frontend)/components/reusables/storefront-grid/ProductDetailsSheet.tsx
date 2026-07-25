@@ -1,127 +1,198 @@
 "use client";
 
+import Image from "next/image";
+import { Loader2, Star } from "lucide-react";
+
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from "@/app/(frontend)/components/ui/sheet";
-import Image from "next/image";
-import { Loader2, Star } from "lucide-react";
-import { useGetMenuItemById } from "@/app/(frontend)/admin/menu-items/hooks/usegetmenuitembyid";
 
-interface ProductDetailsSheetProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  menuItemId: string | null;
-}
+import AppCarousel from "../carousel/carousel";
+import { ProductDetailsSheetProps } from "./types";
 
 export function ProductDetailsSheet({
   open,
   onOpenChange,
-  menuItemId,
+  data,
+  isLoading,
 }: ProductDetailsSheetProps) {
-  const { data, isLoading } = useGetMenuItemById(menuItemId!);
-
-  if (!menuItemId) {
-    return (
-      <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="right" className="w-full sm:max-w-2xl">
-          <SheetHeader>
-            <SheetTitle>Product Details</SheetTitle>
-          </SheetHeader>
-
-          <div className="mt-10 text-center text-muted-foreground">
-            Select a product
-          </div>
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-full p-5 overflow-y-auto sm:max-w-2xl"
+        className="w-full overflow-y-auto sm:max-w-5xl"
       >
-        <SheetHeader>
-          <SheetTitle>Product Details</SheetTitle>
-        </SheetHeader>
-
         {isLoading ? (
-          <div className="flex h-96 items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin" />
+          <div className="flex h-full min-h-[500px] items-center justify-center">
+            <Loader2 className="h-10 w-10 animate-spin" />
+          </div>
+        ) : !data ? (
+          <div className="flex h-full min-h-[500px] items-center justify-center text-muted-foreground">
+            No details found.
           </div>
         ) : (
-          <div className="mt-6 space-y-6">
-            {/* Product Image */}
-            <div className="relative h-72 w-full overflow-hidden rounded-lg">
-              <Image
-                src={data?.images?.[0]?.url || "/placeholder.png"}
-                alt={data?.title || "Product"}
-                fill
-                className="object-cover"
-              />
-            </div>
+          <>
+            <SheetHeader className="border-b">
+              <SheetTitle>{data.name}</SheetTitle>
+            </SheetHeader>
 
-            {/* Product Info */}
-            <div className="space-y-3">
-              <h2 className="text-3xl font-bold">{data?.title}</h2>
+            <div className="space-y-10 p-6">
+              {/* Cover */}
 
-              <p className="text-muted-foreground">
-                {data?.description || "No description available."}
-              </p>
-
-              <div className="text-2xl font-semibold text-primary">
-                Rs {data?.price}
+              <div className="relative h-[420px] overflow-hidden rounded-xl">
+                <Image
+                  src={data.image || "/placeholder.png"}
+                  alt={data.name}
+                  fill
+                  className="object-cover"
+                />
               </div>
 
-              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                <span>{data?.averageRating?.toFixed(1) ?? "0.0"}</span>
-                <span>({data?.totalReviews ?? 0} Reviews)</span>
-              </div>
-            </div>
+              {/* Details */}
 
-            {/* Reviews */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold">Customer Reviews</h3>
+              <section className="space-y-4">
+                <h2 className="text-4xl font-bold">
+                  {data.name}
+                </h2>
 
-              {data?.reviews?.length ? (
-                data.reviews.map((review) => (
-                  <div key={review.id} className="rounded-lg border p-4">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold">{review.user.name}</h4>
+                <div className="text-3xl font-bold text-primary">
+                  Rs {data.finalPrice}
+                </div>
 
-                      <span>{"⭐".repeat(review.rating)}</span>
-                    </div>
+                <div className="flex items-center gap-2">
+                  <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
 
-                    {review.comment && (
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        {review.comment}
-                      </p>
-                    )}
+                  <span className="font-semibold">
+                    {data.averageRating.toFixed(1)}
+                  </span>
+
+                  <span className="text-muted-foreground">
+                    ({data.totalReviews} Reviews)
+                  </span>
+                </div>
+              </section>
+
+              {/* Description */}
+
+              <section className="space-y-3">
+                <h3 className="text-2xl font-semibold">
+                  Description
+                </h3>
+
+                <p className="leading-8 text-muted-foreground">
+                  {data.description}
+                </p>
+              </section>
+
+              {/* Menu Items */}
+
+              {data.items.length > 0 && (
+                <section className="space-y-5">
+                  <h3 className="text-2xl font-semibold">
+                    Included Menu Items
+                  </h3>
+
+                  <div className="px-12">
+                    <AppCarousel
+                      items={data.items}
+                      autoplay={false}
+                      loop={false}
+                      showArrows
+                      className="w-full"
+                      itemClassName="basis-full"
+                      previousClassName="-left-10"
+                      nextClassName="-right-10"
+                      renderItem={(item) => {
+                        const menu = item.menuItem;
+
+                        return (
+                          <div className="overflow-hidden rounded-xl border bg-background">
+                            <div className="relative h-[350px]">
+                              <Image
+                                src={
+                                  menu.images?.[0]?.url ??
+                                  "/placeholder.png"
+                                }
+                                alt={menu.title}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+
+                            <div className="space-y-4 p-6">
+                              <div className="flex items-center justify-between">
+                                <h4 className="text-2xl font-semibold">
+                                  {menu.title}
+                                </h4>
+
+                                <span className="font-bold text-primary">
+                                  Rs {menu.price}
+                                </span>
+                              </div>
+
+                              {menu.description && (
+                                <p className="leading-7 text-muted-foreground">
+                                  {menu.description}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      }}
+                    />
                   </div>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground">No reviews yet.</p>
+                </section>
+              )}
+
+              {/* Reviews */}
+
+              <section className="space-y-5">
+                <h3 className="text-2xl font-semibold">
+                  Customer Reviews
+                </h3>
+
+                {data.reviews.length > 0 ? (
+                  data.reviews.map((review) => (
+                    <div
+                      key={review.id}
+                      className="rounded-xl border p-5"
+                    >
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold">
+                          {review.user.name}
+                        </h4>
+
+                        <div className="flex items-center gap-2">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+
+                          <span>{review.rating}</span>
+                        </div>
+                      </div>
+
+                      {review.comment && (
+                        <p className="mt-3 text-muted-foreground">
+                          {review.comment}
+                        </p>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-muted-foreground">
+                    No reviews yet.
+                  </p>
+                )}
+              </section>
+
+              {data.canReview && (
+                <section>
+                  {/* Review Form */}
+                </section>
               )}
             </div>
-
-            {/* Review Section */}
-            {data?.canReview ? (
-              <div className="space-y-3">
-                <h3 className="text-xl font-semibold">Write a Review</h3>
-
-                {/* <ReviewForm menuItemId={menuItemId} /> */}
-              </div>
-            ) : (
-              <div className="rounded-lg border bg-muted p-4 text-sm">
-                Only customers who purchased this menu item can leave a review.
-              </div>
-            )}
-          </div>
+          </>
         )}
       </SheetContent>
     </Sheet>

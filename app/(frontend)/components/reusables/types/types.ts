@@ -3,7 +3,9 @@ import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
 import React from "react";
 import { Button } from "@/app/(frontend)/components/ui/button";
 import { PackageMenuItem } from "@/app/(frontend)/admin/packages/types/type";
-import { Category } from "@/app/(frontend)/admin/menu-items/types/types";
+import { Category} from "@/app/(frontend)/admin/menu-items/types/types";
+
+
 
 
 
@@ -160,7 +162,7 @@ export interface AppCarouselProps<T> {
   id: string;
   title?: string;
   name?:string;
-  price: number;
+  price?: number;
   finalPrice?:number;
   image?:string;
   images?: { url: string }[];
@@ -181,7 +183,7 @@ export interface Dropdowitems {
 }
 export interface CartItem extends GridSelectableItem {
   quantity: number;
-}
+  }
 
 export interface EntityCartProps {
   title?: string;

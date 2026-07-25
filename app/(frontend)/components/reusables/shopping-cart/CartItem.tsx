@@ -34,7 +34,7 @@ export function CartItem({
 
         <div>
           <h3 className="font-semibold">
-            {item.title}
+            {item.title ?? item.name}
           </h3>
 
           <p className="text-sm text-muted-foreground">

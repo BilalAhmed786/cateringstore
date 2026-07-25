@@ -1,8 +1,9 @@
 "use client";
 
 import { Minus, Plus } from "lucide-react";
-import { QuantitySelectorProps } from "./gridtypes";
+
 import { UniButton } from "../button/button";
+import { QuantitySelectorProps } from "./types";
 
 export function QuantitySelector({
   quantity,

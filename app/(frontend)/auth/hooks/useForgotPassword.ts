@@ -1,15 +1,16 @@
 'use client';
 import { useMutation } from '@tanstack/react-query';
 import { sendPasswordResetEmail, fetchSignInMethodsForEmail, getAuth } from 'firebase/auth';
+import {FieldValues } from 'react-hook-form';
 import { toast } from 'sonner'; // or your toast library
 
 export function useForgotPassword() {
   return useMutation({
-    mutationFn: async (email: string) => {
-      if (!email) throw new Error('Email is required');
+    mutationFn: async (data: FieldValues) => {
+      if (!data.email) throw new Error('Email is required');
        const auth = getAuth();
     // Check the sign-in methods for this email
-      const methods = await fetchSignInMethodsForEmail(auth, email);
+      const methods = await fetchSignInMethodsForEmail(auth, data.email);
 
       if (!methods.includes('password')) {
         // OAuth-only user → disallow password reset
@@ -19,7 +20,7 @@ export function useForgotPassword() {
       }
 
       // Email/password user → send reset email
-      await sendPasswordResetEmail(auth, email);
+      await sendPasswordResetEmail(auth, data.email);
       return true;
     },
     onSuccess: () => {

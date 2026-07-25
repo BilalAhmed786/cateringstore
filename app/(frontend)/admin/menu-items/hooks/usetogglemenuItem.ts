@@ -6,7 +6,7 @@ export function useToggleMenuItem() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async ({ id, available }: { id: string; available: boolean }) => {
+    mutationFn: async ({ id, available }: { id: string; available?: boolean }) => {
       return apiRequest({
         url: `/api/admin/menuitem/${id}`,
         method: "PATCH",
