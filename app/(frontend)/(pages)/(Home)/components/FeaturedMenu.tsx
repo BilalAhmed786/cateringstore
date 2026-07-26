@@ -25,7 +25,7 @@ export default function FeaturedMenuCategories() {
 
   return (
     <section className="py-20">
-      <div className="container mx-auto px-4">
+      <div className="px-7">
         {/* Heading */}
         <div className="mb-10">
           <p className="text-sm font-semibold uppercase tracking-[4px] text-primary">

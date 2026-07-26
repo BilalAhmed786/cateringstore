@@ -24,6 +24,8 @@ export interface SelectedItem {
 export interface PackageFilters{
   status?: string;
   dateFilter?:string;
+  minPrice?:number;
+  maxPrice?:number;
   search?: string;
   page?: number;
   limit?: number;

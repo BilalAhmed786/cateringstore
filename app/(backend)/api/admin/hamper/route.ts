@@ -90,26 +90,54 @@ export async function POST(req: Request) {
 
 export async function GET(req: NextRequest) {
   try {
-    await requireRole(req, ["admin"]);
+    
 
     const { searchParams } = new URL(req.url);
-
     const page = Number(searchParams.get("page") ?? 1);
     const limit = Number(searchParams.get("limit") ?? 10);
     const skip = (page - 1) * limit;
+
+    const minPrice = searchParams.get("minPrice");
+    const maxPrice = searchParams.get("maxPrice");
+    const sort = searchParams.get("sort");
 
     /* -------------------- FILTERS -------------------- */
 
     const where = buildFilter<Prisma.HamperWhereInput>(
       {
         status: searchParams.get("status"),
+        category: searchParams.get("category"),
         search: searchParams.get("search"),
         dateFilter: searchParams.get("dateFilter"),
       },
       {
+        hasCategory: true,
         searchFields: ["name", "description"],
       }
     );
+
+    /* -------------------- PRICE FILTER -------------------- */
+
+    if (minPrice || maxPrice) {
+      where.finalPrice = {};
+
+      if (minPrice) {
+        where.finalPrice.gte = Number(minPrice);
+      }
+
+      if (maxPrice) {
+        where.finalPrice.lte = Number(maxPrice);
+      }
+    }
+
+    /* -------------------- SORT -------------------- */
+
+    const orderBy: Prisma.HamperOrderByWithRelationInput =
+      sort === "asc"
+        ? { finalPrice: "asc" }
+        : sort === "desc"
+        ? { finalPrice: "desc" }
+        : { createdAt: "desc" };
 
     /* -------------------- QUERY -------------------- */
 
@@ -118,35 +146,54 @@ export async function GET(req: NextRequest) {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: "desc" },
+        orderBy,
         include: {
+          category: true,
           items: {
             include: {
               menuItem: true,
             },
           },
+          reviews: true,
         },
       }),
-      prisma.hamper.count({ where }),
+
+      prisma.hamper.count({
+        where,
+      }),
     ]);
 
     /* -------------------- MAPPING -------------------- */
 
-    const mappedItems = items.map((hamper) => ({
-      ...hamper,
-      totalItems: hamper.items.reduce(
-        (sum, i) => sum + i.quantity,
-        0
-      ),
-    }));
+    const mappedItems = items.map((hamper) => {
+      const totalReviews = hamper.reviews.length;
+
+      const averageRating =
+        totalReviews > 0
+          ? hamper.reviews.reduce(
+              (sum, review) => sum + review.rating,
+              0
+            ) / totalReviews
+          : 0;
+
+      return {
+        ...hamper,
+        totalItems: hamper.items.reduce(
+          (sum, item) => sum + item.quantity,
+          0
+        ),
+        averageRating,
+        totalReviews,
+        totalComments: totalReviews,
+      };
+    });
 
     return NextResponse.json({
       items: mappedItems,
       total,
     });
-
   } catch (error) {
-    console.error("Hampers GET error:", error);
+    console.error("Hamper GET error:", error);
 
     return NextResponse.json(
       {
@@ -155,8 +202,9 @@ export async function GET(req: NextRequest) {
             ? error.message
             : "Failed to fetch hampers",
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
-
 }

@@ -35,11 +35,11 @@ const features = [
 export default function WhyChooseUs() {
   return (
     <section className="bg-muted/30 py-24">
-      <div className="container mx-auto px-4">
+      <div className="w-full px-7">
 
         {/* Heading */}
 
-        <div className="mx-auto mb-16 max-w-2xl text-center">
+        <div className="mb-16 text-center">
           <span className="text-sm font-semibold uppercase tracking-widest text-primary">
             Why Choose Us
           </span>

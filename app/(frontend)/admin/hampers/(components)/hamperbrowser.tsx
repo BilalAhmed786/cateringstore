@@ -33,7 +33,7 @@ export default function HamperBrowser({
     dateFilter,
     search:debouncedSearch,
    });
-
+console.log(data)
   const deleteMutation = useDeleteHamper();
   const toggleMutation = useToggleHamper();
   /* ---------------- FILTER HANDLERS ---------------- */

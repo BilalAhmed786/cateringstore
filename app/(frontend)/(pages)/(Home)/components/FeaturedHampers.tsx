@@ -26,7 +26,7 @@ export default function FeaturedHampers() {
 
   return (
     <section className="py-24">
-      <div className="container mx-auto px-4">
+      <div className="px-7">
 
         {/* Header */}
         <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -79,7 +79,7 @@ export default function FeaturedHampers() {
                 </h3>
 
                 <Link
-                  href={`/hampers?category=${category.id}`}
+                  href={`/hampers/category/${category.id}`}
                   className="mt-3 inline-flex items-center text-sm font-medium text-primary hover:underline"
                 >
                   Explore →

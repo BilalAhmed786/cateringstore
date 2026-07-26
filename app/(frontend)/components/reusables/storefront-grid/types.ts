@@ -1,6 +1,8 @@
 import { ReactNode } from "react";
 import { GridItem } from "../grid/gridtypes";
 import { Package } from "@/app/(frontend)/admin/packages/types/type";
+import { Hampers } from "@/app/(frontend)/admin/hampers/types/type";
+
 
 
 
@@ -34,7 +36,7 @@ export interface StorefrontGridProps {
 
 
 export interface ProductDetailsSheetProps {
-  data?:Package;
+  data?:Package | Hampers;
   isLoading: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;

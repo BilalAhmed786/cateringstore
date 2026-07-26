@@ -13,7 +13,6 @@ export function proxy(req: NextRequest) {
   try {
     const decoded = token ? verifyJwt(token) : null;
 
-    // 3️⃣ Redirect logged-in users away from login/register
     if (pathname.startsWith("/auth")) {
       if (decoded) {
         // User already logged in → redirect based on role

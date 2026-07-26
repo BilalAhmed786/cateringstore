@@ -8,9 +8,6 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const auth = await requireRole(req, ["ADMIN"]);
-    if (auth instanceof NextResponse) return auth;
-
     const { id } = await params;
 
     if (!id) {
@@ -23,16 +20,13 @@ export async function GET(
     const hamper = await prisma.hamper.findUnique({
       where: { id },
       include: {
-        category:true,
+        category: true,
+        reviews: true,
         items: {
           include: {
             menuItem: {
-              select: {
-                id: true,
-                title: true,
-                price: true,
+              include: {
                 images: true,
-                
               },
             },
           },
@@ -47,7 +41,23 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(hamper);
+    const totalReviews = hamper.reviews.length;
+
+    const averageRating =
+      totalReviews > 0
+        ? hamper.reviews.reduce((sum, review) => sum + review.rating, 0) /
+          totalReviews
+        : 0;
+
+    const response = {
+      ...hamper,
+      totalItems: hamper.items.reduce((sum, item) => sum + item.quantity, 0),
+      averageRating,
+      totalReviews,
+      totalComments: totalReviews,
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error("Hamper details error:", error);
 

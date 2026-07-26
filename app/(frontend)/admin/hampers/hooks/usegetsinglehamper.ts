@@ -1,16 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
-import { Hampers } from "../types/type";
+import { Hamper } from "@prisma/client";
+
 
 
 export function useGetSingleHamperDetails(id?: string) {
-  return useQuery<Hampers>({
+  return useQuery<Hamper>({
     queryKey: ["hamper", id],
     queryFn: () =>
       apiRequest({
         url: `/api/admin/hamper/${id}`,
         method: "GET",
-        authRequired: true,
+        authRequired: false,
       }),
     enabled: !!id,
   });

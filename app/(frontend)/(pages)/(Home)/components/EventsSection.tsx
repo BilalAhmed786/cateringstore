@@ -23,7 +23,7 @@ export default function EventsSection() {
 
   return (
     <section className="bg-muted/30 py-24">
-      <div className="container mx-auto px-4">
+      <div className="px-7">
         {/* Heading */}
         <div className="mb-14 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
           <div>

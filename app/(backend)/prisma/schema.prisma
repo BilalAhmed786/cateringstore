@@ -208,21 +208,26 @@ model EventCategory {
 }
 
 model Event {
-  id          String          @id @default(uuid())
-  name        String
-  description String?
-  image       String?
-  publicId    String?
-  price       Float           @default(0)
-  available   Boolean         @default(true)
-  categoryId  String
-  category    EventCategory   @relation(fields: [categoryId], references: [id])
-  createdAt   DateTime        @default(now())
-  menuItems   EventMenuItem[]
-  packages    EventPackage[]
-  reviews     EventReview[]
-}
+  id             String          @id @default(uuid())
+  name           String
+  description    String?
+  image          String?
+  publicId       String?
 
+  originalPrice  Float           @default(0)
+  discountType   DiscountType?
+  discountValue  Float?
+  finalPrice     Float           @default(0)
+
+  available      Boolean         @default(true)
+  categoryId     String
+  category       EventCategory   @relation(fields: [categoryId], references: [id])
+  createdAt      DateTime        @default(now())
+
+  menuItems      EventMenuItem[]
+  packages       EventPackage[]
+  reviews        EventReview[]
+}
 model EventMenuItem {
   id         String @id @default(uuid())
   eventId    String

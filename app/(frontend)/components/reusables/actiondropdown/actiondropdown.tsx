@@ -16,7 +16,7 @@ export function MenuItemDropdown({ actions }: MenuItemDropdownProps) {
   if (!visibleActions.length) return null;
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
           <MoreVertical size={18} />

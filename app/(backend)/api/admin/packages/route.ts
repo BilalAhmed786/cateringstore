@@ -67,32 +67,48 @@ export async function POST(req: Request) {
 
 export async function GET(req: NextRequest) {
   try {
-    await requireRole(req, ["admin"]);
-
     const { searchParams } = new URL(req.url);
 
     const page = Number(searchParams.get("page") ?? 1);
     const limit = Number(searchParams.get("limit") ?? 10);
     const skip = (page - 1) * limit;
 
-    /* -------------------- FILTERS -------------------- */
-   const where = buildFilter<Prisma.PackageWhereInput>(
-  {
-    status: searchParams.get("status"),
-    search: searchParams.get("search"),
-    dateFilter: searchParams.get("dateFilter"),
-  },
-  {
-    searchFields: ["name", "description"],
-  }
-);
-    /* -------------------- QUERY -------------------- */
+    // Raw query params
+    const minPrice = searchParams.get("minPrice");
+    const maxPrice = searchParams.get("maxPrice");
+
+    const where = buildFilter<Prisma.PackageWhereInput>(
+      {
+        status: searchParams.get("status"),
+        search: searchParams.get("search"),
+        dateFilter: searchParams.get("dateFilter"),
+      },
+      {
+        searchFields: ["name", "description"],
+      }
+    );
+
+    // Apply price filter only if provided
+    if (minPrice || maxPrice) {
+      where.finalPrice = {};
+
+      if (minPrice) {
+        where.finalPrice.gte = Number(minPrice);
+      }
+
+      if (maxPrice) {
+        where.finalPrice.lte = Number(maxPrice);
+      }
+    }
+
     const [items, total] = await Promise.all([
       prisma.package.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: "desc" },
+        orderBy: {
+          createdAt: "desc",
+        },
         include: {
           items: {
             include: {
@@ -101,13 +117,16 @@ export async function GET(req: NextRequest) {
           },
         },
       }),
-      prisma.package.count({ where }),
+
+      prisma.package.count({
+        where,
+      }),
     ]);
 
     const mappedItems = items.map((pkg) => ({
       ...pkg,
       totalItems: pkg.items.reduce(
-        (sum, i) => sum + i.quantity,
+        (sum, item) => sum + item.quantity,
         0
       ),
     }));
@@ -118,6 +137,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     console.error("Package GET error:", error);
+
     return NextResponse.json(
       {
         message:

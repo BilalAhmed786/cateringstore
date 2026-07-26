@@ -38,6 +38,7 @@ export default function AddEventPage() {
 const eventFields: FieldConfig[] = [
   { name: "name", label: "Event Name", type: "text", required: true },
   { name: "description", label: "Description", type: "textarea" },
+  { name: "discount", label: "Discount", type: "number" },
     {
       name: "categoryId",
       label: "Category",
@@ -68,6 +69,7 @@ const eventFields: FieldConfig[] = [
     defaultValues: {
       name: "",
       description: "",
+      discount:0
     },
   });
 
@@ -118,6 +120,7 @@ const eventFields: FieldConfig[] = [
   createEvent({
     name: data.name,
     description: data.description,
+    discount:data.discount,
     categoryId:data.categoryId,
     image:data.image,
     menuItems: selectedMenuItems.map((i) => ({

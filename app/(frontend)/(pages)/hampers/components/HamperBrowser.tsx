@@ -2,32 +2,36 @@
 
 import { useEffect, useState } from "react";
 
-import { EntityFilters } from "@/app/(frontend)/components/reusables/filters/entityfilters";
-import { PriceFilter } from "@/app/(frontend)/components/reusables/filters/pricefilter";
 import { StorefrontGrid } from "@/app/(frontend)/components/reusables/storefront-grid/StorefrontGrid";
 import { ShoppingCart } from "@/app/(frontend)/components/reusables/shopping-cart/ShoppingCart";
-import { useAllCategories } from "@/app/(frontend)/admin/menu-items/hooks/usegetallcategories";
-import { useGetMenuItems } from "@/app/(frontend)/admin/menu-items/hooks/useGetMenuItems";
+import { ProductDetailsSheet } from "@/app/(frontend)/components/reusables/storefront-grid/ProductDetailsSheet";
+
+import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
+import { EntityFilters } from "@/app/(frontend)/components/reusables/filters/entityfilters";
+import { PriceFilter } from "@/app/(frontend)/components/reusables/filters/pricefilter";
+
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 import { useInfiniteScroll } from "@/app/(frontend)/components/reusables/hooks/useInfiniteScroll";
-import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
-import { MenuItemDetailsSheet } from "./MenuItemDetailsSheet"; // <-- update path
 
-export function MenuItemBrowser() {
+import { useCartStore } from "@/app/(frontend)/store/useCartStore";
+
+import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
+import { useGetHampers } from "@/app/(frontend)/admin/hampers/hooks/usegethampers";
+import { useGetSingleHamperDetails } from "@/app/(frontend)/admin/hampers/hooks/usegetsinglehamper";
+import { useHamperCategories } from "@/app/(frontend)/admin/categories/hamper/hooks/useHamperCategories";
+
+export function HamperBrowser() {
   const [category, setCategory] = useState("all");
   const [search, setSearch] = useState("");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
-
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-  const [detailsOpen, setDetailsOpen] = useState(false);
-
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<GridItem[]>([]);
-
+  const [selectedHamperId, setSelectedHamperId] = useState<string | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const debouncedSearch = useDebounce(search, 500);
   const debouncedPriceRange = useDebounce(priceRange, 500);
 
-  const { data, isLoading, isFetching } = useGetMenuItems({
+  const { data, isLoading, isFetching } = useGetHampers({
     page,
     limit: 4,
     category,
@@ -36,14 +40,31 @@ export function MenuItemBrowser() {
     maxPrice: debouncedPriceRange[1],
   });
 
-  const { data: categories = [] } = useAllCategories();
+  const { data: cat } = useHamperCategories({ page: 1, limit: 1000 });
+  const categories = cat?.categories ?? [];
+
+  const { data: hamperDetails, isLoading: isDetailsLoading } =
+    useGetSingleHamperDetails(selectedHamperId ?? "");
+
+  const { addItem } = useCartStore();
 
   const hasMore = items.length < (data?.total ?? 0);
 
-  // Filters
+  useEffect(() => {
+    if (!data) return;
+
+    function dataRetreive(data: GridItem[]) {
+      if (page === 1) {
+        setItems(data);
+      } else {
+        setItems((prev) => [...prev, ...data]);
+      }
+    }
+    dataRetreive(data.items);
+  }, [data, page]);
 
   const handleCategoryChange = (value: string) => {
-   setCategory(value);
+    setCategory(value);
     setPage(1);
   };
 
@@ -57,22 +78,6 @@ export function MenuItemBrowser() {
     setPage(1);
   };
 
-  // Update items
-
-  useEffect(() => {
-    if (!data) return;
-    function dataItems(data:GridItem[]) {
-      if (page === 1) {
-        setItems(data);
-      } else {
-        setItems((prev) => [...prev, ...data]);
-      }
-    }
-    dataItems(data.items);
-  }, [data, page]);
-
-  // Infinite Scroll
-
   useInfiniteScroll({
     loading: isFetching,
     hasMore,
@@ -81,8 +86,6 @@ export function MenuItemBrowser() {
 
   return (
     <div className="space-y-8 pt-28">
-      {/* Filters */}
-
       <div className="flex flex-col items-center space-y-8">
         <div className="flex w-full flex-col justify-center gap-10 px-5 lg:flex-row">
           <EntityFilters
@@ -97,7 +100,7 @@ export function MenuItemBrowser() {
                     label: "All",
                     value: "all",
                   },
-                  ...categories.map((category) => ({
+                  ...categories?.map((category) => ({
                     label: category.name,
                     value: category.id,
                   })),
@@ -121,29 +124,31 @@ export function MenuItemBrowser() {
           search={{
             value: search,
             onChange: handleSearchChange,
-            placeholder: "Search menu items...",
+            placeholder: "Search hampers...",
             classname: "sm:w-xl lg:w-5xl",
           }}
         />
       </div>
 
-      {/* Grid */}
-
       <div className="relative mx-7">
         <StorefrontGrid
           items={items}
           isLoading={isLoading && page === 1}
-          onItemClick={(item) => {
-            setSelectedItemId(item.id);
+          onItemClick={(hamper) => {
+            setSelectedHamperId(hamper.id);
             setDetailsOpen(true);
           }}
+          renderActions={(hamper) => (
+            <UniButton label="Add To Cart" onClick={() => addItem(hamper)} />
+          )}
         />
       </div>
 
       <ShoppingCart />
 
-      <MenuItemDetailsSheet
-        id={selectedItemId}
+      <ProductDetailsSheet
+        data={hamperDetails}
+        isLoading={isDetailsLoading}
         open={detailsOpen}
         onOpenChange={setDetailsOpen}
       />

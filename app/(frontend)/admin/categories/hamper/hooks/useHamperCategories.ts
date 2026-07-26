@@ -17,7 +17,7 @@ export const useHamperCategories = ({
       apiRequest<HamperCategoryResponse>({
         url: `/api/admin/category/hamper?page=${page}&limit=${limit}&search=${search ?? ""}`,
         method: "GET",
-        authRequired: true,
+        authRequired: false,
       }),
     
   });

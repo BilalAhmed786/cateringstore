@@ -28,7 +28,7 @@ export default function FeaturedPackages() {
 
   return (
     <section className="bg-muted/30 py-24">
-      <div className="container mx-auto px-4">
+      <div className="px-7">
         {/* Header */}
         <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>

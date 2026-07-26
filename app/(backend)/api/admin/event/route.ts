@@ -84,6 +84,7 @@ export async function POST(req: NextRequest) {
       name,
       description,
       categoryId,
+      discount,
       menuItems = [],
       packages = [],
     } = body;
@@ -104,7 +105,9 @@ export async function POST(req: NextRequest) {
 
     if (!menuItems.length && !packages.length) {
       return NextResponse.json(
-        { error: "Select at least one menu item or package" },
+        {
+          error: "Select at least one menu item or package",
+        },
         { status: 400 }
       );
     }
@@ -145,7 +148,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // ---------------- Calculate Event Price ----------------
+    // ---------------- Calculate Prices ----------------
 
     const menuTotal = menuItems.reduce(
       (
@@ -175,7 +178,31 @@ export async function POST(req: NextRequest) {
       0
     );
 
-    const totalPrice = menuTotal + packageTotal;
+    const originalPrice = menuTotal + packageTotal;
+
+    let finalPrice = originalPrice;
+    let discountType = null;
+    let discountValue = null;
+
+    if (
+      discount &&
+      discount.type &&
+      discount.value &&
+      Number(discount.value) > 0
+    ) {
+      discountType = discount.type;
+      discountValue = Number(discount.value);
+
+      if (discount.type === "PERCENTAGE") {
+        finalPrice =
+          originalPrice -
+          (originalPrice * discountValue) / 100;
+      } else if (discount.type === "FIXED") {
+        finalPrice = originalPrice - discountValue;
+      }
+
+      finalPrice = Math.max(0, finalPrice);
+    }
 
     // ---------------- Create Event ----------------
 
@@ -183,12 +210,20 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         description: description ?? null,
+
         categoryId,
-        price: totalPrice,
+
+        originalPrice,
+        discountType,
+        discountValue,
+        finalPrice,
 
         menuItems: {
           create: menuItems.map(
-            (m: { menuItemId: string; quantity: number }) => ({
+            (m: {
+              menuItemId: string;
+              quantity: number;
+            }) => ({
               menuItemId: m.menuItemId,
               quantity: m.quantity,
             })
@@ -197,20 +232,26 @@ export async function POST(req: NextRequest) {
 
         packages: {
           create: packages.map(
-            (p: { packageId: string; quantity: number }) => ({
+            (p: {
+              packageId: string;
+              quantity: number;
+            }) => ({
               packageId: p.packageId,
               quantity: p.quantity,
             })
           ),
         },
       },
+
       include: {
         menuItems: true,
         packages: true,
       },
     });
 
-    return NextResponse.json(newEvent.id, { status: 201 });
+    return NextResponse.json(newEvent.id, {
+      status: 201,
+    });
   } catch (error) {
     console.error("CREATE EVENT ERROR:", error);
 
