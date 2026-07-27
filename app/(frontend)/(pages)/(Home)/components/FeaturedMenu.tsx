@@ -2,15 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-
-import { useMenuCategories } from "../hooks/useMenuCategories";
 import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
 import { Button } from "@/app/(frontend)/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useCategories } from "@/app/(frontend)/admin/categories/menu/hooks/usecategories";
 
 export default function FeaturedMenuCategories() {
-  const { data: categories, isLoading } = useMenuCategories();
-
+  const { data: categories, isLoading } = useCategories({page:1,limit:10000});
+     
   if (isLoading) {
     return (
       <section className="py-20">
@@ -21,7 +20,7 @@ export default function FeaturedMenuCategories() {
     );
   }
 
-  if (!categories?.length) return null;
+  if (!categories?.categories?.length) return null;
 
   return (
     <section className="py-20">
@@ -50,7 +49,7 @@ export default function FeaturedMenuCategories() {
         </div>
 
         <AppCarousel
-          items={categories}
+          items={categories.categories}
           delay={3000}
           itemClassName="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
           showArrows={false}

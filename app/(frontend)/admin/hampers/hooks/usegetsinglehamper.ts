@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
-import { Hamper } from "@prisma/client";
+import { Hamper } from "../types/type";
+
 
 
 

@@ -59,8 +59,9 @@ export default function Header() {
         <Link href="/" className="flex items-center">
           <Image
             src={Cateringlogo}
+            className="rounded-full"
             alt="Saif Catering Logo"
-            width={70}
+            width={60}
             priority
           />
         </Link>

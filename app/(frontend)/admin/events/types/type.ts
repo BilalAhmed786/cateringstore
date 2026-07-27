@@ -16,10 +16,13 @@ export interface eventFilters {
   category?:string;
   dateFilter?: string;
   page?:number;
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: "asc" | "desc";
   limit?:number
 }
 
-export type EventMenuItem = {
+export interface EventMenuItem{
   id: string;
   eventId: string;
   menuItemId: string;
@@ -34,7 +37,7 @@ export type EventMenuItem = {
   };
 };
 
-export type EventPackage = {
+export interface EventPackage{
   id: string;
   eventId: string;
   packageId: string;
@@ -42,33 +45,59 @@ export type EventPackage = {
   package: {
     id: string;
     name:string;
+    description:string;
     finalPrice:number;
     image:string    
 
   };
 };
+export interface EventReview {
+  id: string;
+  rating: number;
+  comment: string | null;
 
-export type Event = {
+  user: {
+    id: string;
+    name: string;
+  };
+}
+
+export interface EventCategory {
+  id: string;
+  name: string;
+  image: string;
+  publicId: string;
+  createdAt: string;
+}
+
+export interface Event {
   id: string;
   name: string;
   description: string | null;
   image: string | null;
   publicId: string | null;
+
+  originalPrice: number;
+  discountType: string | null;
+  discountValue: number | null;
+  finalPrice: number;
+
   available: boolean;
-  categoryId: string;
   createdAt: string;
 
-  category: {
-    id: string;
-    name: string;
-    image: string;
-    publicId: string;
-    createdAt: string;
-  };
+  categoryId: string;
+  category: EventCategory;
 
   menuItems: EventMenuItem[];
   packages: EventPackage[];
-};
+
+  reviews: EventReview[];
+
+  averageRating: number;
+  totalReviews: number;
+  totalComments: number;
+  canReview: boolean;
+}
 
 export interface ToggleEventPayload{
   id: string;

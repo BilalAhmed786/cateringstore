@@ -4,10 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "../../../components/ui/button";
-import { useEventCategories } from "../hooks/useEventCategories";
+import { useEventCategories } from "@/app/(frontend)/admin/categories/event/hooks/useEventCategories";
+
 
 export default function EventsSection() {
-  const { data: events, isLoading } = useEventCategories();
+const { data: events, isLoading } = useEventCategories({page:1,limit:1000});
 
   if (isLoading) {
     return (
@@ -19,7 +20,7 @@ export default function EventsSection() {
     );
   }
 
-  if (!events?.length) return null;
+  if (!events?.categories.length) return null;
 
   return (
     <section className="bg-muted/30 py-24">
@@ -51,7 +52,7 @@ export default function EventsSection() {
 
         {/* Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {events.map((event, index) => {
+          {events.categories.map((event, index) => {
             const isLarge = index < 2;
 
             return (
@@ -89,14 +90,14 @@ export default function EventsSection() {
                         variant="secondary"
                         asChild
                       >
-                        <Link href={`/events?category=${event.id}`}>
+                        <Link href={`/events/category/${event.id}`}>
                           Explore Event
                         </Link>
                       </Button>
                     </>
                   ) : (
                     <Link
-                      href={`/events?category=${event.id}`}
+                      href={`/events/category/${event.id}`}
                       className="mt-3 inline-flex items-center text-sm font-medium text-white hover:underline lg:translate-y-4 lg:opacity-0 lg:transition-all lg:duration-500 lg:group-hover:translate-y-0 lg:group-hover:opacity-100"
                     >
                       Explore Event →

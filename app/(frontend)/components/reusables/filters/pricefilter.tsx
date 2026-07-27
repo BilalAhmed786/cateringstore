@@ -24,7 +24,7 @@ export function PriceFilter({
         onValueChange={(v) => onChange(v as [number, number])}
       />
 
-      <div className="flex justify-between text-sm text-muted-foreground">
+      <div className="flex justify-between  text-sm text-muted-foreground">
         <span>Rs {value[0]}</span>
         <span>Rs {value[1]}</span>
       </div>

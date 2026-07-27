@@ -2,6 +2,7 @@ import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { HamperBody } from "../types/types";
+import { getCurrentUser } from "@/app/(backend)/lib/guard/getCurrentuser";
 
 export async function GET(
   req: NextRequest,
@@ -21,7 +22,16 @@ export async function GET(
       where: { id },
       include: {
         category: true,
-        reviews: true,
+        reviews: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
         items: {
           include: {
             menuItem: {
@@ -41,30 +51,72 @@ export async function GET(
       );
     }
 
+    /* -----------------------------
+       Calculate Rating
+    ----------------------------- */
+
     const totalReviews = hamper.reviews.length;
 
     const averageRating =
       totalReviews > 0
-        ? hamper.reviews.reduce((sum, review) => sum + review.rating, 0) /
-          totalReviews
+        ? hamper.reviews.reduce(
+            (sum, review) => sum + review.rating,
+            0,
+          ) / totalReviews
         : 0;
 
-    const response = {
+    /* -----------------------------
+       Can Review
+    ----------------------------- */
+
+    let canReview = false;
+
+    const user = await getCurrentUser(req);
+
+    if (user) {
+      const purchased = await prisma.orderHamper.findFirst({
+        where: {
+          hamperId: id,
+          order: {
+            userId: user.id,
+            status: "DELIVERED",
+          },
+        },
+      });
+
+      const alreadyReviewed =
+        await prisma.hamperReview.findUnique({
+          where: {
+            userId_hamperId: {
+              userId: user.id,
+              hamperId: id,
+            },
+          },
+        });
+
+      canReview = !!purchased && !alreadyReviewed;
+    }
+
+    return NextResponse.json({
       ...hamper,
-      totalItems: hamper.items.reduce((sum, item) => sum + item.quantity, 0),
+      totalItems: hamper.items.reduce(
+        (sum, item) => sum + item.quantity,
+        0,
+      ),
       averageRating,
       totalReviews,
       totalComments: totalReviews,
-    };
-
-    return NextResponse.json(response);
+      canReview,
+    });
   } catch (error) {
     console.error("Hamper details error:", error);
 
     return NextResponse.json(
       {
         message:
-          error instanceof Error ? error.message : "Failed to fetch hamper",
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch hamper",
       },
       { status: 500 },
     );

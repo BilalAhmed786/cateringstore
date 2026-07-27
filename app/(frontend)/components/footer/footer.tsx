@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   Facebook,
   Instagram,
@@ -7,7 +8,7 @@ import {
   Phone,
   Twitter,
 } from "lucide-react";
-
+import Cateringlogo from "../../assets/saif catering.png";
 export default function Footer() {
   return (
     <footer className="border-t bg-gray-950 text-gray-300">
@@ -16,18 +17,18 @@ export default function Footer() {
           {/* Column 1 */}
           <div>
             <Link href="/" className="flex items-center gap-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 64 64"
-                className="h-10 w-10 text-white"
-                fill="currentColor"
-              >
-                <path d="M20 6a2 2 0 0 0-2 2v20a6 6 0 0 0 4 5.65V58h4V33.65A6 6 0 0 0 30 28V8a2 2 0 0 0-4 0v8h-2V8a2 2 0 0 0-4 0v8h-2V8a2 2 0 0 0-2-2zm24 0c-4.4 0-8 7.16-8 16 0 7.4 2.53 13.52 6 15.46V58h4V6h-2z" />
-              </svg>
-
-              <span className="text-2xl font-bold text-white">
-                Saif Catering
-              </span>
+              <Image
+                src={Cateringlogo}
+                className="rounded-full"
+                alt="Saif Catering Logo"
+                width={70}
+                priority
+              />
+              <div>
+                <span className="text-2xl font-bold text-white">
+                  Saif Catering
+                </span>
+              </div>
             </Link>
 
             <p className="mt-4 text-sm leading-7 text-gray-400">

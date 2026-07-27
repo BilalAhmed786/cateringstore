@@ -43,24 +43,19 @@ export interface Hamper {
   id: string;
   name: string;
   description: string | null;
-
   categoryId: string;
   category: Hampercategory;
-
   originalPrice: number;
   discountType: string ;
   discountValue: number;
   finalPrice: number;
-
   image: string | null;
   publicId: string | null;
-
   available: boolean;
   createdAt: string;
-
   items: HampereMenuItem[];
   reviews: HamperReview[];
-
+  canReview: boolean;
   totalItems: number;
   averageRating: number;
   totalReviews: number;

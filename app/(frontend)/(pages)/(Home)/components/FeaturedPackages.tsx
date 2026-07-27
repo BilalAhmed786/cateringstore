@@ -6,12 +6,12 @@ import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/app/(frontend)/components/ui/button";
 import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
-import { useFeaturedPackages } from "../hooks/useFeaturedPackages";
 import { PackageCustomizeSheet } from "../../packages/components/PackageCustomizeSheet";
 import { useState } from "react";
+import { useGetPackages } from "@/app/(frontend)/admin/packages/hooks/usegetpackages";
 
 export default function FeaturedPackages() {
-  const { data: packages, isLoading } = useFeaturedPackages();
+  const { data: packages, isLoading } = useGetPackages({page:1,limit:1000});
   const [customizeOpen, setCustomizeOpen] = useState(false);
    const [selectedPackageId, setSelectedPackageId] = useState<string | null>(null);
   if (isLoading) {
@@ -24,7 +24,7 @@ export default function FeaturedPackages() {
     );
   }
 
-  if (!packages?.length) return null;
+  if (!packages?.items.length) return null;
 
   return (
     <section className="bg-muted/30 py-24">
@@ -56,7 +56,7 @@ export default function FeaturedPackages() {
         </div>
 
         <AppCarousel
-          items={packages}
+          items={packages.items}
           delay={3500}
           showArrows={false}
           itemClassName="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
@@ -72,7 +72,7 @@ export default function FeaturedPackages() {
                 />
 
                 <div className="absolute right-4 top-4 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow">
-                  Rs. {pkg.finalPrice.toLocaleString()}
+                  Rs. {pkg.finalPrice}
                 </div>
               </div>
 

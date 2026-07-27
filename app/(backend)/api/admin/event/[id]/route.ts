@@ -2,19 +2,20 @@ import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import cloudinary from "@/app/(backend)/lib/cloudinary/cloudinary";
+import { getCurrentUser } from "@/app/(backend)/lib/guard/getCurrentuser";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const userOrResponse = await requireRole(req, ["ADMIN"]);
-    if (userOrResponse instanceof NextResponse) return userOrResponse;
-
     const { id } = await params;
 
     if (!id) {
-      return NextResponse.json({ error: "ID is required" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Event ID is required" },
+        { status: 400 },
+      );
     }
 
     const event = await prisma.event.findUnique({
@@ -22,12 +23,11 @@ export async function GET(
       include: {
         category: true,
 
-        // IMPORTANT for edit page
         menuItems: {
           include: {
             menuItem: {
               include: {
-                images: true
+                images: true,
               },
             },
           },
@@ -39,27 +39,94 @@ export async function GET(
           },
         },
 
-        reviews: true,
+        reviews: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
 
     if (!event) {
-      return NextResponse.json({ error: "Event not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Event not found" },
+        { status: 404 },
+      );
     }
 
-    return NextResponse.json(event);
+    /* -----------------------------
+       Calculate Rating
+    ----------------------------- */
+
+    const totalReviews = event.reviews.length;
+
+    const averageRating =
+      totalReviews > 0
+        ? event.reviews.reduce(
+            (sum, review) => sum + review.rating,
+            0,
+          ) / totalReviews
+        : 0;
+
+    /* -----------------------------
+       Can Review
+    ----------------------------- */
+
+    let canReview = false;
+
+    const user = await getCurrentUser(req);
+
+    if (user) {
+      const purchased = await prisma.orderEvent.findFirst({
+        where: {
+          eventId: id,
+          order: {
+            userId: user.id,
+            status: "DELIVERED",
+          },
+        },
+      });
+
+      const alreadyReviewed =
+        await prisma.eventReview.findUnique({
+          where: {
+            userId_eventId: {
+              userId: user.id,
+              eventId: id,
+            },
+          },
+        });
+
+      canReview = !!purchased && !alreadyReviewed;
+    }
+
+    return NextResponse.json({
+      ...event,
+      averageRating,
+      totalReviews,
+      totalComments: totalReviews,
+      canReview,
+    });
   } catch (error) {
     console.error("GET EVENT ERROR:", error);
 
     return NextResponse.json(
       {
         message:
-          error instanceof Error ? error.message : "Failed to fetch event",
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch event",
       },
       { status: 500 },
     );
   }
 }
+
 
 export async function PUT(
   req: NextRequest,

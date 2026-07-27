@@ -7,13 +7,17 @@ import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 
 export async function GET(req: NextRequest) {
   try {
-    await requireRole(req, ["admin"]);
-
     const { searchParams } = new URL(req.url);
 
     const page = Number(searchParams.get("page") ?? 1);
     const limit = Number(searchParams.get("limit") ?? 10);
     const skip = (page - 1) * limit;
+
+    const minPrice = searchParams.get("minPrice");
+    const maxPrice = searchParams.get("maxPrice");
+    const sort = searchParams.get("sort");
+
+    /* -------------------- FILTERS -------------------- */
 
     const where = buildFilter<Prisma.EventWhereInput>(
       {
@@ -28,39 +32,90 @@ export async function GET(req: NextRequest) {
       }
     );
 
+    /* -------------------- PRICE FILTER -------------------- */
+
+    if (minPrice || maxPrice) {
+      where.finalPrice = {};
+
+      if (minPrice) {
+        where.finalPrice.gte = Number(minPrice);
+      }
+
+      if (maxPrice) {
+        where.finalPrice.lte = Number(maxPrice);
+      }
+    }
+
+    /* -------------------- SORT -------------------- */
+
+    const orderBy: Prisma.EventOrderByWithRelationInput =
+      sort === "asc"
+        ? { finalPrice: "asc" }
+        : sort === "desc"
+        ? { finalPrice: "desc" }
+        : { createdAt: "desc" };
+
+    /* -------------------- QUERY -------------------- */
+
     const [items, total] = await Promise.all([
       prisma.event.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: "desc" },
+        orderBy,
         include: {
           category: true,
+          menuItems: {
+            include: {
+              menuItem: {
+                include: {
+                  images: true,
+                },
+              },
+            },
+          },
+          packages: {
+            include: {
+              package: true,
+            },
+          },
           reviews: true,
         },
       }),
-      prisma.event.count({ where }),
+
+      prisma.event.count({
+        where,
+      }),
     ]);
 
-  
-    const itemsWithRatings = items.map((event) => {
+    /* -------------------- MAPPING -------------------- */
+
+    const mappedItems = items.map((event) => {
       const totalReviews = event.reviews.length;
+
       const averageRating =
         totalReviews > 0
-          ? event.reviews.reduce((sum, r) => sum + r.rating, 0) /
-            totalReviews
+          ? event.reviews.reduce(
+              (sum, review) => sum + review.rating,
+              0
+            ) / totalReviews
           : 0;
 
       return {
         ...event,
         averageRating,
         totalReviews,
+        totalComments: totalReviews,
       };
     });
 
-    return NextResponse.json({ items: itemsWithRatings, total });
+    return NextResponse.json({
+      items: mappedItems,
+      total,
+    });
   } catch (error) {
     console.error("Event GET error:", error);
+
     return NextResponse.json(
       {
         message:
@@ -68,7 +123,9 @@ export async function GET(req: NextRequest) {
             ? error.message
             : "Failed to fetch events",
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }

@@ -1,41 +1,44 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
 import { EntityFilters } from "@/app/(frontend)/components/reusables/filters/entityfilters";
 import { PriceFilter } from "@/app/(frontend)/components/reusables/filters/pricefilter";
 import { StorefrontGrid } from "@/app/(frontend)/components/reusables/storefront-grid/StorefrontGrid";
 import { ShoppingCart } from "@/app/(frontend)/components/reusables/shopping-cart/ShoppingCart";
-import { ProductDetailsSheet } from "@/app/(frontend)/components/reusables/storefront-grid/ProductDetailsSheet";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 import { useInfiniteScroll } from "@/app/(frontend)/components/reusables/hooks/useInfiniteScroll";
 
-import { useGetHampers } from "@/app/(frontend)/admin/hampers/hooks/usegethampers";
-import { useGetSingleHamperDetails } from "@/app/(frontend)/admin/hampers/hooks/usegetsinglehamper";
-
-import { useCartStore } from "@/app/(frontend)/store/useCartStore";
 import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
-import { useParams } from "next/navigation";
+import { useCartStore } from "@/app/(frontend)/store/useCartStore";
 
-export default function HamperCategoryBrowser() {
+import { useGetEvents } from "@/app/(frontend)/admin/events/hooks/usegetEvents";
+import { useGetSingleEvent } from "@/app/(frontend)/admin/events/hooks/usegetsingleevent";
+import { EventDetailsSheet } from "../../components/EventDetailsSheet";
+
+export default function EventCategoryBrowser() {
   const params = useParams();
   const categoryId = params.categoryid as string;
+
   const [search, setSearch] = useState("");
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([
+    0, 5000,
+  ]);
 
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<GridItem[]>([]);
 
-  const [selectedHamperId, setSelectedHamperId] = useState<string | null>(null);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
   const [detailsOpen, setDetailsOpen] = useState(false);
 
   const debouncedSearch = useDebounce(search, 500);
   const debouncedPrice = useDebounce(priceRange, 500);
 
-  const { data, isLoading, isFetching } = useGetHampers({
+  const { data, isLoading, isFetching } = useGetEvents({
     page,
     limit: 4,
     category: categoryId,
@@ -44,8 +47,10 @@ export default function HamperCategoryBrowser() {
     maxPrice: debouncedPrice[1],
   });
 
-  const { data: hamperDetails, isLoading: isDetailsLoading } =
-    useGetSingleHamperDetails(selectedHamperId ?? "");
+  const {
+    data: eventDetails,
+    isLoading: isDetailsLoading,
+  } = useGetSingleEvent(selectedEventId ?? "");
 
   const { addItem } = useCartStore();
 
@@ -54,14 +59,15 @@ export default function HamperCategoryBrowser() {
   useEffect(() => {
     if (!data) return;
 
-    function dataRetreive(data: GridItem[]) {
+    function dataRetrieve(data: GridItem[]) {
       if (page === 1) {
         setItems(data);
       } else {
         setItems((prev) => [...prev, ...data]);
       }
     }
-    dataRetreive(data.items);
+
+    dataRetrieve(data.items);
   }, [data, page]);
 
   useInfiniteScroll({
@@ -85,12 +91,13 @@ export default function HamperCategoryBrowser() {
             step={100}
           />
         </div>
+
         <div>
           <EntityFilters
             search={{
               value: search,
               onChange: setSearch,
-              placeholder: "Search...",
+              placeholder: "Search events...",
               classname: "lg:w-5xl sm:w-xl",
             }}
           />
@@ -102,19 +109,22 @@ export default function HamperCategoryBrowser() {
           items={items}
           isLoading={isLoading && page === 1}
           onItemClick={(item) => {
-            setSelectedHamperId(item.id);
+            setSelectedEventId(item.id);
             setDetailsOpen(true);
           }}
           renderActions={(item) => (
-            <UniButton label="Add To Cart" onClick={() => addItem(item)} />
+            <UniButton
+              label="Add To Cart"
+              onClick={() => addItem(item)}
+            />
           )}
         />
       </div>
 
       <ShoppingCart />
 
-      <ProductDetailsSheet
-        data={hamperDetails}
+      <EventDetailsSheet
+        data={eventDetails}
         isLoading={isDetailsLoading}
         open={detailsOpen}
         onOpenChange={setDetailsOpen}

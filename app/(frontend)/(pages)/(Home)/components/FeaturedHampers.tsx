@@ -3,14 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-
 import { Button } from "@/app/(frontend)/components/ui/button";
 import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
-import { useHamperCategories } from "../hooks/useHamperCategories";
+import { useHamperCategories } from "@/app/(frontend)/admin/categories/hamper/hooks/useHamperCategories";
+
 
 
 export default function FeaturedHampers() {
-  const { data: categories, isLoading } =useHamperCategories();
+  const { data: categories, isLoading } =useHamperCategories({page:1,limit:1000});
 
   if (isLoading) {
     return (
@@ -22,7 +22,7 @@ export default function FeaturedHampers() {
     );
   }
 
-  if (!categories?.length) return null;
+  if (!categories?.categories.length) return null;
 
   return (
     <section className="py-24">
@@ -56,7 +56,7 @@ export default function FeaturedHampers() {
         </div>
 
         <AppCarousel
-          items={categories}
+          items={categories.categories}
           delay={3000}
           showArrows={false}
           itemClassName="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"

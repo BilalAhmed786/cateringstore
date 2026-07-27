@@ -91,6 +91,19 @@ model MenuItem {
   eventLinks   EventMenuItem[]
   createdAt    DateTime         @default(now())
 }
+model MenuItemReview {
+  id         String   @id @default(uuid())
+  userId     String
+  menuItemId String
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+
+  @@unique([userId, menuItemId])
+}
 
 model ItemImage {
   id         String @id @default(uuid())
@@ -111,15 +124,24 @@ model ItemImage {
 
 model Order {
   id        String      @id @default(uuid())
-  userId    String
+
+  // Registered user (optional)
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id])
+
+  // Guest information
+  guestName  String?
+  guestEmail String?
+  guestPhone String?
+
   status    OrderStatus @default(PENDING)
   total     Float
   createdAt DateTime    @default(now())
 
-  user          User           @relation(fields: [userId], references: [id])
   items         OrderItem[]
   orderPackages OrderPackage[]
   orderHampers  OrderHamper[]
+  orderEvents   OrderEvent[]
 }
 
 model OrderItem {
@@ -131,7 +153,18 @@ model OrderItem {
   order Order    @relation(fields: [orderId], references: [id])
   menu  MenuItem @relation(fields: [menuId], references: [id])
 }
+model OrderEvent {
+  id String @id @default(uuid())
 
+  orderId String
+  eventId String
+
+  quantity Int @default(1)
+  price Float
+
+  order Order @relation(fields: [orderId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+}
 model OrderPackage {
   id        String @id @default(uuid())
   orderId   String
@@ -180,7 +213,19 @@ model Package {
   reviews       PackageReview[]
   eventLinks    EventPackage[]
 }
+model PackageReview {
+  id        String   @id @default(uuid())
+  userId    String
+  packageId String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
 
+  user    User    @relation(fields: [userId], references: [id])
+  package Package @relation(fields: [packageId], references: [id])
+
+  @@unique([userId, packageId])
+}
 model PackageItem {
   id         String @id @default(uuid())
   packageId  String
@@ -227,6 +272,21 @@ model Event {
   menuItems      EventMenuItem[]
   packages       EventPackage[]
   reviews        EventReview[]
+  
+  orderEvents    OrderEvent[]
+}
+model EventReview {
+  id        String   @id @default(uuid())
+  userId    String
+  eventId   String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
 }
 model EventMenuItem {
   id         String @id @default(uuid())
@@ -296,39 +356,6 @@ model HamperItem {
   menuItem MenuItem @relation(fields: [menuItemId], references: [id])
 }
 
-/**
- * =======================
- * REVIEWS
- * =======================
- */
-
-model MenuItemReview {
-  id         String   @id @default(uuid())
-  userId     String
-  menuItemId String
-  rating     Int
-  comment    String?
-  createdAt  DateTime @default(now())
-
-  user     User     @relation(fields: [userId], references: [id])
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
-
-  @@unique([userId, menuItemId])
-}
-
-model PackageReview {
-  id        String   @id @default(uuid())
-  userId    String
-  packageId String
-  rating    Int
-  comment   String?
-  createdAt DateTime @default(now())
-
-  user    User    @relation(fields: [userId], references: [id])
-  package Package @relation(fields: [packageId], references: [id])
-
-  @@unique([userId, packageId])
-}
 
 model HamperReview {
   id        String   @id @default(uuid())
@@ -344,16 +371,4 @@ model HamperReview {
   @@unique([userId, hamperId])
 }
 
-model EventReview {
-  id        String   @id @default(uuid())
-  userId    String
-  eventId   String
-  rating    Int
-  comment   String?
-  createdAt DateTime @default(now())
 
-  user  User  @relation(fields: [userId], references: [id])
-  event Event @relation(fields: [eventId], references: [id])
-
-  @@unique([userId, eventId])
-}
