@@ -8,8 +8,8 @@ import { Edit, Trash2 } from "lucide-react";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { BaseSearch } from "@/app/(frontend)/components/reusables/search/search";
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
+import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
-import { FullScreenLoader } from "@/app/(frontend)/components/reusables/loader/loader";
 import { DataTable } from "@/app/(frontend)/components/reusables/table/table";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
 import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
@@ -33,9 +33,9 @@ export default function EventCategoriesPage() {
   const categories = data?.categories ?? [];
   const total = data?.total as number
 
-  if (isPending && !data) {
-    return <FullScreenLoader />;
-  }
+ if (isPending) {
+  return <Loader variant="page" />;
+}
 
   return (
     <div className="w-full flex justify-center py-10">

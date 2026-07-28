@@ -12,6 +12,7 @@ import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebo
 import { useInfiniteScroll } from "@/app/(frontend)/components/reusables/hooks/useInfiniteScroll";
 import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
 import { MenuItemDetailsSheet } from "./MenuItemDetailsSheet"; // <-- update path
+import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
 export function MenuItemBrowser() {
   const [category, setCategory] = useState("all");
@@ -138,6 +139,7 @@ export function MenuItemBrowser() {
             setDetailsOpen(true);
           }}
         />
+        {isFetching  && page !==1 && <Loader variant="page"/>}
       </div>
 
       <ShoppingCart />

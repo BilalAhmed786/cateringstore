@@ -3,11 +3,12 @@
 import { useParams } from "next/navigation";
 import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamicform/dynamicform";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
-import { FullScreenLoader } from "@/app/(frontend)/components/reusables/loader/loader";
+
 import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 import { useEventCategory } from "../hooks/useEventCategory";
 import { useUpdateEventCategoryImage } from "../hooks/useUpdateEventCategoryImage";
 import { useUpdateEventCategory } from "../hooks/useUpdateEventCategory";
+import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
 
 export default function UpdateEventCategoryPage() {
@@ -18,7 +19,7 @@ export default function UpdateEventCategoryPage() {
   const { mutate, isPending } = useUpdateEventCategory();
   const { mutate: updateImage } = useUpdateEventCategoryImage();
 
-  if (isLoading) return <FullScreenLoader />;
+  if (isLoading) return <Loader variant="inline" />;
 
   const fields: FieldConfig[] = [
     {

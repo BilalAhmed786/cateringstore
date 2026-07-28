@@ -32,11 +32,12 @@ export function useInfiniteScroll({
       }
     };
 
-    const throttledScroll = throttle(handleScroll, 200);
+    const throttledScroll = throttle(handleScroll,500);
 
     window.addEventListener("scroll", throttledScroll, {
       passive: true,
     });
+    
 
     return () => {
       window.removeEventListener("scroll", throttledScroll);

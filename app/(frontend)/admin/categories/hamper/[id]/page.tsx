@@ -3,11 +3,11 @@
 import { useParams } from "next/navigation";
 import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamicform/dynamicform";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
-import { FullScreenLoader } from "@/app/(frontend)/components/reusables/loader/loader";
 import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 import { useHamperCategory } from "../hooks/useHamperCategory";
 import { useUpdateHamperCategoryImage } from "../hooks/useUpdateHamperCategoryImage";
 import { useUpdateHamperCategory } from "../hooks/useUpdateHamperCategory";
+import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
 
 export default function UpdateHamperCategoryPage() {
@@ -18,7 +18,7 @@ export default function UpdateHamperCategoryPage() {
   const { mutate, isPending } = useUpdateHamperCategory();
   const { mutate: updateImage } = useUpdateHamperCategoryImage();
 
-  if (isLoading) return <FullScreenLoader />;
+  if (isLoading) return <Loader variant="inline" />;
 
   const fields: FieldConfig[] = [
     {

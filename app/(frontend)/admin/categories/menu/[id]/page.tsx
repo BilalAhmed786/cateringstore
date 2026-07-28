@@ -4,9 +4,9 @@ import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamic
 import { useUpdateCategory } from "../hooks/useUpdateCategory";
 import { useCategory } from "../hooks/usegetcategory";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
-import { FullScreenLoader } from "@/app/(frontend)/components/reusables/loader/loader";
 import { useUpdateCategoryImage } from "../hooks/useUpdateCategoryImage";
 import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
+import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
 export default function UpdateCategoryPage() {
   const params = useParams();
@@ -16,7 +16,7 @@ export default function UpdateCategoryPage() {
   const { mutate, isPending } = useUpdateCategory();
   const { mutate:updateImage } = useUpdateCategoryImage();
   
-  if (isLoading) return <FullScreenLoader />;
+  if (isLoading) return <Loader variant="inline" />;
 
   const fields: FieldConfig[] = [
     {

@@ -9,10 +9,10 @@ import { BaseSearch } from "@/app/(frontend)/components/reusables/search/search"
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 import { useCategories } from "./hooks/usecategories";
 import { useDeleteCategory } from "./hooks/useDeleteCategory";
-import { FullScreenLoader } from "@/app/(frontend)/components/reusables/loader/loader";
 import { DataTable } from "@/app/(frontend)/components/reusables/table/table";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
 import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
+import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
 export default function CategoriesPage() {
   const [search, setSearch] = useState("");
@@ -32,7 +32,7 @@ export default function CategoriesPage() {
   const categories = data?.categories ?? [];
   const total = data?.total ?? 0;
   if (isPending && !data) {
-    return <FullScreenLoader />;
+    return <Loader variant ="inline"/>;
   }
 
   return (

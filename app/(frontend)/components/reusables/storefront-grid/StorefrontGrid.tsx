@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { ProductCard } from "./ProductCard";
 import { StorefrontGridProps } from "./types";
+import { Loader } from "../loader/loader";
 
 
 export function StorefrontGrid({
@@ -11,14 +12,13 @@ export function StorefrontGrid({
   renderSubtitle,
   renderActions,
 }: StorefrontGridProps) {
-  console.log(items)
+  
   if (isLoading) {
     return (
-      <div className="py-20 text-center text-muted-foreground">
-        Loading items...
-      </div>
+      <Loader variant="page"/>
     );
   }
+  
   if (!items.length) {
     return (
       <div className="py-20 text-center text-muted-foreground">
