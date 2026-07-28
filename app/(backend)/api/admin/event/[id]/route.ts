@@ -3,6 +3,7 @@ import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import cloudinary from "@/app/(backend)/lib/cloudinary/cloudinary";
 import { getCurrentUser } from "@/app/(backend)/lib/guard/getCurrentuser";
+import { EventBody } from "../types/type";
 
 export async function GET(
   req: NextRequest,
@@ -53,10 +54,7 @@ export async function GET(
     });
 
     if (!event) {
-      return NextResponse.json(
-        { message: "Event not found" },
-        { status: 404 },
-      );
+      return NextResponse.json({ message: "Event not found" }, { status: 404 });
     }
 
     /* -----------------------------
@@ -67,10 +65,8 @@ export async function GET(
 
     const averageRating =
       totalReviews > 0
-        ? event.reviews.reduce(
-            (sum, review) => sum + review.rating,
-            0,
-          ) / totalReviews
+        ? event.reviews.reduce((sum, review) => sum + review.rating, 0) /
+          totalReviews
         : 0;
 
     /* -----------------------------
@@ -92,15 +88,14 @@ export async function GET(
         },
       });
 
-      const alreadyReviewed =
-        await prisma.eventReview.findUnique({
-          where: {
-            userId_eventId: {
-              userId: user.id,
-              eventId: id,
-            },
+      const alreadyReviewed = await prisma.eventReview.findUnique({
+        where: {
+          userId_eventId: {
+            userId: user.id,
+            eventId: id,
           },
-        });
+        },
+      });
 
       canReview = !!purchased && !alreadyReviewed;
     }
@@ -118,15 +113,12 @@ export async function GET(
     return NextResponse.json(
       {
         message:
-          error instanceof Error
-            ? error.message
-            : "Failed to fetch event",
+          error instanceof Error ? error.message : "Failed to fetch event",
       },
       { status: 500 },
     );
   }
 }
-
 
 export async function PUT(
   req: NextRequest,
@@ -138,16 +130,70 @@ export async function PUT(
   const { id } = await params;
 
   try {
-    const body = await req.json();
+    const body = (await req.json()) as EventBody;
 
-    const { name, description, categoryId, menuItems, packages } = body;
+    const {
+      name,
+      description,
+      categoryId,
+      discount = 0,
+      menuItems = [],
+      packages = [],
+    } = body;
 
-    if (!name || !description) {
-      return NextResponse.json(
-        { error: " All fileds are required" },
-        { status: 400 },
-      );
+    if (!name || (!menuItems.length && !packages.length)) {
+      return NextResponse.json({ message: "Invalid data" }, { status: 400 });
     }
+
+    /* -------------------- GET MENU ITEM PRICES -------------------- */
+
+    const dbMenuItems = await prisma.menuItem.findMany({
+      where: {
+        id: {
+          in: menuItems.map((item) => item.menuItemId),
+        },
+      },
+      select: {
+        id: true,
+        price: true,
+      },
+    });
+
+    /* -------------------- GET PACKAGE PRICES -------------------- */
+
+    const dbPackages = await prisma.package.findMany({
+      where: {
+        id: {
+          in: packages.map((item) => item.packageId),
+        },
+      },
+      select: {
+        id: true,
+        finalPrice: true,
+      },
+    });
+
+    /* -------------------- CALCULATE ORIGINAL PRICE -------------------- */
+
+    const menuTotal = menuItems.reduce((sum, item) => {
+      const menu = dbMenuItems.find((m) => m.id === item.menuItemId);
+
+      return sum + (menu?.price ?? 0) * item.quantity;
+    }, 0);
+
+    const packageTotal = packages.reduce((sum, item) => {
+      const pkg = dbPackages.find((p) => p.id === item.packageId);
+
+      return sum + (pkg?.finalPrice ?? 0) * item.quantity;
+    }, 0);
+
+    const originalPrice = menuTotal + packageTotal;
+
+    /* -------------------- FINAL PRICE -------------------- */
+
+    const finalPrice = originalPrice - (originalPrice * discount) / 100;
+
+    /* -------------------- UPDATE EVENT -------------------- */
 
     const updatedEvent = await prisma.$transaction(async (tx) => {
       const event = await tx.event.update({
@@ -156,40 +202,44 @@ export async function PUT(
           name,
           description: description ?? null,
           categoryId,
+
+          originalPrice,
+          discountType: discount > 0 ? "PERCENTAGE" : null,
+          discountValue: discount,
+          finalPrice,
         },
       });
 
-      if (Array.isArray(menuItems)) {
-        await tx.eventMenuItem.deleteMany({
-          where: { eventId: id },
-        });
+      /* -------------------- UPDATE MENU ITEMS -------------------- */
 
-        if (menuItems.length > 0) {
-          await tx.eventMenuItem.createMany({
-            data: menuItems.map((item) => ({
-              eventId: id,
-              menuItemId: item.menuItemId,
-              quantity: item.quantity,
-            })),
-          });
-        }
+      await tx.eventMenuItem.deleteMany({
+        where: { eventId: id },
+      });
+
+      if (menuItems.length > 0) {
+        await tx.eventMenuItem.createMany({
+          data: menuItems.map((item) => ({
+            eventId: id,
+            menuItemId: item.menuItemId,
+            quantity: item.quantity,
+          })),
+        });
       }
 
-      // 3️⃣ Update Packages (if provided)
-      if (Array.isArray(packages)) {
-        await tx.eventPackage.deleteMany({
-          where: { eventId: id },
-        });
+      /* -------------------- UPDATE PACKAGES -------------------- */
 
-        if (packages.length > 0) {
-          await tx.eventPackage.createMany({
-            data: packages.map((pkg) => ({
-              eventId: id,
-              packageId: pkg.packageId,
-              quantity: pkg.quantity,
-            })),
-          });
-        }
+      await tx.eventPackage.deleteMany({
+        where: { eventId: id },
+      });
+
+      if (packages.length > 0) {
+        await tx.eventPackage.createMany({
+          data: packages.map((item) => ({
+            eventId: id,
+            packageId: item.packageId,
+            quantity: item.quantity,
+          })),
+        });
       }
 
       return event;
@@ -200,8 +250,12 @@ export async function PUT(
     console.error("UPDATE EVENT ERROR:", error);
 
     return NextResponse.json(
-      { error: "Failed to update event" },
-      { status: 500 },
+      {
+        message: "Something went wrong",
+      },
+      {
+        status: 500,
+      },
     );
   }
 }

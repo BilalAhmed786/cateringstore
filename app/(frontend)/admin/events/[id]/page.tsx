@@ -53,6 +53,7 @@ export default function EditEventPage() {
   const fields: FieldConfig[] = [
     { name: "name", label: "Event Name", type: "text", required: true },
     { name: "description", label: "Description", type: "textarea" },
+    { name: "discount", label: "Discount", type: "number" },
 
     {
       name: "categoryId",
@@ -97,6 +98,7 @@ export default function EditEventPage() {
     defaultValues: {
       name: "",
       description: "",
+      discount:"",
       categoryId: "",
     },
   });
@@ -111,6 +113,7 @@ export default function EditEventPage() {
     reset({
       name: singleEvent.name ?? "",
       description: singleEvent.description ?? "",
+      discount:singleEvent.discountValue??"",
       categoryId: singleEvent.categoryId ?? "",
     });
   }, [isReady, singleEvent, reset]);
@@ -195,6 +198,7 @@ export default function EditEventPage() {
       name: formData.name,
       description: formData.description,
       categoryId: formData.categoryId,
+      discount:formData.discount,
       menuItems: selectedMenuItems.map((i) => ({
         menuItemId: i.id,
         quantity: i.quantity,

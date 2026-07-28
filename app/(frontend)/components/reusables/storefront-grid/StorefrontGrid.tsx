@@ -11,6 +11,7 @@ export function StorefrontGrid({
   renderSubtitle,
   renderActions,
 }: StorefrontGridProps) {
+  console.log(items)
   if (isLoading) {
     return (
       <div className="py-20 text-center text-muted-foreground">
@@ -18,7 +19,6 @@ export function StorefrontGrid({
       </div>
     );
   }
-
   if (!items.length) {
     return (
       <div className="py-20 text-center text-muted-foreground">

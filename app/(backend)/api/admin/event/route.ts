@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { buildFilter } from "../../reusables/filters/filters";
 import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
+import { EventBody } from "./types/type";
 
 export async function GET(req: NextRequest) {
   try {
@@ -131,54 +132,37 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const userOrResponse = await requireRole(req, ["ADMIN"]);
-  if (userOrResponse instanceof NextResponse) return userOrResponse;
-
   try {
-    const body = await req.json();
+    const auth = await requireRole(req, ["ADMIN"]);
+    if (auth instanceof NextResponse) return auth;
 
+    const body = await req.json() as EventBody;
+  
     const {
       name,
       description,
       categoryId,
-      discount,
+      discount = 0,
       menuItems = [],
       packages = [],
     } = body;
 
-    if (!name) {
+    if (
+      !name ||
+      (!menuItems.length && !packages.length)
+    ) {
       return NextResponse.json(
-        { error: "Event name is required" },
+        { message: "Invalid data" },
         { status: 400 }
       );
     }
 
-    if (!categoryId) {
-      return NextResponse.json(
-        { error: "Category is required" },
-        { status: 400 }
-      );
-    }
-
-    if (!menuItems.length && !packages.length) {
-      return NextResponse.json(
-        {
-          error: "Select at least one menu item or package",
-        },
-        { status: 400 }
-      );
-    }
-
-    // ---------------- Fetch Menu Item Prices ----------------
-
-    const menuItemIds = menuItems.map(
-      (m: { menuItemId: string }) => m.menuItemId
-    );
+    /* -------------------- GET MENU ITEM PRICES -------------------- */
 
     const dbMenuItems = await prisma.menuItem.findMany({
       where: {
         id: {
-          in: menuItemIds,
+          in: menuItems.map((item) => item.menuItemId),
         },
       },
       select: {
@@ -187,16 +171,12 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // ---------------- Fetch Package Prices ----------------
-
-    const packageIds = packages.map(
-      (p: { packageId: string }) => p.packageId
-    );
+    /* -------------------- GET PACKAGE PRICES -------------------- */
 
     const dbPackages = await prisma.package.findMany({
       where: {
         id: {
-          in: packageIds,
+          in: packages.map((item) => item.packageId),
         },
       },
       select: {
@@ -205,120 +185,69 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // ---------------- Calculate Prices ----------------
+    /* -------------------- CALCULATE ORIGINAL PRICE -------------------- */
 
-    const menuTotal = menuItems.reduce(
-      (
-        total: number,
-        item: { menuItemId: string; quantity: number }
-      ) => {
-        const dbItem = dbMenuItems.find(
-          (m) => m.id === item.menuItemId
-        );
+    const menuTotal = menuItems.reduce((sum, item) => {
+      const menu = dbMenuItems.find(
+        (m) => m.id === item.menuItemId
+      );
 
-        return total + (dbItem?.price ?? 0) * item.quantity;
-      },
-      0
-    );
+      return sum + (menu?.price ?? 0) * item.quantity;
+    }, 0);
 
-    const packageTotal = packages.reduce(
-      (
-        total: number,
-        item: { packageId: string; quantity: number }
-      ) => {
-        const dbPackage = dbPackages.find(
-          (p) => p.id === item.packageId
-        );
+    const packageTotal = packages.reduce((sum, item) => {
+      const pkg = dbPackages.find(
+        (p) => p.id === item.packageId
+      );
 
-        return total + (dbPackage?.finalPrice ?? 0) * item.quantity;
-      },
-      0
-    );
+      return sum + (pkg?.finalPrice ?? 0) * item.quantity;
+    }, 0);
 
     const originalPrice = menuTotal + packageTotal;
 
-    let finalPrice = originalPrice;
-    let discountType = null;
-    let discountValue = null;
+    /* -------------------- FINAL PRICE -------------------- */
 
-    if (
-      discount &&
-      discount.type &&
-      discount.value &&
-      Number(discount.value) > 0
-    ) {
-      discountType = discount.type;
-      discountValue = Number(discount.value);
+    const finalPrice =
+      originalPrice - (originalPrice * discount) / 100;
 
-      if (discount.type === "PERCENTAGE") {
-        finalPrice =
-          originalPrice -
-          (originalPrice * discountValue) / 100;
-      } else if (discount.type === "FIXED") {
-        finalPrice = originalPrice - discountValue;
-      }
+    /* -------------------- CREATE EVENT -------------------- */
 
-      finalPrice = Math.max(0, finalPrice);
-    }
-
-    // ---------------- Create Event ----------------
-
-    const newEvent = await prisma.event.create({
+    const createdEvent = await prisma.event.create({
       data: {
         name,
-        description: description ?? null,
-
+        description,
         categoryId,
 
         originalPrice,
-        discountType,
-        discountValue,
+        discountType: discount > 0 ? "PERCENTAGE" : null,
+        discountValue: discount,
         finalPrice,
 
         menuItems: {
-          create: menuItems.map(
-            (m: {
-              menuItemId: string;
-              quantity: number;
-            }) => ({
-              menuItemId: m.menuItemId,
-              quantity: m.quantity,
-            })
-          ),
+          create: menuItems.map((item) => ({
+            menuItemId: item.menuItemId,
+            quantity: item.quantity,
+          })),
         },
 
         packages: {
-          create: packages.map(
-            (p: {
-              packageId: string;
-              quantity: number;
-            }) => ({
-              packageId: p.packageId,
-              quantity: p.quantity,
-            })
-          ),
+          create: packages.map((item) => ({
+            packageId: item.packageId,
+            quantity: item.quantity,
+          })),
         },
-      },
-
-      include: {
-        menuItems: true,
-        packages: true,
       },
     });
 
-    return NextResponse.json(newEvent.id, {
+    return NextResponse.json(createdEvent.id, {
       status: 201,
     });
   } catch (error) {
     console.error("CREATE EVENT ERROR:", error);
 
     return NextResponse.json(
-      {
-        error: "Failed to create event",
-      },
-      {
-        status: 500,
-      }
+      { message: "Something went wrong" },
+      { status: 500 }
     );
   }
 }
