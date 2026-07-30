@@ -1,23 +1,13 @@
-import { MenuItem } from "@/app/(frontend)/admin/menu-items/types/types";
-
 export interface GridItem {
   id: string;
-  title: string;
-  name: string;
+  title?: string;
+  name?: string;
   description?:string;
   images?: { url: string }[];
   image?: string;
-  items?:MenuItem[];
-  event?: {
-    id: string;
-    status: string;
-    title: string;
-    description: string;
-    createdAt: string;
-  };
   available?: boolean;
-  price: number;
   originalPrice?: number;
+  price?:number;
   finalPrice?: number;
   averageRating?: number;
   totalReviews?: number;

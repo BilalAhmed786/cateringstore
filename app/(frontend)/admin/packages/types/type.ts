@@ -2,13 +2,11 @@ import { images } from "../../menu-items/types/types";
 
 export interface MenuItem {
   id: string;
-  title:string;
+  title?:string;
   name?: string;
   description?:string;
-  price?: number;
-  images:images[]
-  
-}
+  images:images[];
+  }
 export interface PackageItemsFieldProps {
   menuItems: MenuItem[];
   name: string;

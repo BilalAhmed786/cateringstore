@@ -11,12 +11,12 @@ import { useContainerInfiniteScroll } from "@/app/(frontend)/components/reusable
 import { useAllCategories } from "@/app/(frontend)/admin/menu-items/hooks/usegetallcategories";
 import { useGetMenuItems } from "@/app/(frontend)/admin/menu-items/hooks/useGetMenuItems";
 import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
-import { MenuItem } from "@/app/(frontend)/admin/packages/types/type";
+import { PackageItem } from "../types/type";
 
 
 interface AllMenuItemsTabProps {
-  selectedItems: (MenuItem | GridItem)[];
-  onAddItem: (item:(MenuItem | GridItem)) => void;
+  selectedItems: (PackageItem)[];
+  onAddItem: (item:GridItem) => void;
 }
 
 export function AllMenuItemsTab({

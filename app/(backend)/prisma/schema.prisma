@@ -80,7 +80,6 @@ model MenuItem {
   description String?
   price       Float
   available   Boolean @default(true)
-
   categoryId   String
   category     MenuCategory     @relation(fields: [categoryId], references: [id])
   images       ItemImage[]

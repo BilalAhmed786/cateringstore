@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { CartStore } from "./types/type";
 
+
 export const useCartStore = create<CartStore>()(
   persist(
     (set) => ({
@@ -78,14 +79,16 @@ export const useCartStore = create<CartStore>()(
         totalPrice,
       ) =>
         set((state) => {
+
           // Find existing package in cart
           const existing = state.items.find(
             (item) => item?.id === packageData?.id
           );
+          
 
           return {
             items: [
-              // Remove previous version
+              // Remove previous version if pacakge is selected without customize vicecersa
               ...state.items.filter((item) => item.id !== packageData.id),
 
               // Add customized version
@@ -124,7 +127,7 @@ export const useCartSubtotal = () =>
   useCartStore((state) =>
     state.items.reduce(
       (sum, item) =>
-        sum + (item.price ?? item.finalPrice ?? 0) * item.quantity,
+        sum + (item.finalPrice ?? 0) * item.quantity,
       0
     )
   );

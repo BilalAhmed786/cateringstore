@@ -1,3 +1,4 @@
+
 import { GridItem } from "../../../components/reusables/grid/gridtypes";
 export interface Survey {
   id: string;
@@ -40,7 +41,13 @@ export interface MenuItem {
   title: string;
   description?: string | null;
   price: number;
+  quantity:number;
   images: images[];
+  menuItem?: {
+        id: string;
+        title?: string;
+        price?: number;
+    };
   available: boolean;
   category: Category;
   reviews: MenuItemReview[];
