@@ -100,13 +100,14 @@ export default function HamperCategoryBrowser() {
       <div className="relative mx-7">
         <StorefrontGrid
           items={items}
+          type="Hamper"
           isLoading={isLoading && page === 1}
           onItemClick={(item) => {
             setSelectedHamperId(item.id);
             setDetailsOpen(true);
           }}
           renderActions={(item) => (
-            <UniButton label="Add To Cart" onClick={() => addItem(item)} />
+            <UniButton label="Add To Cart" onClick={() => addItem(item,"Hamper")} />
           )}
         />
       </div>

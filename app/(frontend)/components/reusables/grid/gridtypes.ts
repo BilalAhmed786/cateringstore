@@ -5,6 +5,14 @@ export interface GridItem {
   description?:string;
   images?: { url: string }[];
   image?: string;
+  items?:{
+    id: string;
+    quantity: number;
+    menuItem: {
+      id: string;
+      title?: string;
+      price?: number;
+    }}[];
   available?: boolean;
   originalPrice?: number;
   price?:number;

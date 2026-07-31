@@ -8,7 +8,7 @@ export function useAllCategories() {
     queryFn: () =>
       apiRequest<Category[]>({
         url: "/api/admin/category/menu",
-        authRequired: true,
+        authRequired: false,
       }),
   });
 }

@@ -83,7 +83,7 @@ model MenuItem {
   categoryId   String
   category     MenuCategory     @relation(fields: [categoryId], references: [id])
   images       ItemImage[]
-  orderItems   OrderItem[]
+  orderItems   OrderMenuItem[]
   packageItems PackageItem[]
   hamperItems  HamperItem[]
   reviews      MenuItemReview[]
@@ -137,13 +137,13 @@ model Order {
   total     Float
   createdAt DateTime    @default(now())
 
-  items         OrderItem[]
+  items         OrderMenuItem[]
   orderPackages OrderPackage[]
   orderHampers  OrderHamper[]
   orderEvents   OrderEvent[]
 }
 
-model OrderItem {
+model OrderMenuItem {
   id       String @id @default(uuid())
   orderId  String
   menuId   String

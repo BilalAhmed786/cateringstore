@@ -71,10 +71,8 @@ export async function POST(req: NextRequest) {
 
 
 export async function GET(req: NextRequest) {
-  const userOrResponse = await requireRole(req, ["ADMIN"]);
-  if (userOrResponse instanceof NextResponse) return userOrResponse;
-
-  try {
+ 
+ try {
     const { searchParams } = new URL(req.url);
 
     const page = Number(searchParams.get("page") ?? 1);

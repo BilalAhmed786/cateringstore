@@ -125,7 +125,7 @@ export function EntityCart({
   return (
     <CartCollapse
       itemsCount={items.length}
-      total={total}
+      total={total.toFixed(2)}
     >
       {cartContent}
     </CartCollapse>

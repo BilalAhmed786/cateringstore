@@ -45,7 +45,7 @@ export function PackageBrowser() {
     minPrice: debouncedPriceRange[0],
     maxPrice: debouncedPriceRange[1],
   });
-
+console.log(items)
   const { addItem } = useCartStore();
 
   const { data: packageDetails, isLoading: isDetailsLoading } =
@@ -111,17 +111,19 @@ export function PackageBrowser() {
       <div className="relative mx-7">
         <StorefrontGrid
           items={items}
+          type="pacakge"
           isLoading={isLoading && page === 1}
           onItemClick={(pkg) => {
             setSelectedPackageId(pkg.id);
             setDetailsOpen(true);
           }}
           renderSubtitle={(pkg) => (
+
             <span>{pkg.items?.length ?? 0} Menu Items Included</span>
           )}
           renderActions={(pkg) => (
             <>
-              <UniButton label="Add To Cart" onClick={() => addItem(pkg)} />
+              <UniButton label="Add To Cart" onClick={() => addItem(pkg,"package")} />
 
               <UniButton
                 label="Customize"

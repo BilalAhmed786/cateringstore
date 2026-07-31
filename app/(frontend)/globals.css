@@ -123,4 +123,9 @@
     @apply bg-background text-foreground;
   }
 }
-
+html {
+  overflow-y: scroll;
+}
+body {
+  width: 100%;
+}

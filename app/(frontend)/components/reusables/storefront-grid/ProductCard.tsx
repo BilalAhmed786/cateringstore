@@ -13,6 +13,7 @@ import { ProductCardProps } from "./types";
 
 export function ProductCard({
   item,
+  type,
   onClick,
   renderSubtitle,
   renderActions,
@@ -88,7 +89,7 @@ export function ProductCard({
               <UniButton
                 label="Add To Cart"
                 icon={<ShoppingCart className="h-4 w-4" />}
-                onClick={() => addItem(item)}
+                onClick={() => addItem(item,type)}
                 disabled={!item.available}
               />
             )}

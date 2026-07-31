@@ -16,6 +16,7 @@ export type StorefrontType =
 
 export interface ProductCardProps {
   item: GridItem;
+  type:string;
   onClick?: () => void;
   renderSubtitle?: (item: GridItem) => ReactNode;
   renderActions?: (item: GridItem) => ReactNode;
@@ -23,6 +24,7 @@ export interface ProductCardProps {
 
 export interface StorefrontGridProps {
   items: GridItem[];
+  type:string;
   isLoading: boolean;
   onItemClick?: (item: GridItem) => void;
   renderSubtitle?: (

@@ -1,11 +1,8 @@
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
+
 export async function GET(req: NextRequest) {
   try {
-    const userOrResponse = await requireRole(req, ["ADMIN"]);
-    if (userOrResponse instanceof NextResponse) return userOrResponse;
-
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search") || "";
     const page = Number(searchParams.get("page") || 1);

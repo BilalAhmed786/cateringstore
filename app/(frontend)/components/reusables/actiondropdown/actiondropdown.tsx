@@ -17,7 +17,7 @@ export function MenuItemDropdown({ actions }: MenuItemDropdownProps) {
 
   return (
     <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger>
         <Button variant="ghost" size="icon">
           <MoreVertical size={18} />
         </Button>

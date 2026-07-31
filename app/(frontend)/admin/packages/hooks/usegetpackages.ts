@@ -7,7 +7,7 @@ export function useGetPackages(filters?: PackageFilters) {
   return useQuery({
     queryKey: ["packages", filters],
     queryFn: () =>
-      apiRequest<{ items: GridItem[]; total: number }>({
+      apiRequest<{ items:GridItem[]; total: number }>({
         url: `/api/admin/packages?${new URLSearchParams({
           page: String(filters?.page ?? 1),
           limit: String(filters?.limit ?? 10),

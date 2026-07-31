@@ -19,6 +19,7 @@ export default function HomePage() {
       <EventsSection />
       <Testimonials />
       <CTASection />
+     
     </main>
   );
 }

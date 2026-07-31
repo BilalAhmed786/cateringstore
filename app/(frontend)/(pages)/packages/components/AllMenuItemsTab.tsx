@@ -130,6 +130,7 @@ export function AllMenuItemsTab({
 
       <StorefrontGrid
         items={items}
+        type="menuitem"
         isLoading={isLoading && page === 1}
         renderActions={(item) => {
           const exists = selectedItems.some(

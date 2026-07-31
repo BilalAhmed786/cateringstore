@@ -17,7 +17,7 @@ export const useEventCategories = ({
       apiRequest<EventCategoryResponse>({
         url: `/api/admin/category/event?page=${page}&limit=${limit}&search=${search ?? ""}`,
         method: "GET",
-        authRequired: true,
+        authRequired:false,
       }),
     
   });

@@ -107,6 +107,7 @@ export default function EventCategoryBrowser() {
       <div className="relative mx-7">
         <StorefrontGrid
           items={items}
+          type="event"
           isLoading={isLoading && page === 1}
           onItemClick={(item) => {
             setSelectedEventId(item.id);
@@ -115,7 +116,7 @@ export default function EventCategoryBrowser() {
           renderActions={(item) => (
             <UniButton
               label="Add To Cart"
-              onClick={() => addItem(item)}
+              onClick={() => addItem(item,"event")}
             />
           )}
         />

@@ -10,7 +10,7 @@ export const useCartStore = create<CartStore>()(
     (set) => ({
       items: [],
 
-      addItem: (item) =>
+      addItem: (item,type) =>
         set((state) => {
           const existing = state.items.find((i) => i.id === item.id);
 
@@ -21,6 +21,7 @@ export const useCartStore = create<CartStore>()(
                   ? {
                       ...i,
                       quantity: i.quantity + 1,
+                      type
                     }
                   : i
               ),
@@ -33,6 +34,7 @@ export const useCartStore = create<CartStore>()(
               {
                 ...item,
                 quantity: 1,
+                type
               },
             ],
           };
@@ -97,7 +99,7 @@ export const useCartStore = create<CartStore>()(
 
                 quantity: existing?.quantity ?? 1,
 
-                customized: true,
+                type:"package",
 
                 selectedItems,
 

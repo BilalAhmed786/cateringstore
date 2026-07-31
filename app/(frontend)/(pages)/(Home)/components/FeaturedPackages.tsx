@@ -66,7 +66,7 @@ export default function FeaturedPackages() {
               <div className="relative h-64 overflow-hidden">
                 <Image
                   src={pkg.image || "/placeholder.jpg"}
-                  alt={pkg.name}
+                  alt={pkg.name??""}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />

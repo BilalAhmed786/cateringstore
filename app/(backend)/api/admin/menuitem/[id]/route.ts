@@ -56,7 +56,7 @@ export async function GET(
     const user = await getCurrentUser(req);
 
    if (user) {
-        const purchased = await prisma.orderItem.findFirst({
+        const purchased = await prisma.orderMenuItem.findFirst({
           where: {
             menuId: id,
             order: {

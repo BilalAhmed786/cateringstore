@@ -5,7 +5,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../ui/co
 
 interface CartCollapseProps {
   itemsCount: number;
-  total: string;
+  total:string;
   children: React.ReactNode;
 }
 

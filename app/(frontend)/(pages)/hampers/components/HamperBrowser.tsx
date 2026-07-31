@@ -133,13 +133,14 @@ export function HamperBrowser() {
       <div className="relative mx-7">
         <StorefrontGrid
           items={items}
+          type="hamper"
           isLoading={isLoading && page === 1}
           onItemClick={(hamper) => {
             setSelectedHamperId(hamper.id);
             setDetailsOpen(true);
           }}
           renderActions={(hamper) => (
-            <UniButton label="Add To Cart" onClick={() => addItem(hamper)} />
+            <UniButton label="Add To Cart" onClick={() => addItem(hamper,"hamper")} />
           )}
         />
       </div>

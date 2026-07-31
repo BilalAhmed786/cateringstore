@@ -28,7 +28,7 @@ export function Menuitemdetail({ items }: { items:PackageMenuItem[] | HampereMen
                   <div className="absolute inset-0 bg-black/30 z-10 rounded-t-lg" />
                   <Image
                     src={image}
-                    alt={item.menuItem.title}
+                    alt={item.menuItem.title??""}
                     fill
                     className="object-cover rounded-t-lg"
                   />

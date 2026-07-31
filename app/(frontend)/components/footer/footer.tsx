@@ -12,8 +12,8 @@ import Cateringlogo from "../../assets/saif catering.png";
 export default function Footer() {
   return (
     <footer className="border-t bg-gray-950 text-gray-300">
-      <div className="mx-auto max-w-4/5 px-6 py-14">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto max-w-11/12 px-6 py-14">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {/* Column 1 */}
           <div>
             <Link href="/" className="flex items-center gap-3">

@@ -116,7 +116,7 @@ export function ProductDetailsSheet({
                                   menu.images?.[0]?.url ??
                                   "/placeholder.png"
                                 }
-                                alt={menu.title}
+                                alt={menu.title??""}
                                 fill
                                 className="object-cover"
                               />

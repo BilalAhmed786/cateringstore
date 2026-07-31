@@ -10,7 +10,7 @@ export const useEventCategory = (id: string) => {
       apiRequest<Eventcategory>({
         url: `/api/admin/category/event/${id}`,
         method: "GET",
-        authRequired: true,
+        authRequired: false,
       }),
     enabled: !!id,
   });

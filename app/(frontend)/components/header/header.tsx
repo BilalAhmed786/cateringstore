@@ -54,7 +54,7 @@ export default function Header() {
         showHeader ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-6">
+      <div className="flex h-18 items-center justify-between px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <Image
@@ -80,7 +80,7 @@ export default function Header() {
         </nav>
 
         {/* Right */}
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="items-center gap-3 md:flex">
           {isLoggedIn ? (
             <>
               <Button variant="outline">Profile</Button>

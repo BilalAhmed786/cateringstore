@@ -2,6 +2,7 @@
 
 import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamicform/dynamicform";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
+import { FieldValues } from "react-hook-form";
 
 export function CheckoutForm() {
   const fields: FieldConfig[] = [
@@ -34,7 +35,7 @@ export function CheckoutForm() {
     },
   ];
 
-  const handleSubmit = (data) => {
+  const handleSubmit = (data:FieldValues) => {
     console.log(data);
   };
 

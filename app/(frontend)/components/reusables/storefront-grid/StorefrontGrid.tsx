@@ -7,6 +7,7 @@ import { Loader } from "../loader/loader";
 
 export function StorefrontGrid({
   items,
+  type,
   isLoading,
   onItemClick,
   renderSubtitle,
@@ -38,6 +39,7 @@ export function StorefrontGrid({
         >
           <ProductCard
             item={item}
+            type={type}
             onClick={() => onItemClick?.(item)}
             renderSubtitle={renderSubtitle}
             renderActions={renderActions}

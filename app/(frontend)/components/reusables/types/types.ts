@@ -1,17 +1,31 @@
-import { LucideIcon } from "lucide-react"
+import { LucideIcon } from "lucide-react";
 import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
 import React from "react";
 import { Button } from "@/app/(frontend)/components/ui/button";
-import { Package, PackageMenuItem } from "@/app/(frontend)/admin/packages/types/type";
-import { Category, MenuItem} from "@/app/(frontend)/admin/menu-items/types/types";
-import { PackageItem } from '@/app/(frontend)/(pages)/packages/types/type';
+import {
 
-
-
-
+  PackageMenuItem,
+} from "@/app/(frontend)/admin/packages/types/type";
+ 
+import {
+  Category,
+  
+} from "@/app/(frontend)/admin/menu-items/types/types";
+import { PackageItem } from "@/app/(frontend)/(pages)/packages/types/type";
 
 export type FieldConfig = {
-  type: "email" | "password" |"text" | "number" | "select" | "checkbox" | "radio" | "date" | "file" | "textarea" | "imagepreview";
+  type:
+    | "email"
+    | "password"
+    | "text"
+    | "number"
+    | "select"
+    | "checkbox"
+    | "radio"
+    | "date"
+    | "file"
+    | "textarea"
+    | "imagepreview";
   name: string;
   label: string;
   placeholder?: string;
@@ -19,43 +33,38 @@ export type FieldConfig = {
   accept?: string;
   required?: boolean;
   multiple?: boolean;
-  className?:string;
-  dragdrop?:string;
+  className?: string;
+  dragdrop?: string;
   images?: { id: string; url: string }[];
-  image?:string | null;
+  image?: string | null;
   onDelete?: (id: string) => void;
   onUpload?: (files: File[]) => void;
   isDeleting?: boolean;
-  onChange?: (value:number) => void; 
-
+  onChange?: (value: number) => void;
 };
 
-export interface metadataprop{
-
-  title?:string
-  desc?:string
-  classname?:string
-
+export interface metadataprop {
+  title?: string;
+  desc?: string;
+  classname?: string;
 }
 
 export interface ImagePreviewFieldProps {
-   images: { id: string; url: string }[];
-   image?: string; 
-   onDelete: (imageId: string) => void;
-   isDeleting?: boolean;
+  images: { id: string; url: string }[];
+  image?: string;
+  onDelete: (imageId: string) => void;
+  isDeleting?: boolean;
 }
 
-
-export interface DynamicShadcnFormProps{
- 
+export interface DynamicShadcnFormProps {
   fields: FieldConfig[];
   cardTitle: string;
   cardDescription?: string;
   className?: string;
   reset: string;
-  showreset?:boolean;
+  showreset?: boolean;
   submitLabel: string;
-  defaultvalues:FieldValues;
+  defaultvalues: FieldValues;
   onSubmit: (data: FieldValues) => void;
 }
 export interface CheckboxProps {
@@ -70,9 +79,19 @@ export interface TextInputProps {
   name: string;
   label: string;
   placeholder?: string;
-  type:"email" | "password" |"text" | "number" | "select" | "checkbox" | "radio" | "date" | "file" | "textarea" | "imagepreview";
-  className?:string
-  
+  type:
+    | "email"
+    | "password"
+    | "text"
+    | "number"
+    | "select"
+    | "checkbox"
+    | "radio"
+    | "date"
+    | "file"
+    | "textarea"
+    | "imagepreview";
+  className?: string;
 }
 export interface SelectInputProps {
   name: string;
@@ -97,26 +116,24 @@ export interface UniButtonProps extends React.ComponentProps<typeof Button> {
 }
 
 export interface NavItemProps {
-  open: boolean
-  icon: LucideIcon
-  label: string
-  href: string
+  open: boolean;
+  icon: LucideIcon;
+  label: string;
+  href: string;
 }
 
 export interface SubNavProps {
-  icon: LucideIcon
-  label: string
-  href: string
+  icon: LucideIcon;
+  label: string;
+  href: string;
 }
 
 export interface paginationProps {
-  page: number
-  total: number
-  limit: number
-  onPageChange: (page: number) => void
+  page: number;
+  total: number;
+  limit: number;
+  onPageChange: (page: number) => void;
 }
-
-
 
 export interface MenuItemsTableProps<T> {
   items: T[];
@@ -124,23 +141,21 @@ export interface MenuItemsTableProps<T> {
   columns: { header: string; accessor: (item: T) => React.ReactNode }[];
 }
 
- export interface BaseSelectProps {
-  label: string
-  value: string
-  onChange: (value: string) => void
-  options: { label: string; value: string }[]
-  placeholder?: string
+export interface BaseSelectProps {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: { label: string; value: string }[];
+  placeholder?: string;
 }
-
 
 export interface BaseSearchProps {
-  label: string
-  value: string
-  onChange: (value: string) => void
-  placeholder?: string
-  className?:string
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  className?: string;
 }
-
 
 export interface AppCarouselProps<T> {
   items: T[];
@@ -158,20 +173,19 @@ export interface AppCarouselProps<T> {
   nextClassName?: string;
 }
 
-
-  export type GridSelectableItem = {
+export type GridSelectableItem = {
   id: string;
   title?: string;
-  name?:string;
+  name?: string;
   price?: number;
-  finalPrice?:number;
-  image?:string;
+  finalPrice?: number;
+  image?: string;
   images?: { url: string }[];
   available?: boolean;
-  averageRating?: number; 
-  totalReviews?: number;  
-  totalComments?:number
- };
+  averageRating?: number;
+  totalReviews?: number;
+  totalComments?: number;
+};
 
 export interface Dropdowitems {
   items?: GridSelectableItem[];
@@ -180,36 +194,48 @@ export interface Dropdowitems {
   onDelete?: (id: string) => void;
   onToggleStatus?: (id: string, available: boolean) => void;
   onSelect?: (item: GridSelectableItem) => void;
- 
 }
 export interface CartItem extends GridSelectableItem {
-    items?: {
+  items?: {
     id: string;
     quantity: number;
-    menuItem:MenuItem;
+    menuItem: {
+      id: string;
+      title?: string;
+      price?: number;
+    };
   }[];
-  
+
   menuItems?: {
     id: string;
     quantity: number;
-    menuItem:MenuItem;
-  }[];
+    menuItem: {
+      id: string;
+      title: string;
+      price: number;
+    };
   
+  }[];
+
   packages?: {
     id: string;
     quantity: number;
-    package:Package;
+    package: {
+      id: string;
+      name: string;
+      finalPrice: number;
+    };
   }[];
-  selectedItems?:PackageItem[]
-  quantity:number
-  }
+  selectedItems?: PackageItem[];
+  quantity: number;
+}
 
 export interface EntityCartProps {
   title?: string;
   items: CartItem[];
   onChange: (items: CartItem[]) => void;
   showTotal?: boolean;
-  Collapsible?:boolean
+  Collapsible?: boolean;
 }
 
 export interface DynamicFormFieldsProps {
@@ -229,7 +255,6 @@ export interface DropdownAction {
 export interface MenuItemDropdownProps {
   actions: DropdownAction[];
 }
-
 
 type FilterValue = string;
 export interface ItemsFiltersProps {
@@ -255,26 +280,25 @@ export type RatingSummaryProps = {
   count?: number;
 };
 export interface EntityItem {
-  id: string
-  name: string
-  description?: string
-  originalPrice: number
-  finalPrice: number
-  available: boolean
+  id: string;
+  name: string;
+  description?: string;
+  originalPrice: number;
+  finalPrice: number;
+  available: boolean;
 }
 
-export interface EntityAction{
-  label: string
-  onClick: () => void
-  variant?: "danger"
-  show?: boolean
+export interface EntityAction {
+  label: string;
+  onClick: () => void;
+  variant?: "danger";
+  show?: boolean;
 }
-export interface Etitygrid{
-  items: EntityItem[]
-  isLoading?: boolean
-  getActions: (item: EntityItem) => EntityAction[]
+export interface Etitygrid {
+  items: EntityItem[];
+  isLoading?: boolean;
+  getActions: (item: EntityItem) => EntityAction[];
 }
-
 
 export interface MenuItemDetailProps {
   items: PackageMenuItem[] | undefined;

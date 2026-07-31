@@ -19,6 +19,7 @@ export function IncludedItemsTab({
     <div className="space-y-6">
       <StorefrontGrid
         items={items}
+        type="menuitem"
         isLoading={false}
         renderActions={(item) => (
           <UniButton
