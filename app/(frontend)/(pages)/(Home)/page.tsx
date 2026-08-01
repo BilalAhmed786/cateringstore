@@ -1,3 +1,4 @@
+import { ShoppingCart } from "../../components/reusables/shopping-cart/ShoppingCart";
 import CTASection from "./components/CTASection";
 import EventsSection from "./components/EventsSection";
 import FeaturedHampers from "./components/FeaturedHampers";
@@ -19,7 +20,7 @@ export default function HomePage() {
       <EventsSection />
       <Testimonials />
       <CTASection />
-     
+      <ShoppingCart/>
     </main>
   );
 }

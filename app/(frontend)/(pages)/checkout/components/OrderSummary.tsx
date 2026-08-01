@@ -17,211 +17,127 @@ export function OrderSummary() {
   const { items } = useCartStore();
 
   const total = items.reduce(
-    (sum, item) =>
-      sum + (item.finalPrice ?? 0) * item.quantity,
-    0,
+    (sum, item) => sum + (item.finalPrice ?? item.price ?? 0) * item.quantity,
+    0
   );
 
   return (
-    <Card className="lg:sticky lg:top-24 p-4 lg:h-[calc(100vh-120px)] flex flex-col">
-
+    <Card className="flex flex-col p-4 lg:sticky lg:top-24 lg:h-[calc(100vh-120px)]">
       <CardHeader>
-        <CardTitle>
-          Order Summary
-        </CardTitle>
+        <CardTitle>Order Summary</CardTitle>
       </CardHeader>
 
-
       <CardContent className="flex flex-1 flex-col overflow-hidden">
-
-        {/* Scrollable Items */}
-        <div className="flex-1 overflow-y-auto space-y-6 pr-2">
-
+        {/* Scrollable */}
+        <div className="flex-1 space-y-6 overflow-y-auto pr-2">
           {items.map((item) => {
-
             const title = item.title ?? item.name;
 
-            const price =
-              item.price ??
-              item.finalPrice ??
-              0;
+            const price = item.price ?? item.finalPrice ?? 0;
 
+            // Supports both normal and customized package
+            const packageItems = item.selectedItems ?? item.items;
 
             return (
-
-              <div
-                key={item.id}
-                className="space-y-3"
-              >
-
+              <div key={item.id} className="space-y-4">
                 {/* Main Item */}
-
                 <div className="flex gap-4">
-
                   <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md">
-
                     <Image
-                      src={
-                        item.image ??
-                        item.images?.[0]?.url ??
-                        ""
-                      }
+                      src={item.image ?? item.images?.[0]?.url ?? ""}
                       alt={title ?? ""}
                       fill
                       className="object-cover"
                     />
-
                   </div>
 
-
-                  <div>
-
-                    <h3 className="font-semibold">
-                      {title}
-                    </h3>
-
+                  <div className="flex-1">
+                    <h3 className="font-semibold">{title}</h3>
 
                     <p className="text-sm text-muted-foreground">
                       Quantity: {item.quantity}
                     </p>
 
-
-                    <p>
-                      ${price}
-                    </p>
-
+                    <p>Rs {price.toFixed(2)}</p>
 
                     <p className="font-medium">
-                      Subtotal: ${(price * item.quantity).toFixed(2)}
+                      Subtotal: Rs {(price * item.quantity).toFixed(2)}
                     </p>
-
                   </div>
-
                 </div>
 
-                {item.selectedItems && item.selectedItems?.length > 0 && (
-
+                {/* Package / Customized Package / Hamper Items */}
+                {packageItems && packageItems.length > 0 && (
                   <div className="rounded-md bg-muted p-3">
-
-                    <p className="mb-2 font-medium">
-                      Includes:
-                    </p>
-
+                    <p className="mb-2 font-medium">Includes:</p>
 
                     <ul className="space-y-1 text-sm">
-
-                      {item.selectedItems && item.selectedItems.map((included) => (
-
+                      {packageItems.map((included) => (
                         <li key={included.id}>
-                          • {included.menuItem.title}
-                          {included.quantity &&
+                          {"menuItem" in included && included.menuItem.title}
+                          {included.quantity > 0 &&
                             ` (x${included.quantity})`}
                         </li>
-
                       ))}
-
                     </ul>
-
                   </div>
-
                 )}
 
-
-
                 {/* Event Menu Items */}
-
-                {item.menuItems && item.menuItems?.length > 0 && (
-
+                {item.menuItems && item.menuItems.length > 0 && (
                   <div className="rounded-md bg-muted p-3">
-
                     <p className="mb-2 font-medium">
                       Includes Menu Items:
                     </p>
 
-
                     <ul className="space-y-1 text-sm">
-
                       {item.menuItems.map((included) => (
-
                         <li key={included.id}>
                           • {included.menuItem.title}
-                          {included.quantity &&
+                          {included.quantity > 0 &&
                             ` (x${included.quantity})`}
                         </li>
-
                       ))}
-
                     </ul>
-
                   </div>
-
                 )}
 
-
-
                 {/* Event Packages */}
-
                 {item.packages && item.packages.length > 0 && (
-
                   <div className="rounded-md bg-muted p-3">
-
                     <p className="mb-2 font-medium">
                       Includes Packages:
                     </p>
 
-
                     <ul className="space-y-1 text-sm">
-
                       {item.packages.map((included) => (
-
                         <li key={included.id}>
                           • {included.package.name}
+                          {included.quantity > 0 &&
+                            ` (x${included.quantity})`}
                         </li>
-
                       ))}
-
                     </ul>
-
                   </div>
-
                 )}
 
-
                 <Separator />
-
               </div>
-
             );
           })}
-
         </div>
 
-
-        {/* Fixed Total Area */}
-
+        {/* Footer */}
         <div className="pt-4">
-
           <Separator className="mb-4" />
 
-
           <div className="flex justify-between text-lg font-bold">
+            <span>Total</span>
 
-            <span>
-              Total
-            </span>
-
-
-            <span>
-              ${total.toFixed(2)}
-            </span>
-
+            <span>Rs {total.toFixed(2)}</span>
           </div>
-
         </div>
-
-
       </CardContent>
-
     </Card>
   );
 }
