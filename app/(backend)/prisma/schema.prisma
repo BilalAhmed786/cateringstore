@@ -38,6 +38,12 @@ enum DiscountType {
   FIXED
 }
 
+enum CheckoutStatus {
+  PENDING
+  COMPLETED
+  EXPIRED
+}
+
 /**
  * =======================
  * USER
@@ -186,6 +192,25 @@ model OrderHamper {
   hamper Hamper @relation(fields: [hamperId], references: [id])
 }
 
+//checkout session
+model CheckoutSession {
+  id String @id @default(uuid())
+
+  paymentIntentId String @unique
+
+  fullName String
+  email String
+  phone String
+  notes String?
+
+  cart Json
+
+  total Float
+
+  status CheckoutStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+}
 /**
  * =======================
  * PACKAGES (NO EVENTS)
