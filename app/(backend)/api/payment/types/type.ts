@@ -36,7 +36,7 @@ export interface CreatePaymentIntentResponse {
 
 export interface CartItem{
   id: string;
-  type: "menu" | "package" | "hamper" | "event";
+  type: "menuitem" | "package" | "hamper" | "event";
   quantity: number;
   price: number;
 };
