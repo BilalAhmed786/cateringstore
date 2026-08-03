@@ -17,20 +17,24 @@ export function BaseSelect({
   placeholder,
 }: BaseSelectProps) {
   return (
-    <div>
-      <Label className="mb-2">{label}</Label>
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger>
-          <SelectValue placeholder={placeholder ?? `Select ${label}`} />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((opt) => (
-            <SelectItem key={opt.value} value={opt.value}>
-              {opt.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
+   <div className="flex flex-col gap-2 w-28">
+  <Label className="ml-2">{label}</Label>
+
+  <Select value={value} onValueChange={onChange}>
+    <SelectTrigger className="w-full">
+      <SelectValue placeholder={placeholder ?? `Select ${label}`} />
+    </SelectTrigger>
+
+    <SelectContent>
+      {options.map((opt) => (
+        <SelectItem key={opt.value} value={opt.value}>
+          <span className="block w-52 truncate">
+            {opt.label}
+          </span>
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
+</div>
   )
 }

@@ -10,7 +10,6 @@ import {
 } from "@/app/(frontend)/components/ui/card";
 
 import { Separator } from "@/app/(frontend)/components/ui/separator";
-
 import { useCartStore } from "@/app/(frontend)/store/useCartStore";
 
 export function OrderSummary() {

@@ -1,10 +1,16 @@
 "use client";
 
+import { FieldValues } from "react-hook-form";
 import { DynamicShadcnForm } from "@/app/(frontend)/components/reusables/dynamicform/dynamicform";
 import { FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
-import { FieldValues } from "react-hook-form";
 
-export function CheckoutForm() {
+interface CheckoutFormProps {
+  onSubmit: (data: FieldValues) => void | Promise<void>;
+}
+
+export function CheckoutForm({
+  onSubmit,
+}: CheckoutFormProps) {
   const fields: FieldConfig[] = [
     {
       name: "fullName",
@@ -12,21 +18,18 @@ export function CheckoutForm() {
       type: "text",
       placeholder: "Enter your full name",
     },
-
     {
       name: "email",
       label: "Email",
       type: "email",
       placeholder: "Enter your email",
     },
-
     {
       name: "phone",
       label: "Phone Number",
       type: "text",
       placeholder: "Enter your phone number",
     },
-
     {
       name: "notes",
       label: "Order Notes",
@@ -34,10 +37,6 @@ export function CheckoutForm() {
       placeholder: "Any special instructions",
     },
   ];
-
-  const handleSubmit = (data:FieldValues) => {
-    console.log(data);
-  };
 
   return (
     <DynamicShadcnForm
@@ -53,7 +52,7 @@ export function CheckoutForm() {
       showreset={false}
       reset="Reset"
       submitLabel="Proceed to Payment"
-      onSubmit={handleSubmit}
+      onSubmit={onSubmit}
     />
   );
 }

@@ -59,7 +59,7 @@ const { data: events, isLoading } = useEventCategories({page:1,limit:1000});
               <div
                 key={event.id}
                 className={`group relative overflow-hidden rounded-3xl ${
-                  isLarge ? "lg:col-span-2 h-[450px]" : "h-[220px]"
+                  isLarge ? "lg:col-span-2 h-112.5" : "h-55"
                 }`}
               >
                 <Image
@@ -70,7 +70,7 @@ const { data: events, isLoading } = useEventCategories({page:1,limit:1000});
                 />
 
                 {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to from-black/90 via-black/30 to-transparent" />
 
                 {/* Content */}
                 <div className="absolute inset-x-0 bottom-0 p-8 text-white">

@@ -16,14 +16,14 @@ export function MenuItemDropdown({ actions }: MenuItemDropdownProps) {
   if (!visibleActions.length) return null;
 
   return (
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
           <MoreVertical size={18} />
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-44">
+      <DropdownMenuContent align="end" className="w-80">
         {visibleActions.map((action, index) => {
           const Icon = action.icon;
 
