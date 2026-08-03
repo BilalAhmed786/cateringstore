@@ -23,7 +23,7 @@ export async function createOrder(session: CheckoutSession) {
 
     for (const item of session.cart) {
       switch (item.type) {
-        case "menu":
+        case "menuitem":
           await tx.orderMenuItem.create({
             data: {
               orderId: order.id,
