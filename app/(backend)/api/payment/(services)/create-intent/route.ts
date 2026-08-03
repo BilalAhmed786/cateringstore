@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
-import { calculateCartTotal } from "../calculateCartTotal";
+import { calculateCartTotal } from "../../calculateCartTotal";
 import { stripe } from "@/app/(backend)/lib/stripe/stripe";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 

@@ -33,3 +33,21 @@ export interface CreatePaymentIntentRequest {
 export interface CreatePaymentIntentResponse {
   clientSecret: string;
 }
+
+export interface CartItem{
+  id: string;
+  type: "menu" | "package" | "hamper" | "event";
+  quantity: number;
+  price: number;
+};
+
+export interface CheckoutSession {
+  userId?: string | null;
+  fullName: string;
+  email: string;
+  phone: string;
+  notes?: string | null;
+  paymentIntentId: string;
+  total: number;
+  cart: CartItem[];
+};

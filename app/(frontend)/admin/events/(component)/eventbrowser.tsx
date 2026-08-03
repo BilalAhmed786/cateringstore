@@ -8,9 +8,10 @@ import { DropdownAction, GridItem } from "../../../components/reusables/grid/gri
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 import { useGetEvents } from "../hooks/usegetEvents";
-import { useDeleteEvent } from "../hooks/usedeleteevent";
+
 import { useEventCategories } from "../../categories/event/hooks/useEventCategories";
 import { useToggleEvent } from "../hooks/usetoggleevent";
+import { useDeleteEvent } from "../hooks/useDeleteEvent";
 
 export default function EventBrowser({
   showFilters = true,
