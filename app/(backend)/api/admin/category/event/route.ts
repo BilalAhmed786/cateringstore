@@ -4,7 +4,7 @@ import { UploadApiResponse } from "cloudinary";
 import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import cloudinary from "@/app/(backend)/lib/cloudinary/cloudinary";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
-import {type Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 export async function POST(req: NextRequest) {
   const userOrResponse = await requireRole(req, ["ADMIN"]);
