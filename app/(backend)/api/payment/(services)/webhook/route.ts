@@ -5,16 +5,24 @@ import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { stripe } from "@/app/(backend)/lib/stripe/stripe";
 import { createOrder } from "../order/createOrder";
 
-
 export async function POST(req: Request) {
   const body = await req.text();
 
-  const signature = (await headers()).get("stripe-signature");
+  const headerList = await headers();
+  const signature = headerList.get("stripe-signature");
+
+  console.log("========== STRIPE WEBHOOK ==========");
+  console.log("Body Length:", body.length);
+  console.log("Signature Exists:", !!signature);
+  console.log(
+    "Webhook Secret Prefix:",
+    process.env.STRIPE_WEBHOOK_SECRET?.substring(0, 12)
+  );
 
   if (!signature) {
     return NextResponse.json(
       {
-        message: "Missing Stripe Signature",
+        message: "Missing Stripe-Signature header",
       },
       {
         status: 400,
@@ -30,12 +38,18 @@ export async function POST(req: Request) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
+
+    console.log("Webhook Verified:", event.type);
   } catch (error) {
+    console.error("Webhook verification failed");
     console.error(error);
 
     return NextResponse.json(
       {
-        message: "Invalid webhook signature",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Invalid webhook signature",
       },
       {
         status: 400,
@@ -43,65 +57,102 @@ export async function POST(req: Request) {
     );
   }
 
-  switch (event.type) {
-    case "payment_intent.succeeded": {
-      const paymentIntent = event.data.object;
+  try {
+    switch (event.type) {
+      case "payment_intent.succeeded": {
+        const paymentIntent = event.data.object;
 
-      const session = await prisma.checkoutSession.findUnique({
-        where: {
-          paymentIntentId: paymentIntent.id,
-        },
-      });
+        console.log("PaymentIntent:", paymentIntent.id);
 
-      if (!session) break;
+        const session = await prisma.checkoutSession.findUnique({
+          where: {
+            paymentIntentId: paymentIntent.id,
+          },
+        });
 
-      if (session.status === "COMPLETED") break;
+        if (!session) {
+          console.log("Checkout session not found");
+          break;
+        }
 
-      await createOrder({
-        userId: null,
+        console.log("Checkout Session:", session.id);
+        console.log("Checkout Status:", session.status);
 
-        fullName: session.fullName,
-        email: session.email,
-        phone: session.phone,
-        notes: session.notes,
+        if (session.status === "COMPLETED") {
+          console.log("Already processed");
+          break;
+        }
 
-        paymentIntentId: session.paymentIntentId,
+        await createOrder({
+          userId: null,
 
-        total: session.total,
+          fullName: session.fullName,
+          email: session.email,
+          phone: session.phone,
+          notes: session.notes,
 
-        cart: session.cart as never,
-      });
+          paymentIntentId: session.paymentIntentId,
 
-      await prisma.checkoutSession.update({
-        where: {
-          paymentIntentId: paymentIntent.id,
-        },
-        data: {
-          status: "COMPLETED",
-        },
-      });
+          total: session.total,
 
-      break;
+          cart: session.cart as never,
+        });
+
+        console.log("Order Created");
+
+        await prisma.checkoutSession.update({
+          where: {
+            paymentIntentId: paymentIntent.id,
+          },
+          data: {
+            status: "COMPLETED",
+          },
+        });
+
+        console.log("Checkout Session Updated");
+
+        break;
+      }
+
+      case "payment_intent.payment_failed": {
+        const paymentIntent = event.data.object;
+
+        console.log("Payment Failed:", paymentIntent.id);
+
+        await prisma.checkoutSession.updateMany({
+          where: {
+            paymentIntentId: paymentIntent.id,
+          },
+          data: {
+            status: "FAILED",
+          },
+        });
+
+        break;
+      }
+
+      default:
+        console.log("Unhandled Event:", event.type);
+        break;
     }
 
-    case "payment_intent.payment_failed": {
-      await prisma.checkoutSession.updateMany({
-        where: {
-          paymentIntentId: event.data.object.id,
-        },
-        data: {
-          status: "FAILED",
-        },
-      });
+    return NextResponse.json({
+      received: true,
+    });
+  } catch (error) {
+    console.error("Webhook Processing Error");
+    console.error(error);
 
-      break;
-    }
-
-    default:
-      break;
+    return NextResponse.json(
+      {
+        message:
+          error instanceof Error
+            ? error.message
+            : "Webhook processing failed",
+      },
+      {
+        status: 500,
+      }
+    );
   }
-
-  return NextResponse.json({
-    received: true,
-  });
 }
