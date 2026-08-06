@@ -22,23 +22,23 @@ export default async function FailedPage({
         </h1>
 
         <p className="mb-6 text-muted-foreground">
-          {message ||
-            "Unfortunately your payment could not be completed. Please try again."}
+          {message ??
+            "Your payment couldn't be completed. No money was charged. Please try again."}
         </p>
 
         <div className="space-y-3">
           <Link
             href="/checkout"
-            className="block rounded-lg bg-black px-5 py-3 text-white"
+            className="block rounded-lg bg-black px-5 py-3 text-center text-white"
           >
             Try Again
           </Link>
 
           <Link
             href="/"
-            className="block rounded-lg border px-5 py-3"
+            className="block rounded-lg border px-5 py-3 text-center"
           >
-            Back Home
+            Continue Shopping
           </Link>
         </div>
       </div>
