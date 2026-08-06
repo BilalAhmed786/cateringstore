@@ -139,6 +139,8 @@ model Order {
   guestEmail String?
   guestPhone String?
 
+  notes String?   // <-- MUST EXIST
+
   paymentIntentId String @unique
 
   status OrderStatus @default(PENDING)
