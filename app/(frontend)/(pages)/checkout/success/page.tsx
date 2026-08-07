@@ -14,7 +14,7 @@ export default function SuccessPage() {
     const timer = setTimeout(() => {
       clearCart();
       setProcessing(false);
-    }, 2500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [clearCart]);

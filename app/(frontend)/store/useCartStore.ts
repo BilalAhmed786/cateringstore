@@ -4,13 +4,12 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { CartStore } from "./types/type";
 
-
 export const useCartStore = create<CartStore>()(
   persist(
     (set) => ({
       items: [],
 
-      addItem: (item,type) =>
+      addItem: (item, type) =>
         set((state) => {
           const existing = state.items.find((i) => i.id === item.id);
 
@@ -21,9 +20,9 @@ export const useCartStore = create<CartStore>()(
                   ? {
                       ...i,
                       quantity: i.quantity + 1,
-                      type
+                      type,
                     }
-                  : i
+                  : i,
               ),
             };
           }
@@ -34,7 +33,7 @@ export const useCartStore = create<CartStore>()(
               {
                 ...item,
                 quantity: 1,
-                type
+                type,
               },
             ],
           };
@@ -53,7 +52,7 @@ export const useCartStore = create<CartStore>()(
                   ...i,
                   quantity: i.quantity + 1,
                 }
-              : i
+              : i,
           ),
         })),
 
@@ -66,27 +65,22 @@ export const useCartStore = create<CartStore>()(
                     ...i,
                     quantity: i.quantity - 1,
                   }
-                : i
+                : i,
             )
             .filter((i) => i.quantity > 0),
         })),
 
-      clearCart: () => ({
-        items: [],
-      }),
+      clearCart: () =>
+        set({
+          items: [],
+        }),
 
-      addCustomizedPackage: (
-        packageData,
-        selectedItems,
-        totalPrice,
-      ) =>
+      addCustomizedPackage: (packageData, selectedItems, totalPrice) =>
         set((state) => {
-
           // Find existing package in cart
           const existing = state.items.find(
-            (item) => item?.id === packageData?.id
+            (item) => item?.id === packageData?.id,
           );
-          
 
           return {
             items: [
@@ -99,7 +93,7 @@ export const useCartStore = create<CartStore>()(
 
                 quantity: existing?.quantity ?? 1,
 
-                type:"package",
+                type: "package",
 
                 selectedItems,
 
@@ -111,25 +105,23 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: "shopping-cart",
-    }
-  )
+    },
+  ),
 );
 
 // Useful selectors
 
-export const useCartItems = () =>
-  useCartStore((state) => state.items);
+export const useCartItems = () => useCartStore((state) => state.items);
 
 export const useCartCount = () =>
   useCartStore((state) =>
-    state.items.reduce((sum, item) => sum + item.quantity, 0)
+    state.items.reduce((sum, item) => sum + item.quantity, 0),
   );
 
 export const useCartSubtotal = () =>
   useCartStore((state) =>
     state.items.reduce(
-      (sum, item) =>
-        sum + (item.finalPrice ?? 0) * item.quantity,
-      0
-    )
+      (sum, item) => sum + (item.finalPrice ?? 0) * item.quantity,
+      0,
+    ),
   );
