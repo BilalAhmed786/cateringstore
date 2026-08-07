@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/app/(backend)/lib/guard/getCurrentuser"; // yo
 
 export async function POST(req: NextRequest) {
   try {
-    // 1️⃣ Verify Firebase token and get current user
+    // 1 Verify Firebase token and get current user
     const currentUser = await getCurrentUser(req);
 
     if (!currentUser) {
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2️⃣ Fetch user from Postgres (already exists)
+    // 2 Fetch user from Postgres (already exists)
     const user = await prisma.user.findUnique({
       where: { id: currentUser.id },
     });
@@ -27,14 +27,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3️⃣ Create app JWT
+    // 3 Create app JWT
     const token = signJwt({
       sub: user.id,
       email: user.email,
       role: user.role,
     });
 
-    // 4️⃣ Set cookie
+    // 4 Set cookie
     const response = NextResponse.json({ user });
     response.cookies.set({
       name: "access_token",
