@@ -39,6 +39,7 @@ export interface CartItem{
   type: "menuitem" | "package" | "hamper" | "event";
   quantity: number;
   price: number;
+  finalPrice:number
 };
 
 export interface CheckoutSession {

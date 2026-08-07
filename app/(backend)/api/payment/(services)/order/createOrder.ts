@@ -37,6 +37,12 @@ export async function createOrder(session: CheckoutSession) {
     /* -------------------- CREATE ORDER ITEMS -------------------- */
 
     for (const item of session.cart) {
+      const price = item.finalPrice ?? item.price;
+
+      if (price === undefined) {
+        throw new Error(`Price missing for item ${item.id}`);
+      }
+
       switch (item.type) {
         case "menuitem":
           await tx.orderMenuItem.create({
@@ -44,7 +50,7 @@ export async function createOrder(session: CheckoutSession) {
               orderId: order.id,
               menuId: item.id,
               quantity: item.quantity,
-              price: item.price,
+              price,
             },
           });
           break;
@@ -55,7 +61,7 @@ export async function createOrder(session: CheckoutSession) {
               orderId: order.id,
               packageId: item.id,
               quantity: item.quantity,
-              price: item.price,
+              price,
             },
           });
           break;
@@ -66,7 +72,7 @@ export async function createOrder(session: CheckoutSession) {
               orderId: order.id,
               hamperId: item.id,
               quantity: item.quantity,
-              price: item.price,
+              price,
             },
           });
           break;
@@ -77,13 +83,10 @@ export async function createOrder(session: CheckoutSession) {
               orderId: order.id,
               eventId: item.id,
               quantity: item.quantity,
-              price: item.price,
+              price,
             },
           });
           break;
-
-        default:
-          throw new Error(`Unsupported cart item type: ${item.type}`);
       }
     }
 
