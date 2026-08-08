@@ -1,20 +1,31 @@
-﻿"use client"
+﻿"use client";
 
-import { useQuery } from "@tanstack/react-query"
-import type { StatItem } from "../types/types"
-import { ShoppingCart, Users, TrendingUp, BarChart3 } from "lucide-react"
+import { useQuery } from "@tanstack/react-query";
+import type {
+  DashboardStats,
+  DashboardStatsResponse,
+  StatsPeriod,
+} from "../types/types";
+import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
 
-export function useDashboardStats() {
-  return useQuery<StatItem[]>({
-    queryKey: ["dashboard", "stats"],
+
+
+
+export function useDashboardStats(period: StatsPeriod) {
+  return useQuery<DashboardStats>({
+    queryKey: ["dashboard", "stats", period],
+
     queryFn: async () => {
-      return [
-        { label: "Total Orders", value: "1,234", trend: "+12.5%", icon: ShoppingCart },
-        { label: "Total Users", value: "856", trend: "+8.2%", icon: Users },
-        { label: "Revenue", value: "$45,231", trend: "+23.1%", icon: TrendingUp },
-        { label: "Analytics", value: "92%", trend: "+5.4%", icon: BarChart3 },
-      ]
+      const response = await apiRequest<DashboardStatsResponse>({
+       url: `/api/admin/stats?period=${period}`,
+       method:"GET",
+       authRequired:true
+      }
+      );
+
+      return response.stats;
     },
+
     staleTime: 60_000,
-  })
+  });
 }

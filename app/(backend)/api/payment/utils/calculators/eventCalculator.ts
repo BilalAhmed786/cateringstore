@@ -1,11 +1,11 @@
 import prisma from "@/app/(backend)/lib/prisma/prisma";
-import { CheckoutItem } from "../types/type";
+import { CheckoutItem } from "../../types/type";
 
 
-export async function hamperCalculator(
+export async function eventCalculator(
   item: CheckoutItem
 ): Promise<number> {
-  const hamper = await prisma.hamper.findUnique({
+  const event = await prisma.event.findUnique({
     where: {
       id: item.id,
     },
@@ -15,17 +15,17 @@ export async function hamperCalculator(
     },
   });
 
-  if (!hamper) {
-    throw new Error("Hamper not found.");
+  if (!event) {
+    throw new Error("Event not found.");
   }
 
-  if (!hamper.available) {
-    throw new Error("Hamper unavailable.");
+  if (!event.available) {
+    throw new Error("Event unavailable.");
   }
 
   if (!Number.isInteger(item.quantity) || item.quantity < 1) {
     throw new Error("Invalid quantity.");
   }
 
-  return hamper.originalPrice * item.quantity;
+  return event.originalPrice * item.quantity;
 }
