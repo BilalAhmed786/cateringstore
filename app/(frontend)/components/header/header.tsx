@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { auth } from "@/app/(frontend)/lib/firebase/firebase";
 import { useLogout } from "@/app/(frontend)/admin/dashboard/hooks/useLogout";
 import { apiRequest } from "../reusables/apireq/apireq";
+import { Loader } from "../reusables/loader/loader";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -70,7 +71,6 @@ export default function Header() {
           return;
         }
 
-       
         setUser({
           uid: firebaseUser.uid,
           role: response.user.role,
@@ -163,33 +163,34 @@ export default function Header() {
         </nav>
 
         {/* Right */}
-        <div className="items-center gap-3 md:flex">
-          {!authLoading &&
-            (isLoggedIn ? (
-              <>
-                <Button variant="outline" onClick={handleDashboard}>
-                  Dashboard
-                </Button>
+        <div className="items-center gap-3 md:flex min-w-[190px] justify-end">
+          {authLoading ? (
+            <Loader variant="inline" size={20} className="min-w-[190px]" />
+          ) : isLoggedIn ? (
+            <>
+              <Button variant="outline" onClick={handleDashboard}>
+                Dashboard
+              </Button>
 
-                <Button
-                  variant="destructive"
-                  onClick={logout}
-                  disabled={isPending}
-                >
-                  {isPending ? "Logging out..." : "Logout"}
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button variant="ghost" asChild>
-                  <Link href="/auth/login">Login</Link>
-                </Button>
+              <Button
+                variant="destructive"
+                onClick={logout}
+                disabled={isPending}
+              >
+                {isPending ? "Logging out..." : "Logout"}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" asChild>
+                <Link href="/auth/login">Login</Link>
+              </Button>
 
-                <Button asChild>
-                  <Link href="/auth/register">Register</Link>
-                </Button>
-              </>
-            ))}
+              <Button asChild>
+                <Link href="/auth/register">Register</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile */}
