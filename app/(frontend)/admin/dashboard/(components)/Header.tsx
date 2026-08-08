@@ -4,12 +4,12 @@ import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { Home, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { HeaderProps } from "../types/types";
-
+import { useLogout } from "../hooks/useLogout";
 export default function Header({
   title = "Welcome Admin",
-  onLogout,
-}: HeaderProps) {
+ }: HeaderProps) {
   const router = useRouter();
+  const { logout } = useLogout();
 
   return (
     <div className="sticky top-0 bg-slate-900 border-b border-slate-800 px-8 py-4 flex justify-between items-center backdrop-blur-sm z-10">
@@ -27,7 +27,7 @@ export default function Header({
         />
 
         <UniButton
-          onClick={onLogout}
+          onClick={logout}
           variant="outline"
           size="sm"
           icon={<LogOut size={16} />}
