@@ -32,7 +32,7 @@ export default function LoginPage() {
   // const schema = generateSchema(loginFields);
 
   return (
-    <div className="space-y-6 max-w-md mx-auto mt-10">
+    <div className="space-y-6 max-w-md mx-auto  mt-25">
       {/* ---------------- EMAIL / PASSWORD LOGIN ---------------- */}
       <DynamicShadcnForm
         fields={loginFields}

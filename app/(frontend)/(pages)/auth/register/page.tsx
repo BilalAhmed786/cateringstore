@@ -24,7 +24,7 @@ export default function RegisterPage() {
   const oauthMutation = useOAuth();
 
   return (
-    <div className="space-y-6 max-w-md mx-auto mt-10">
+    <div className="space-y-6 max-w-md mx-auto mt-25">
       {/* ---------------- EMAIL / PASSWORD REGISTER ---------------- */}
       <DynamicShadcnForm
         fields={registerFields}

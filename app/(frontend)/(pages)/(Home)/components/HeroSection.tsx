@@ -31,7 +31,7 @@ export default function HeroSection() {
 
             <div className="absolute inset-0 flex items-center p-4">
               <div className="container">
-                <div className="max-w-3xl text-white">
+                <div className="max-w-3xl text-white mt-10">
                   <span className="rounded-full bg-primary px-4 py-2 text-sm">
                     Premium Catering
                   </span>

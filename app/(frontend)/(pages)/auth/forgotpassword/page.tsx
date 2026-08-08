@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { DynamicShadcnForm } from '@/app/(frontend)/components/reusables/dynamicform/dynamicform';
 import { FieldConfig } from '@/app/(frontend)/components/reusables/types/types';
-import { useForgotPassword } from '@/app/(frontend)/auth/hooks/useForgotPassword';
+import { useForgotPassword } from '@/app/(frontend)/(pages)/auth/hooks/useForgotPassword';
 import Link from 'next/link';
 
 export default function ForgotPasswordPage() {
@@ -20,7 +20,7 @@ export default function ForgotPasswordPage() {
   ];
 
   return (
-    <div className="space-y-6 max-w-md mx-auto mt-10">
+    <div className="space-y-6 max-w-md mx-auto  mt-25">
       <DynamicShadcnForm
         fields={fields}
         defaultvalues={defaultValues}
