@@ -6,7 +6,7 @@ import { Prisma } from "@prisma/client";
 import { buildFilter } from "../../reusables/filters/filters";
 
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const auth = await requireRole(req, ["ADMIN"]);
     if (auth instanceof NextResponse) return auth;
