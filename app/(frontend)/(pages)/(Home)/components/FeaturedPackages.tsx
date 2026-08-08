@@ -9,6 +9,7 @@ import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel
 import { PackageCustomizeSheet } from "../../packages/components/PackageCustomizeSheet";
 import { useState } from "react";
 import { useGetPackages } from "@/app/(frontend)/admin/packages/hooks/usegetpackages";
+import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
 export default function FeaturedPackages() {
   const { data: packages, isLoading } = useGetPackages({page:1,limit:1000});
@@ -18,7 +19,7 @@ export default function FeaturedPackages() {
     return (
       <section className="py-24">
         <div className="container mx-auto px-4">
-          <p>Loading packages...</p>
+          <Loader/>
         </div>
       </section>
     );
@@ -77,7 +78,7 @@ export default function FeaturedPackages() {
               </div>
 
               {/* Content */}
-              <div className="flex h-[220px] flex-col p-6">
+              <div className="flex h-55 flex-col p-6">
                 <h3 className="text-2xl font-bold">{pkg.name}</h3>
 
                 <p className="mt-4 line-clamp-3 flex-1 text-sm leading-7 text-muted-foreground">

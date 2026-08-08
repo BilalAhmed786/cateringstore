@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/app/(frontend)/components/ui/button";
 import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
 import { useHamperCategories } from "@/app/(frontend)/admin/categories/hamper/hooks/useHamperCategories";
+import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
 
 
@@ -15,9 +16,7 @@ export default function FeaturedHampers() {
   if (isLoading) {
     return (
       <section className="py-24">
-        <div className="container mx-auto px-4">
-          <p>Loading...</p>
-        </div>
+        <Loader/>
       </section>
     );
   }

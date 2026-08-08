@@ -15,7 +15,6 @@ import { useDeleteHamperCategory } from "./hooks/useDeleteHamperCategory";
 import { useHamperCategories } from "./hooks/useHamperCategories";
 import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
-
 export default function HamperCategoriesPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -24,7 +23,7 @@ export default function HamperCategoriesPage() {
 
   const debouncedSearch = useDebounce(search, 1000);
 
-  const { data, isPending, isFetching } = useHamperCategories({
+  const { data, isFetching } = useHamperCategories({
     page,
     limit,
     search: debouncedSearch,
@@ -32,24 +31,15 @@ export default function HamperCategoriesPage() {
 
   const { mutate: deleteHamperCategory } = useDeleteHamperCategory();
   const categories = data?.categories ?? [];
-  const total = data?.total as number
-
-  if (isPending && !data) {
-    return <Loader variant="inline" />;
-  }
+  const total = data?.total as number;
 
   return (
     <div className="w-full flex justify-center py-10">
       <div className="w-full px-4 space-y-6">
-
-        <Metadata
-          title="Hamper Categories"
-          desc="manage hamper categories"
-        />
+        <Metadata title="Hamper Categories" desc="manage hamper categories" />
 
         {/* Search + Add Button */}
         <div className="flex flex-wrap gap-2 items-end justify-between">
-
           <BaseSearch
             label=""
             value={search}
@@ -72,66 +62,71 @@ export default function HamperCategoriesPage() {
             isFetching ? "opacity-60 pointer-events-none" : "opacity-100"
           }`}
         >
-          <DataTable
-            items={categories}
-            isLoading={isFetching}
-            columns={[
-              {
-                header: "Name",
-                accessor: (item) => item.name,
-              },
-              {
-                header: "Image",
-                accessor: (item) => (
-                  <div className="relative w-12 h-12">
-                    <Image
-                      src={item.image ?? ""}
-                      alt={item.name}
-                      fill
-                      className="object-cover rounded"
-                      sizes="48px//"
-                    />
-                  </div>
-                ),
-              },
-              {
-                header: "Created At",
-                accessor: (item) =>
-                  new Date(item.createdAt).toLocaleDateString(),
-              },
-              {
-                header: "Actions",
-                accessor: (item) => (
-                  <div className="flex gap-2">
+          {isFetching ? (
+            <Loader />
+          ) : (
+            <DataTable
+              items={categories}
+              isLoading={isFetching}
+              columns={[
+                {
+                  header: "Name",
+                  accessor: (item) => item.name,
+                },
+                {
+                  header: "Image",
+                  accessor: (item) => (
+                    <div className="relative w-12 h-12">
+                      <Image
+                        src={item.image ?? ""}
+                        alt={item.name}
+                        fill
+                        className="object-cover rounded"
+                        sizes="48px//"
+                      />
+                    </div>
+                  ),
+                },
+                {
+                  header: "Created At",
+                  accessor: (item) =>
+                    new Date(item.createdAt).toLocaleDateString(),
+                },
+                {
+                  header: "Actions",
+                  accessor: (item) => (
+                    <div className="flex gap-2">
+                      <Link href={`/admin/categories/hamper/${item.id}`}>
+                        <UniButton
+                          size="sm"
+                          variant="outline"
+                          icon={<Edit className="w-4 h-4" />}
+                        />
+                      </Link>
 
-                    <Link href={`/admin/categories/hamper/${item.id}`}>
                       <UniButton
                         size="sm"
-                        variant="outline"
-                        icon={<Edit className="w-4 h-4" />}
+                        variant="destructive"
+                        icon={<Trash2 className="w-4 h-4" />}
+                        onClick={() => deleteHamperCategory(item.id)}
                       />
-                    </Link>
-
-                    <UniButton
-                      size="sm"
-                      variant="destructive"
-                      icon={<Trash2 className="w-4 h-4" />}
-                      onClick={() => deleteHamperCategory(item.id)}
-                    />
-                  </div>
-                ),
-              },
-            ]}
-          />
+                    </div>
+                  ),
+                },
+              ]}
+            />
+          )}
         </div>
 
         {/* Pagination */}
-        <ItemsPagination
-          page={page}
-          total={total}
-          limit={limit}
-          onPageChange={setPage}
-        />
+        {!isFetching && (
+          <ItemsPagination
+            page={page}
+            total={total}
+            limit={limit}
+            onPageChange={setPage}
+          />
+        )}
       </div>
     </div>
   );

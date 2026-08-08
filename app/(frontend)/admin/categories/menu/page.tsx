@@ -21,7 +21,7 @@ export default function CategoriesPage() {
 
   const debouncedSearch = useDebounce(search, 1000);
 
-  const { data, isPending, isFetching } = useCategories({
+  const { data,isFetching } = useCategories({
     page,
     limit,
     search: debouncedSearch,
@@ -31,9 +31,7 @@ export default function CategoriesPage() {
 
   const categories = data?.categories ?? [];
   const total = data?.total ?? 0;
-  if (isPending && !data) {
-    return <Loader variant ="inline"/>;
-  }
+  
 
   return (
     <div className="w-full flex justify-center py-10">
@@ -65,7 +63,9 @@ export default function CategoriesPage() {
             isFetching ? "opacity-60 pointer-events-none" : "opacity-100"
           }`}
         >
-          <DataTable
+      {isFetching? <Loader/>  
+        :
+        <DataTable
             items={categories}
             isLoading={isFetching}
             columns={[
@@ -114,15 +114,18 @@ export default function CategoriesPage() {
               },
             ]}
           />
+        }
         </div>
 
         {/* Pagination */}
+      {!isFetching &&
         <ItemsPagination
-          page={page}
-          total={total}
-          limit={limit}
-          onPageChange={setPage}
+        page={page}
+        total={total}
+        limit={limit}
+        onPageChange={setPage}
         />
+      }
       </div>
     </div>
   );

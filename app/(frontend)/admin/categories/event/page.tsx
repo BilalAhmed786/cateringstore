@@ -16,14 +16,12 @@ import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 import { useDeleteEventCategory } from "./hooks/useDeleteEventCategory";
 import { useEventCategories } from "./hooks/useEventCategories";
 
-
-
 export default function EventCategoriesPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const limit = 4;
   const debouncedSearch = useDebounce(search, 1000);
-  const { data, isPending, isFetching } = useEventCategories({
+  const { data, isFetching } = useEventCategories({
     page,
     limit,
     search: debouncedSearch,
@@ -31,24 +29,15 @@ export default function EventCategoriesPage() {
 
   const { mutate: deleteEventCategory } = useDeleteEventCategory();
   const categories = data?.categories ?? [];
-  const total = data?.total as number
-
- if (isPending) {
-  return <Loader variant="page" />;
-}
+  const total = data?.total as number;
 
   return (
     <div className="w-full flex justify-center py-10">
       <div className="w-full px-4 space-y-6">
-
-        <Metadata
-          title="Event Categories"
-          desc="manage event categories"
-        />
+        <Metadata title="Event Categories" desc="manage event categories" />
 
         {/* Search + Add Button */}
         <div className="flex flex-wrap gap-2 items-end justify-between">
-
           <BaseSearch
             label=""
             value={search}
@@ -71,66 +60,71 @@ export default function EventCategoriesPage() {
             isFetching ? "opacity-60 pointer-events-none" : "opacity-100"
           }`}
         >
-          <DataTable
-            items={categories}
-            isLoading={isFetching}
-            columns={[
-              {
-                header: "Name",
-                accessor: (item) => item.name,
-              },
-              {
-                header: "Image",
-                accessor: (item) => (
-                  <div className="relative w-12 h-12">
-                    <Image
-                      src={item.image ?? ""}
-                      alt={item.name}
-                      fill
-                      className="object-cover rounded"
-                      sizes="48px//"
-                    />
-                  </div>
-                ),
-              },
-              {
-                header: "Created At",
-                accessor: (item) =>
-                  new Date(item.createdAt).toLocaleDateString(),
-              },
-              {
-                header: "Actions",
-                accessor: (item) => (
-                  <div className="flex gap-2">
+          {isFetching ? (
+            <Loader />
+          ) : (
+            <DataTable
+              items={categories}
+              isLoading={isFetching}
+              columns={[
+                {
+                  header: "Name",
+                  accessor: (item) => item.name,
+                },
+                {
+                  header: "Image",
+                  accessor: (item) => (
+                    <div className="relative w-12 h-12">
+                      <Image
+                        src={item.image ?? ""}
+                        alt={item.name}
+                        fill
+                        className="object-cover rounded"
+                        sizes="48px//"
+                      />
+                    </div>
+                  ),
+                },
+                {
+                  header: "Created At",
+                  accessor: (item) =>
+                    new Date(item.createdAt).toLocaleDateString(),
+                },
+                {
+                  header: "Actions",
+                  accessor: (item) => (
+                    <div className="flex gap-2">
+                      <Link href={`/admin/categories/event/${item.id}`}>
+                        <UniButton
+                          size="sm"
+                          variant="outline"
+                          icon={<Edit className="w-4 h-4" />}
+                        />
+                      </Link>
 
-                    <Link href={`/admin/categories/event/${item.id}`}>
                       <UniButton
                         size="sm"
-                        variant="outline"
-                        icon={<Edit className="w-4 h-4" />}
+                        variant="destructive"
+                        icon={<Trash2 className="w-4 h-4" />}
+                        onClick={() => deleteEventCategory(item.id)}
                       />
-                    </Link>
-
-                    <UniButton
-                      size="sm"
-                      variant="destructive"
-                      icon={<Trash2 className="w-4 h-4" />}
-                      onClick={() => deleteEventCategory(item.id)}
-                    />
-                  </div>
-                ),
-              },
-            ]}
-          />
+                    </div>
+                  ),
+                },
+              ]}
+            />
+          )}
         </div>
 
         {/* Pagination */}
-        <ItemsPagination
-          page={page}
-          total={total}
-          limit={limit}
-          onPageChange={setPage}
-        />
+        {isFetching && (
+          <ItemsPagination
+            page={page}
+            total={total}
+            limit={limit}
+            onPageChange={setPage}
+          />
+        )}
       </div>
     </div>
   );

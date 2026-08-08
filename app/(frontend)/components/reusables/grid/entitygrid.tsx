@@ -6,6 +6,7 @@ import { Card, CardHeader, CardContent, CardFooter } from "@/app/(frontend)/comp
 import { MenuItemDropdown } from "@/app/(frontend)/components/reusables/actiondropdown/actiondropdown";
 import { RatingSummary } from "../ratingsummary/ratingsummary";
 import { EntityGridProps } from "./gridtypes";
+import { Loader } from "../loader/loader";
 
 export function EntityGrid({
   items,
@@ -18,7 +19,7 @@ export function EntityGrid({
   if (isLoading) {
     return (
       <div className="py-16 text-center text-muted-foreground">
-        Loading items...
+        <Loader/>
       </div>
     );
   }

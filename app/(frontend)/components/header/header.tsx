@@ -163,9 +163,9 @@ export default function Header() {
         </nav>
 
         {/* Right */}
-        <div className="items-center gap-3 md:flex min-w-[190px] justify-end">
+        <div className="items-center gap-3 md:flex min-w-47.5 justify-end">
           {authLoading ? (
-            <Loader variant="inline" size={20} className="min-w-[190px]" />
+            <Loader variant="inline" size={20} className="min-w-47.5" />
           ) : isLoggedIn ? (
             <>
               <Button variant="outline" onClick={handleDashboard}>

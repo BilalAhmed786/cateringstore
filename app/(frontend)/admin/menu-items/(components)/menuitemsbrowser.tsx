@@ -107,13 +107,14 @@ export default function MenuItemBrowser({
 
   return (
     <div className="space-y-6">
-      {showFilters && (
+      {showFilters &&  (
         <EntityFilters
           filters={filters}
           search={{ value: search, onChange: onSearchChange,classname:"w-3xl" }}
         />
       )}
 
+      
       <EntityGrid
         items={data?.items ?? []}
         isLoading={isPending}

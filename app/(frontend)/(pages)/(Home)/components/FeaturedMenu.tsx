@@ -6,6 +6,7 @@ import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel
 import { Button } from "@/app/(frontend)/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useCategories } from "@/app/(frontend)/admin/categories/menu/hooks/usecategories";
+import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
 export default function FeaturedMenuCategories() {
   const { data: categories, isLoading } = useCategories({page:1,limit:10000});
@@ -14,7 +15,7 @@ export default function FeaturedMenuCategories() {
     return (
       <section className="py-20">
         <div className="container mx-auto">
-          <p>Loading...</p>
+          <Loader/>
         </div>
       </section>
     );

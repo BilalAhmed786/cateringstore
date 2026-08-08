@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "../../../components/ui/button";
 import { useEventCategories } from "@/app/(frontend)/admin/categories/event/hooks/useEventCategories";
+import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
 
 export default function EventsSection() {
@@ -13,9 +14,7 @@ const { data: events, isLoading } = useEventCategories({page:1,limit:1000});
   if (isLoading) {
     return (
       <section className="bg-muted/30 py-24">
-        <div className="container mx-auto px-4">
-          <p>Loading events...</p>
-        </div>
+        <Loader />
       </section>
     );
   }
