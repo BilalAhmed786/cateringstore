@@ -25,15 +25,41 @@ export type StatsGridProps = {
   stats: StatItem[]
 }
 
-export type Order = {
-  id: string
-  customer: string
-  amount: string
-  status: string
-}
+export interface Order {
+  id: string;
+  customer: string | null;
+  amount: string;
+  status: string;
+  createdAt: string;
+};
 
-export type RecentOrdersProps = {
+export interface RecentOrdersProps{
   orders: Order[]
 }
 
+export type OrderStatus = "PENDING" | "CONFIRMED" | "COOKING" | "DELIVERED" | "CANCELLED";
 
+export type StatsPeriod = "1m" | "3m" | "6m" | "1y";
+
+export interface DashboardStat{
+  value: number;
+  trend: number;
+};
+
+export interface DashboardStats {
+  totalOrders: DashboardStat;
+  totalUsers: DashboardStat;
+  revenue: DashboardStat;
+  deliveredOrders: DashboardStat;
+};
+
+export interface DashboardStatsResponse {
+  period: StatsPeriod;
+  stats: DashboardStats;
+};
+
+export interface duration{
+  label: string;
+  value: StatsPeriod;
+
+}

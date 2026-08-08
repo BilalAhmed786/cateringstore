@@ -2,7 +2,7 @@ import { eventCalculator } from "./calculators/eventCalculator";
 import { hamperCalculator } from "./calculators/hamperCalculator";
 import { menuItemCalculator } from "./calculators/menuItemCalculator";
 import { packageCalculator } from "./calculators/packageCalculator";
-import { CheckoutItem } from "./types/type";
+import { CheckoutItem } from "../types/type";
 
 export async function calculateCartTotal(
   items: CheckoutItem[]
