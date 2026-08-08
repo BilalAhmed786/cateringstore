@@ -1,5 +1,5 @@
 import prisma from "@/app/(backend)/lib/prisma/prisma";
-import { CheckoutItem } from "../types/type";
+import { CheckoutItem } from "../../types/type";
 
 
 

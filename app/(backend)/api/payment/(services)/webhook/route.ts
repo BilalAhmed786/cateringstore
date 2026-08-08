@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { stripe } from "@/app/(backend)/lib/stripe/stripe";
-import { createOrder } from "../order/createOrder";
+import { createOrder } from "../../utils/order/createOrder";
 
 export async function POST(req: Request) {
   // ---------------------------------------

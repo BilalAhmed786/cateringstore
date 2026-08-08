@@ -1,8 +1,9 @@
 // lib/roleGuard.ts
 import { getCurrentUser } from "./getCurrentuser";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function requireRole(req: Request, roles: string[]) {
+ export async function requireRole(req:NextRequest , roles: string[]) {
+ 
   const user = await getCurrentUser(req);
 
   if (!user) {
