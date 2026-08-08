@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { UploadApiResponse } from "cloudinary";
 import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import cloudinary from "@/app/(backend)/lib/cloudinary/cloudinary";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 
 export async function POST(
-  req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ menuitemid: string }> }
 ) {
   try {

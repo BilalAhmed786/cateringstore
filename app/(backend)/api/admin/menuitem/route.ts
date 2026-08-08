@@ -6,7 +6,7 @@ import { Prisma } from "@prisma/client";
 
 // your auth helper
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     await requireRole(req, ["admin"]);
 

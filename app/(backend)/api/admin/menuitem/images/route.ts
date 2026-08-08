@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import cloudinary from "@/app/(backend)/lib/cloudinary/cloudinary";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import type { UploadApiResponse } from "cloudinary";
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     await requireRole(req, ["admin"]);
 
