@@ -1,11 +1,11 @@
 import { headers } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { stripe } from "@/app/(backend)/lib/stripe/stripe";
 import { createOrder } from "../../utils/order/createOrder";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   // ---------------------------------------
   // 1. Check environment variables FIRST
   // ---------------------------------------

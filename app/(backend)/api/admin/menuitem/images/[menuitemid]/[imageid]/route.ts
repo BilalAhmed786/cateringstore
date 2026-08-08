@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import cloudinary from "@/app/(backend)/lib/cloudinary/cloudinary";
 
 
 export async function DELETE(
-  req: Request,
+  req: NextRequest,
   {
     params,
   }: {

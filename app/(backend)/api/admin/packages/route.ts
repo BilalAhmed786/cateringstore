@@ -7,7 +7,7 @@ import { Prisma } from "@prisma/client";
 
 
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
 
       const auth = await requireRole(req, ["ADMIN"]);
