@@ -16,7 +16,7 @@ const Selectinput: React.FC<SelectInputProps> = ({ name, label, options }) => {
 
   return (
     <div>
-      <Label className="mb-2" htmlFor={name}>{label}</Label>
+      <Label className="mb-2" htmlFor={name}>{label??""}</Label>
       <Controller
         name={name}
         control={control}

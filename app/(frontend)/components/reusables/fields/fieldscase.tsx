@@ -17,6 +17,7 @@ export const FormField: React.FC<FieldProps> = ({ field }) => {
     case "date":
     case "textarea":
     case "checkbox":
+    case "hidden":
       return <TextInput {...field} />;
 
     case "select":

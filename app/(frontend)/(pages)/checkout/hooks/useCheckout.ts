@@ -19,8 +19,7 @@ export function useCheckout() {
 
   const { items } = useCartStore();
 
-  const [customer, setCustomer] =
-    useState<FieldValues | null>(null);
+  const [customer, setCustomer] = useState<FieldValues | null>(null);
 
   async function handleCheckout(
     data: FieldValues

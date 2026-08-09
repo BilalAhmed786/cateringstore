@@ -48,16 +48,13 @@ export async function POST(req: NextRequest) {
     await prisma.checkoutSession.create({
       data: {
         paymentIntentId: paymentIntent.id,
-
+        userId:customer.userId,
         fullName: customer.fullName,
         email: customer.email,
         phone: customer.phone,
         notes: customer.notes,
-
         cart: items,
-
         total,
-
         status: "PENDING",
       },
     });

@@ -25,9 +25,11 @@ export type FieldConfig = {
     | "date"
     | "file"
     | "textarea"
-    | "imagepreview";
+    | "imagepreview"
+    | "hidden";
   name: string;
-  label: string;
+  value?:string;
+  label?: string;
   placeholder?: string;
   options?: { label: string; value: string }[];
   accept?: string;
@@ -77,7 +79,8 @@ export interface FieldProps {
 }
 export interface TextInputProps {
   name: string;
-  label: string;
+  label?: string;
+  value?:string
   placeholder?: string;
   type:
     | "email"
@@ -90,17 +93,19 @@ export interface TextInputProps {
     | "date"
     | "file"
     | "textarea"
-    | "imagepreview";
+    | "imagepreview"
+    | "hidden"
+    ;
   className?: string;
 }
 export interface SelectInputProps {
   name: string;
-  label: string;
+  label?: string;
   options?: { label: string; value: string }[];
 }
 export interface FileUploadInputProps {
   name: string;
-  label: string;
+  label?: string;
   accept?: string;
   multiple?: boolean;
   className?: string; // for image previews

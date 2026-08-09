@@ -13,6 +13,7 @@ import { auth } from "@/app/(frontend)/lib/firebase/firebase";
 import { useLogout } from "@/app/(frontend)/admin/dashboard/hooks/useLogout";
 import { apiRequest } from "../reusables/apireq/apireq";
 import { Loader } from "../reusables/loader/loader";
+import { UniButton } from "../reusables/button/button";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -163,22 +164,23 @@ export default function Header() {
         </nav>
 
         {/* Right */}
-        <div className="items-center gap-3 md:flex min-w-47.5 justify-end">
+        <div className="items-center gap-3 hidden md:flex  min-w-47.5 justify-end">
           {authLoading ? (
             <Loader variant="inline" size={20} className="min-w-47.5" />
           ) : isLoggedIn ? (
             <>
-              <Button variant="outline" onClick={handleDashboard}>
-                Dashboard
-              </Button>
+              <UniButton
+                variant="outline"
+                onClick={handleDashboard}
+                label="Dashboard"
+              />
 
-              <Button
+              <UniButton
                 variant="destructive"
                 onClick={logout}
                 disabled={isPending}
-              >
-                {isPending ? "Logging out..." : "Logout"}
-              </Button>
+                label={isPending ? "Logging out..." : "Logout"}
+              />
             </>
           ) : (
             <>

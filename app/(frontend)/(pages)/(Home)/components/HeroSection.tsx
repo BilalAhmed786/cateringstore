@@ -46,7 +46,7 @@ export default function HeroSection() {
 
                   <div className="mt-10 flex gap-4">
                     <Button asChild size="lg">
-                      <Link href="/menu-items">
+                      <Link href="/menuitem">
                         Explore Menu
                       </Link>
                     </Button>

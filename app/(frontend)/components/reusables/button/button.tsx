@@ -1,4 +1,3 @@
-'use client'
 import { Button } from "@/app/(frontend)/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { UniButtonProps } from "../types/types";

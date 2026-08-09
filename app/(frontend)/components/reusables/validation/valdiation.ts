@@ -34,11 +34,13 @@ export const generateSchema = (fields: FieldConfig[]) => {
 
       /* ================= TEXT TYPES ================= */
       case "text":
+      case "hidden":
       case "textarea":
       case "select":
       case "radio":
       case "date": {
-        const base = z.string();
+        
+      const base = z.string();
 
         shape[field.name] = isRequired
           ? base.min(1, `${field.label} is required`)

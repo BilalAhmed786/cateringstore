@@ -6,11 +6,296 @@ datasource db {
   provider = "postgresql"
 }
 
-/**
- * =======================
- * ENUMS
- * =======================
- */
+model User {
+  id             String           @id
+  email          String           @unique
+  name           String?
+  role           Role             @default(CLIENT)
+  createdAt      DateTime         @default(now())
+  eventReviews   EventReview[]
+  hamperReviews  HamperReview[]
+  menuReviews    MenuItemReview[]
+  orders         Order[]
+  packageReviews PackageReview[]
+}
+
+model MenuCategory {
+  id        String     @id @default(uuid())
+  name      String
+  image     String?
+  createdAt DateTime   @default(now())
+  publicId  String?
+  items     MenuItem[]
+}
+
+model MenuItem {
+  id           String           @id @default(uuid())
+  title        String
+  description  String?
+  price        Float
+  available    Boolean          @default(true)
+  categoryId   String
+  createdAt    DateTime         @default(now())
+  eventLinks   EventMenuItem[]
+  hamperItems  HamperItem[]
+  images       ItemImage[]
+  category     MenuCategory     @relation(fields: [categoryId], references: [id])
+  reviews      MenuItemReview[]
+  orderItems   OrderMenuItem[]
+  packageItems PackageItem[]
+}
+
+model MenuItemReview {
+  id         String   @id @default(uuid())
+  userId     String
+  menuItemId String
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, menuItemId])
+}
+
+model ItemImage {
+  id         String   @id @default(uuid())
+  url        String
+  publicId   String
+  menuItemId String
+  createdAt  DateTime @default(now())
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id              String          @id @default(uuid())
+  userId          String?
+  status          OrderStatus     @default(PENDING)
+  total           Float
+  createdAt       DateTime        @default(now())
+  guestEmail      String?
+  guestName       String?
+  guestPhone      String?
+  notes           String?
+  paymentIntentId String?         @unique
+  user            User?           @relation(fields: [userId], references: [id])
+  orderEvents     OrderEvent[]
+  orderHampers    OrderHamper[]
+  items           OrderMenuItem[]
+  orderPackages   OrderPackage[]
+}
+
+model OrderMenuItem {
+  id       String   @id @default(uuid())
+  orderId  String
+  menuId   String
+  quantity Int
+  price    Float    @default(0)
+  menu     MenuItem @relation(fields: [menuId], references: [id])
+  order    Order    @relation(fields: [orderId], references: [id])
+}
+
+model OrderEvent {
+  id       String @id @default(uuid())
+  orderId  String
+  eventId  String
+  quantity Int    @default(1)
+  price    Float
+  event    Event  @relation(fields: [eventId], references: [id])
+  order    Order  @relation(fields: [orderId], references: [id])
+}
+
+model OrderPackage {
+  id        String  @id @default(uuid())
+  orderId   String
+  packageId String
+  quantity  Int     @default(1)
+  price     Float
+  order     Order   @relation(fields: [orderId], references: [id])
+  package   Package @relation(fields: [packageId], references: [id])
+}
+
+model OrderHamper {
+  id       String @id @default(uuid())
+  orderId  String
+  hamperId String
+  quantity Int    @default(1)
+  price    Float
+  hamper   Hamper @relation(fields: [hamperId], references: [id])
+  order    Order  @relation(fields: [orderId], references: [id])
+}
+
+model CheckoutSession {
+  id              String         @id @default(uuid())
+  userId          String
+  paymentIntentId String         @unique
+  fullName        String
+  email           String
+  phone           String
+  notes           String?
+  cart            Json
+  total           Float
+  status          CheckoutStatus @default(PENDING)
+  createdAt       DateTime       @default(now())
+}
+
+model Package {
+  id            String          @id @default(uuid())
+  name          String
+  description   String?
+  image         String?
+  available     Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  discountType  DiscountType?
+  discountValue Float?
+  finalPrice    Float
+  originalPrice Float
+  publicId      String?
+  eventLinks    EventPackage[]
+  orderPackages OrderPackage[]
+  items         PackageItem[]
+  reviews       PackageReview[]
+}
+
+model PackageReview {
+  id        String   @id @default(uuid())
+  userId    String
+  packageId String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  package   Package  @relation(fields: [packageId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, packageId])
+}
+
+model PackageItem {
+  id         String   @id @default(uuid())
+  packageId  String
+  menuItemId String
+  quantity   Int      @default(1)
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  package    Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+}
+
+model EventCategory {
+  id        String   @id @default(uuid())
+  name      String
+  image     String?
+  createdAt DateTime @default(now())
+  publicId  String?
+  items     Event[]
+}
+
+model Event {
+  id            String          @id @default(uuid())
+  createdAt     DateTime        @default(now())
+  description   String?
+  name          String
+  available     Boolean         @default(true)
+  categoryId    String
+  image         String?
+  publicId      String?
+  discountType  DiscountType?
+  discountValue Float?
+  finalPrice    Float           @default(0)
+  originalPrice Float           @default(0)
+  category      EventCategory   @relation(fields: [categoryId], references: [id])
+  menuItems     EventMenuItem[]
+  packages      EventPackage[]
+  reviews       EventReview[]
+  orderEvents   OrderEvent[]
+}
+
+model EventReview {
+  id        String   @id @default(uuid())
+  userId    String
+  eventId   String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  event     Event    @relation(fields: [eventId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, eventId])
+}
+
+model EventMenuItem {
+  id         String   @id @default(uuid())
+  eventId    String
+  menuItemId String
+  quantity   Int      @default(1)
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+
+  @@unique([eventId, menuItemId])
+}
+
+model EventPackage {
+  id        String  @id @default(uuid())
+  eventId   String
+  packageId String
+  quantity  Int     @default(1)
+  event     Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  package   Package @relation(fields: [packageId], references: [id])
+
+  @@unique([eventId, packageId])
+}
+
+/// *
+/// * =======================
+/// * HAMPERS (EVENT-BASED)
+/// * =======================
+model HamperCategory {
+  id        String   @id @default(uuid())
+  name      String
+  image     String?
+  createdAt DateTime @default(now())
+  publicId  String?
+  items     Hamper[]
+}
+
+model Hamper {
+  id            String         @id @default(uuid())
+  name          String
+  description   String?
+  image         String?
+  available     Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  discountType  DiscountType?
+  discountValue Float?
+  finalPrice    Float
+  originalPrice Float
+  categoryId    String
+  publicId      String?
+  category      HamperCategory @relation(fields: [categoryId], references: [id])
+  items         HamperItem[]
+  reviews       HamperReview[]
+  orderHampers  OrderHamper[]
+}
+
+model HamperItem {
+  id         String   @id @default(uuid())
+  hamperId   String
+  menuItemId String
+  quantity   Int      @default(1)
+  hamper     Hamper   @relation(fields: [hamperId], references: [id], onDelete: Cascade)
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+}
+
+model HamperReview {
+  id        String   @id @default(uuid())
+  userId    String
+  hamperId  String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  hamper    Hamper   @relation(fields: [hamperId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, hamperId])
+}
 
 enum Role {
   SUPER_ADMIN
@@ -24,7 +309,6 @@ enum OrderStatus {
   COOKING
   DELIVERED
   CANCELLED
-  
 }
 
 enum EventStatus {
@@ -34,11 +318,6 @@ enum EventStatus {
   COMPLETED
 }
 
-enum DiscountType {
-  PERCENTAGE
-  FIXED
-}
-
 enum CheckoutStatus {
   PENDING
   COMPLETED
@@ -46,360 +325,7 @@ enum CheckoutStatus {
   FAILED
 }
 
-/**
- * =======================
- * USER
- * =======================
- */
-
-model User {
-  id        String   @id
-  email     String   @unique
-  name      String?
-  role      Role     @default(CLIENT)
-  createdAt DateTime @default(now())
-
-  orders         Order[]
-  menuReviews    MenuItemReview[]
-  packageReviews PackageReview[]
-  hamperReviews  HamperReview[]
-  eventReviews   EventReview[]
+enum DiscountType {
+  PERCENTAGE
+  FIXED
 }
-
-/**
- * =======================
- * CATEGORY & MENU ITEMS
- * =======================
- */
-
-model MenuCategory {
-  id        String   @id @default(uuid())
-  name      String
-  image     String?
-  publicId  String?
-  createdAt DateTime @default(now())
-
-  items MenuItem[]
-}
-
-model MenuItem {
-  id          String  @id @default(uuid())
-  title       String
-  description String?
-  price       Float
-  available   Boolean @default(true)
-  categoryId   String
-  category     MenuCategory     @relation(fields: [categoryId], references: [id])
-  images       ItemImage[]
-  orderItems   OrderMenuItem[]
-  packageItems PackageItem[]
-  hamperItems  HamperItem[]
-  reviews      MenuItemReview[]
-  eventLinks   EventMenuItem[]
-  createdAt    DateTime         @default(now())
-}
-model MenuItemReview {
-  id         String   @id @default(uuid())
-  userId     String
-  menuItemId String
-  rating     Int
-  comment    String?
-  createdAt  DateTime @default(now())
-
-  user     User     @relation(fields: [userId], references: [id])
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
-
-  @@unique([userId, menuItemId])
-}
-
-model ItemImage {
-  id         String @id @default(uuid())
-  url        String
-  publicId   String
-  menuItemId String
-
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-}
-
-/**
- * =======================
- * ORDERS
- * =======================
- */
-
-model Order {
-  id String @id @default(uuid())
-
-  userId String?
-  user User? @relation(fields: [userId], references: [id])
-
-  guestName String?
-  guestEmail String?
-  guestPhone String?
-
-  notes String?   // <-- MUST EXIST
-
-  paymentIntentId String @unique
-
-  status OrderStatus @default(PENDING)
-
-  total Float
-
-  createdAt DateTime @default(now())
-
-  items OrderMenuItem[]
-  orderPackages OrderPackage[]
-  orderHampers OrderHamper[]
-  orderEvents OrderEvent[]
-}
-
-model OrderMenuItem {
-  id       String @id @default(uuid())
-  orderId  String
-  menuId   String
-  quantity Int
-  price    Float
-
-  order Order    @relation(fields: [orderId], references: [id])
-  menu  MenuItem @relation(fields: [menuId], references: [id])
-}
-model OrderEvent {
-  id String @id @default(uuid())
-
-  orderId String
-  eventId String
-
-  quantity Int @default(1)
-  price Float
-
-  order Order @relation(fields: [orderId], references: [id])
-  event Event @relation(fields: [eventId], references: [id])
-}
-model OrderPackage {
-  id        String @id @default(uuid())
-  orderId   String
-  packageId String
-  quantity  Int    @default(1)
-  price     Float
-
-  order   Order   @relation(fields: [orderId], references: [id])
-  package Package @relation(fields: [packageId], references: [id])
-}
-
-model OrderHamper {
-  id       String @id @default(uuid())
-  orderId  String
-  hamperId String
-  quantity Int    @default(1)
-  price    Float
-
-  order  Order  @relation(fields: [orderId], references: [id])
-  hamper Hamper @relation(fields: [hamperId], references: [id])
-}
-
-//checkout session
-model CheckoutSession {
-  id String @id @default(uuid())
-
-  paymentIntentId String @unique
-
-  fullName String
-  email String
-  phone String
-  notes String?
-
-  cart Json
-
-  total Float
-
-  status CheckoutStatus @default(PENDING)
-
-  createdAt DateTime @default(now())
-}
-/**
- * =======================
- * PACKAGES (NO EVENTS)
- * =======================
- */
-
-model Package {
-  id          String  @id @default(uuid())
-  name        String
-  description String?
-
-  originalPrice Float
-  discountType  DiscountType?
-  discountValue Float?
-  finalPrice    Float
-
-  image     String?
-  publicId  String?
-  available Boolean  @default(true)
-  createdAt DateTime @default(now())
-
-  items         PackageItem[]
-  orderPackages OrderPackage[]
-  reviews       PackageReview[]
-  eventLinks    EventPackage[]
-}
-model PackageReview {
-  id        String   @id @default(uuid())
-  userId    String
-  packageId String
-  rating    Int
-  comment   String?
-  createdAt DateTime @default(now())
-
-  user    User    @relation(fields: [userId], references: [id])
-  package Package @relation(fields: [packageId], references: [id])
-
-  @@unique([userId, packageId])
-}
-model PackageItem {
-  id         String @id @default(uuid())
-  packageId  String
-  menuItemId String
-  quantity   Int    @default(1)
-
-  package  Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
-}
-
-/**
- * =======================
- * EVENTS (ADMIN CREATED)
- * =======================
- */
-
-model EventCategory {
-  id        String   @id @default(uuid())
-  name      String
-  image     String?
-  publicId  String?
-  createdAt DateTime @default(now())
-
-  items Event[]
-}
-
-model Event {
-  id             String          @id @default(uuid())
-  name           String
-  description    String?
-  image          String?
-  publicId       String?
-
-  originalPrice  Float           @default(0)
-  discountType   DiscountType?
-  discountValue  Float?
-  finalPrice     Float           @default(0)
-
-  available      Boolean         @default(true)
-  categoryId     String
-  category       EventCategory   @relation(fields: [categoryId], references: [id])
-  createdAt      DateTime        @default(now())
-
-  menuItems      EventMenuItem[]
-  packages       EventPackage[]
-  reviews        EventReview[]
-  
-  orderEvents    OrderEvent[]
-}
-model EventReview {
-  id        String   @id @default(uuid())
-  userId    String
-  eventId   String
-  rating    Int
-  comment   String?
-  createdAt DateTime @default(now())
-
-  user  User  @relation(fields: [userId], references: [id])
-  event Event @relation(fields: [eventId], references: [id])
-
-  @@unique([userId, eventId])
-}
-model EventMenuItem {
-  id         String @id @default(uuid())
-  eventId    String
-  menuItemId String
-  quantity   Int    @default(1)
-
-  event    Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
-
-  @@unique([eventId, menuItemId])
-}
-
-model EventPackage {
-  id        String @id @default(uuid())
-  eventId   String
-  packageId String
-  quantity  Int    @default(1)
-
-  event   Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  package Package @relation(fields: [packageId], references: [id])
-
-  @@unique([eventId, packageId])
-}
-
-/**
- * =======================
- * HAMPERS (EVENT-BASED)
- * =======================
- */
-model HamperCategory {
-  id        String   @id @default(uuid())
-  name      String
-  image     String?
-  publicId  String?
-  createdAt DateTime @default(now())
-  items     Hamper[]
-}
-
-model Hamper {
-  id            String         @id @default(uuid())
-  name          String
-  description   String?
-  originalPrice Float
-  discountType  DiscountType?
-  discountValue Float?
-  finalPrice    Float
-  image         String?
-  publicId      String?
-  categoryId    String
-  category      HamperCategory @relation(fields: [categoryId], references: [id])
-  available     Boolean        @default(true)
-  createdAt     DateTime       @default(now())
-
-  items        HamperItem[]
-  orderHampers OrderHamper[]
-  reviews      HamperReview[]
-}
-
-model HamperItem {
-  id         String @id @default(uuid())
-  hamperId   String
-  menuItemId String
-  quantity   Int    @default(1)
-
-  hamper   Hamper   @relation(fields: [hamperId], references: [id], onDelete: Cascade)
-  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
-}
-
-
-model HamperReview {
-  id        String   @id @default(uuid())
-  userId    String
-  hamperId  String
-  rating    Int
-  comment   String?
-  createdAt DateTime @default(now())
-
-  user   User   @relation(fields: [userId], references: [id])
-  hamper Hamper @relation(fields: [hamperId], references: [id])
-
-  @@unique([userId, hamperId])
-}
-
-
