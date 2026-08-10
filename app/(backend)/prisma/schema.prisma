@@ -127,7 +127,7 @@ model OrderHamper {
 
 model CheckoutSession {
   id              String         @id @default(uuid())
-  userId          String
+  userId          String? 
   paymentIntentId String         @unique
   fullName        String
   email           String

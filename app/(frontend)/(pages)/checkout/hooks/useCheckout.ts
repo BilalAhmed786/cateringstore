@@ -20,10 +20,11 @@ export function useCheckout() {
   const { items } = useCartStore();
 
   const [customer, setCustomer] = useState<FieldValues | null>(null);
-
   async function handleCheckout(
     data: FieldValues
   ) {
+    alert('yes')
+    console.log(customer)
     setCustomer(data);
 
     await createPaymentIntent({

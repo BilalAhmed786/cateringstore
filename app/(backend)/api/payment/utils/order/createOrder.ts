@@ -15,21 +15,18 @@ export async function createOrder(session: CheckoutSession) {
       return existingOrder;
     }
 
+    console.log("CREATE ORDER USER ID:", session.userId);
     /* -------------------- CREATE ORDER -------------------- */
 
     const order = await tx.order.create({
       data: {
-        userId: session.userId ?? null,
-
+        userId: session.userId,
         guestName: session.fullName,
         guestEmail: session.email,
         guestPhone: session.phone,
         notes: session.notes,
-
         paymentIntentId: session.paymentIntentId,
-
         total: session.total,
-
         status: "PENDING",
       },
     });

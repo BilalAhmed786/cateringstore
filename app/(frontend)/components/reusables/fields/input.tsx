@@ -18,7 +18,7 @@ const Inputtext: React.FC<TextInputProps> = ({
   return (
     <div>
       {type !== "hidden" && (
-        <Label className="mb-2" htmlFor={name}>
+        <Label htmlFor={name}>
           {label ?? ""}
         </Label>
       )}
@@ -30,14 +30,15 @@ const Inputtext: React.FC<TextInputProps> = ({
           <>
             <Input
               {...field}
+              value={field.value ?? ""}
               id={name}
               className={className}
               type={type}
               placeholder={placeholder}
-            /> 
+            />
 
             {type !== "hidden" && fieldState.error && (
-              <p className="text-red-500 mt-2">
+              <p className="mt-2 text-red-500">
                 {fieldState.error.message}
               </p>
             )}

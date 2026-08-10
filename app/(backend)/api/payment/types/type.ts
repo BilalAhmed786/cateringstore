@@ -43,7 +43,7 @@ export interface CartItem{
 };
 
 export interface CheckoutSession {
-  userId?: string | null;
+  userId: string | null;
   fullName: string;
   email: string;
   phone: string;

@@ -6,33 +6,12 @@ import { stripe } from "@/app/(backend)/lib/stripe/stripe";
 import { createOrder } from "../../utils/order/createOrder";
 
 export async function POST(req: NextRequest) {
-  // ---------------------------------------
-  // 1. Check environment variables FIRST
-  // ---------------------------------------
-
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-  if (!webhookSecret) {
-    console.error("STRIPE_WEBHOOK_SECRET is missing");
-
-    return NextResponse.json(
-      {
-        message: "Stripe webhook is not configured",
-      },
-      {
-        status: 500,
-      }
-    );
-  }
-
-  // ---------------------------------------
-  // 2. Get raw request body
-  // ---------------------------------------
+ 
 
   const body = await req.text();
 
   // ---------------------------------------
-  // 3. Get Stripe signature
+  // 1. Get Stripe signature
   // ---------------------------------------
 
   const signature = (await headers()).get("stripe-signature");
@@ -60,7 +39,7 @@ export async function POST(req: NextRequest) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      webhookSecret
+      process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (error) {
     console.error("Stripe webhook verification failed:", error);
@@ -76,7 +55,7 @@ export async function POST(req: NextRequest) {
   }
 
   // ---------------------------------------
-  // 5. Handle successful payment
+  // 2. Handle successful payment
   // ---------------------------------------
 
   if (event.type === "payment_intent.succeeded") {
@@ -95,8 +74,6 @@ export async function POST(req: NextRequest) {
           paymentIntent.id
         );
 
-        // Return 200 because Stripe delivered the event,
-        // but there is no checkout session to process.
         return NextResponse.json({
           received: true,
           message: "Checkout session not found",
@@ -122,19 +99,14 @@ export async function POST(req: NextRequest) {
       // ---------------------------------------
       // Create order
       // ---------------------------------------
-
       await createOrder({
-        userId: null,
-
+        userId:session.userId,
         fullName: session.fullName,
         email: session.email,
         phone: session.phone,
         notes: session.notes,
-
         paymentIntentId: session.paymentIntentId,
-
         total: session.total,
-
         cart: session.cart as never,
       });
 
@@ -161,9 +133,7 @@ export async function POST(req: NextRequest) {
         error
       );
 
-      // IMPORTANT:
-      // Return 500 so Stripe knows processing failed
-      // and can retry the webhook.
+      
       return NextResponse.json(
         {
           message: "Order processing failed",
@@ -176,7 +146,7 @@ export async function POST(req: NextRequest) {
   }
 
   // ---------------------------------------
-  // 6. Handle failed payment
+  //  Handle failed payment
   // ---------------------------------------
 
   if (event.type === "payment_intent.payment_failed") {
@@ -214,7 +184,7 @@ export async function POST(req: NextRequest) {
   }
 
   // ---------------------------------------
-  // 7. Tell Stripe we received the event
+  // Tell Stripe we received the event
   // ---------------------------------------
 
   return NextResponse.json({

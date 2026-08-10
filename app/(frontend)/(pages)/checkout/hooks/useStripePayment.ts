@@ -40,6 +40,7 @@ export function useStripePayment() {
             customer,
             items,
           },
+          authRequired:true
         });
 
       setClientSecret(response.clientSecret);
