@@ -25,11 +25,11 @@ export function EventDetailsSheet({
         className="w-full overflow-y-auto sm:max-w-5xl"
       >
         {isLoading ? (
-          <div className="flex h-full min-h-[500px] items-center justify-center">
+          <div className="flex h-full min-h-125 items-center justify-center">
             <Loader2 className="h-10 w-10 animate-spin" />
           </div>
         ) : !data ? (
-          <div className="flex h-full min-h-[500px] items-center justify-center text-muted-foreground">
+          <div className="flex h-full min-h-125 items-center justify-center text-muted-foreground">
             No details found.
           </div>
         ) : (
@@ -41,7 +41,7 @@ export function EventDetailsSheet({
             <div className="space-y-10 p-6">
               {/* Cover */}
 
-              <div className="relative h-[420px] overflow-hidden rounded-xl">
+              <div className="relative h-105 overflow-hidden rounded-xl">
                 <Image
                   src={data.image || "/placeholder.png"}
                   alt={data.name}
@@ -105,7 +105,7 @@ export function EventDetailsSheet({
 
                         return (
                           <div className="overflow-hidden rounded-xl border bg-background">
-                            <div className="relative h-[350px]">
+                            <div className="relative h-87.5">
                               <Image
                                 src={menu.images[0].url}
                                 alt={menu.title}
@@ -160,7 +160,7 @@ export function EventDetailsSheet({
 
                         return (
                           <div className="overflow-hidden rounded-xl border bg-background">
-                            <div className="relative h-[350px]">
+                            <div className="relative h-87.5">
                               <Image
                                 src={pkg.image ?? "/placeholder.png"}
                                 alt={pkg.name}

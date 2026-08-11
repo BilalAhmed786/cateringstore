@@ -48,7 +48,7 @@ export function proxy(req: NextRequest) {
       }
     }
 
-    // 6️⃣ Default allow
+  
     return NextResponse.next();
   } catch (err) {
     console.log(err);

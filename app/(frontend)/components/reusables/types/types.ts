@@ -26,7 +26,8 @@ export type FieldConfig = {
     | "file"
     | "textarea"
     | "imagepreview"
-    | "hidden";
+    | "hidden"
+    | "rating";
   name: string;
   value?:string;
   label?: string;
@@ -95,6 +96,7 @@ export interface TextInputProps {
     | "textarea"
     | "imagepreview"
     | "hidden"
+    |"rating"
     ;
   className?: string;
 }

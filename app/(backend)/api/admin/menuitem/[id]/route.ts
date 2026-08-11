@@ -54,14 +54,14 @@ export async function GET(
     // Check logged in user
     // -----------------------------
     const user = await getCurrentUser(req);
-
-   if (user) {
+   
+    if (user) {
         const purchased = await prisma.orderMenuItem.findFirst({
           where: {
             menuId: id,
             order: {
               userId: user.id,
-              status: "DELIVERED", // Change if needed
+              status: "DELIVERED", 
             },
           },
         });
@@ -74,6 +74,7 @@ export async function GET(
             },
           },
         });
+
 
         canReview = !!purchased && !alreadyReviewed;
       }

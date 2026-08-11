@@ -73,7 +73,6 @@ export async function GET(req: NextRequest) {
     const limit = Number(searchParams.get("limit") ?? 10);
     const skip = (page - 1) * limit;
 
-    // Raw query params
     const minPrice = searchParams.get("minPrice");
     const maxPrice = searchParams.get("maxPrice");
 
@@ -85,10 +84,10 @@ export async function GET(req: NextRequest) {
       },
       {
         searchFields: ["name", "description"],
-      }
+      },
     );
 
-    // Apply price filter only if provided
+    // Price filter
     if (minPrice || maxPrice) {
       where.finalPrice = {};
 
@@ -115,6 +114,12 @@ export async function GET(req: NextRequest) {
               menuItem: true,
             },
           },
+
+          _count: {
+            select: {
+              reviews: true,
+            },
+          },
         },
       }),
 
@@ -123,12 +128,37 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
+    // Get average ratings for packages
+    const packageRatings = await prisma.packageReview.groupBy({
+      by: ["packageId"],
+      where: {
+        packageId: {
+          in: items.map((pkg) => pkg.id),
+        },
+      },
+      _avg: {
+        rating: true,
+      },
+    });
+
+    const ratingMap = new Map(
+      packageRatings.map((rating) => [
+        rating.packageId,
+        rating._avg.rating ?? 0,
+      ]),
+    );
+
     const mappedItems = items.map((pkg) => ({
       ...pkg,
+
       totalItems: pkg.items.reduce(
         (sum, item) => sum + item.quantity,
-        0
+        0,
       ),
+
+      averageRating: ratingMap.get(pkg.id) ?? 0,
+
+      totalReviews: pkg._count.reviews,
     }));
 
     return NextResponse.json({
@@ -145,7 +175,7 @@ export async function GET(req: NextRequest) {
             ? error.message
             : "Failed to fetch packages",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -4,6 +4,7 @@ import { NextRequest } from "next/server";
 
 export async function getCurrentUser(req:NextRequest) {
   const token = req.headers.get("Authorization")?.split(" ")[1];
+
   if (!token) return null;
 
   const decoded = await admin.auth().verifyIdToken(token);

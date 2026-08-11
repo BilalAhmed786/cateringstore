@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Loader2, Star } from "lucide-react";
+import { FieldValues } from "react-hook-form";
 
 import {
   Sheet,
@@ -11,7 +12,12 @@ import {
 } from "@/app/(frontend)/components/ui/sheet";
 
 import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
+
 import { useGetMenuItemById } from "@/app/(frontend)/admin/menu-items/hooks/usegetmenuitembyid";
+
+import { useCreateMenuItemReview } from "../hook/useCreateMenuItemReview";
+
+import { ReviewSection } from "@/app/(frontend)/components/reusables/reviewsection/reviewsection";
 
 interface MenuItemDetailsSheetProps {
   id: string | null;
@@ -26,13 +32,25 @@ export function MenuItemDetailsSheet({
 }: MenuItemDetailsSheetProps) {
   const { data, isLoading } = useGetMenuItemById(id ?? "");
 
+  const { mutateAsync: createReview } =
+    useCreateMenuItemReview();
+
+  const handleReviewSubmit = async (
+    formData: FieldValues,
+  ) => {
+    if (!id) return;
+
+    await createReview({
+      menuItemId: id,
+      rating: Number(formData.rating),
+      comment: formData.comment || null,
+    });
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="right"
-        className="h-screen w-full overflow-y-auto sm:max-w-4xl"
-      >
-        <SheetHeader className="px-6 pt-6">
+      <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-5xl">
+        <SheetHeader>
           <SheetTitle>Menu Item Details</SheetTitle>
         </SheetHeader>
 
@@ -45,8 +63,10 @@ export function MenuItemDetailsSheet({
             Menu item not found.
           </div>
         ) : (
-          <div className="space-y-8 px-6 pb-8 pt-6">
+          <div className="space-y-10 px-6">
+            {/* -------------------------------- */}
             {/* Images */}
+            {/* -------------------------------- */}
 
             <AppCarousel
               items={data.images}
@@ -67,10 +87,14 @@ export function MenuItemDetailsSheet({
               )}
             />
 
+            {/* -------------------------------- */}
             {/* Basic Info */}
+            {/* -------------------------------- */}
 
             <div className="space-y-3">
-              <h2 className="text-3xl font-bold">{data.title}</h2>
+              <h2 className="text-3xl font-bold">
+                {data.title}
+              </h2>
 
               <p className="text-3xl font-bold text-primary">
                 Rs {data.price}
@@ -89,74 +113,29 @@ export function MenuItemDetailsSheet({
               </div>
             </div>
 
+            {/* -------------------------------- */}
             {/* Description */}
+            {/* -------------------------------- */}
 
             <div className="space-y-3">
-              <h3 className="text-xl font-semibold">Description</h3>
+              <h3 className="text-xl font-semibold">
+                Description
+              </h3>
 
               <p className="leading-7 text-muted-foreground">
                 {data.description}
               </p>
             </div>
 
+            {/* -------------------------------- */}
             {/* Reviews */}
+            {/* -------------------------------- */}
 
-            <div className="space-y-5">
-              <h3 className="text-xl font-semibold">
-                Customer Reviews
-              </h3>
-
-              {data.reviews.length > 0 ? (
-                data.reviews.map((review) => (
-                  <div
-                    key={review.id}
-                    className="rounded-xl border p-5"
-                  >
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold">
-                        {review.user.name}
-                      </h4>
-
-                      <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-
-                        <span>{review.rating}</span>
-                      </div>
-                    </div>
-
-                    {review.comment && (
-                      <p className="mt-3 leading-7 text-muted-foreground">
-                        {review.comment}
-                      </p>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <p className="text-muted-foreground">
-                  No reviews yet.
-                </p>
-              )}
-            </div>
-
-            {/* Review Permission */}
-
-            {data.canReview ? (
-              <div className="rounded-xl border border-primary bg-primary/5 p-5">
-                <h3 className="font-semibold">
-                  You can review this item
-                </h3>
-
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Since you have purchased this item, you can leave a review.
-                </p>
-
-                {/* Review Form goes here */}
-              </div>
-            ) : (
-              <div className="rounded-xl border bg-muted p-5 text-sm text-muted-foreground">
-                Only customers who purchased this item can leave a review.
-              </div>
-            )}
+            <ReviewSection
+              reviews={data.reviews}
+              canReview={data.canReview}
+              onSubmit={handleReviewSubmit}
+            />
           </div>
         )}
       </SheetContent>

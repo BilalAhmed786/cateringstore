@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FieldValues } from "react-hook-form";
 
 import { StorefrontGrid } from "@/app/(frontend)/components/reusables/storefront-grid/StorefrontGrid";
 import { ShoppingCart } from "@/app/(frontend)/components/reusables/shopping-cart/ShoppingCart";
@@ -19,22 +20,21 @@ import { useGetPackageDetails } from "@/app/(frontend)/admin/packages/hooks/useg
 
 import { useCartStore } from "@/app/(frontend)/store/useCartStore";
 import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
-
+import { useCreatePackageReview } from "../hooks/useCreatePackageReview";
 
 export function PackageBrowser() {
   const [search, setSearch] = useState("");
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
+  const [priceRange, setPriceRange] =
+    useState<[number, number]>([0, 5000]);
 
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<GridItem[]>([]);
 
-  const [selectedPackageId, setSelectedPackageId] = useState<string | null>(
-    null,
-  );
+  const [selectedPackageId, setSelectedPackageId] =
+    useState<string | null>(null);
 
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [customizeOpen, setCustomizeOpen] = useState(false);
-
   const debouncedSearch = useDebounce(search, 500);
   const debouncedPriceRange = useDebounce(priceRange, 500);
 
@@ -45,17 +45,43 @@ export function PackageBrowser() {
     minPrice: debouncedPriceRange[0],
     maxPrice: debouncedPriceRange[1],
   });
-console.log(items)
+
   const { addItem } = useCartStore();
 
-  const { data: packageDetails, isLoading: isDetailsLoading } =
-    useGetPackageDetails(selectedPackageId ?? "");
+  const {
+    data: packageDetails,
+    isLoading: isDetailsLoading,
+  } = useGetPackageDetails(selectedPackageId ?? "");
 
-  const hasMore = items.length < (data?.total ?? 0);
+  // ---------------------------------------
+  // Package Review
+  // ---------------------------------------
+
+  const { mutateAsync: createReview } =  useCreatePackageReview();
+
+  const handleReviewSubmit = async (
+    formData: FieldValues,
+  ) => {
+    if (!selectedPackageId) return;
+
+    await createReview({
+      packageId: selectedPackageId,
+      rating: Number(formData.rating),
+      comment: formData.comment || null,
+    });
+  };
+
+  // ---------------------------------------
+  // Pagination
+  // ---------------------------------------
+
+  const hasMore =
+    items.length < (data?.total ?? 0);
 
   useEffect(() => {
     if (!data) return;
-    function Dataretreive(data:GridItem[]) {
+
+    function Dataretreive(data: GridItem[]) {
       if (page === 1) {
         setItems(data);
       } else {
@@ -71,7 +97,9 @@ console.log(items)
     setPage(1);
   };
 
-  const handlePriceChange = (value: [number, number]) => {
+  const handlePriceChange = (
+    value: [number, number],
+  ) => {
     setPriceRange(value);
     setPage(1);
   };
@@ -79,12 +107,14 @@ console.log(items)
   useInfiniteScroll({
     loading: isFetching,
     hasMore,
-    onLoadMore: () => setPage((prev) => prev + 1),
+    onLoadMore: () =>
+      setPage((prev) => prev + 1),
   });
 
   return (
     <div className="space-y-8 pt-28">
       {/* Filters */}
+
       <div className="flex flex-col items-center gap-6">
         <div className="w-full max-w-xs">
           <PriceFilter
@@ -95,35 +125,41 @@ console.log(items)
             step={100}
           />
         </div>
-        
-          <EntityFilters
-            search={{
-              value: search,
-              onChange: handleSearchChange,
-              placeholder: "Search packages...",
-              classname: "sm:w-xl lg:w-5xl",
-            }}
-          />
-      
+
+        <EntityFilters
+          search={{
+            value: search,
+            onChange: handleSearchChange,
+            placeholder: "Search packages...",
+            classname: "sm:w-xl lg:w-5xl",
+          }}
+        />
       </div>
 
       {/* Grid */}
+
       <div className="relative mx-7">
         <StorefrontGrid
           items={items}
-          type="pacakge"
+          type="package"
           isLoading={isLoading && page === 1}
           onItemClick={(pkg) => {
             setSelectedPackageId(pkg.id);
             setDetailsOpen(true);
           }}
           renderSubtitle={(pkg) => (
-
-            <span>{pkg.items?.length ?? 0} Menu Items Included</span>
+            <span>
+              {pkg.items?.length ?? 0} Menu Items Included
+            </span>
           )}
           renderActions={(pkg) => (
             <>
-              <UniButton label="Add To Cart" onClick={() => addItem(pkg,"package")} />
+              <UniButton
+                label="Add To Cart"
+                onClick={() =>
+                  addItem(pkg, "package")
+                }
+              />
 
               <UniButton
                 label="Customize"
@@ -140,12 +176,17 @@ console.log(items)
 
       <ShoppingCart />
 
+      {/* Package Details */}
+
       <ProductDetailsSheet
         data={packageDetails}
         isLoading={isDetailsLoading}
         open={detailsOpen}
         onOpenChange={setDetailsOpen}
+        onReviewSubmit={handleReviewSubmit}
       />
+
+      {/* Package Customization */}
 
       <PackageCustomizeSheet
         packageId={selectedPackageId}

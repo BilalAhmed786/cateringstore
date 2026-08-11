@@ -19,7 +19,7 @@ export function ProductCard({
   renderActions,
 }: ProductCardProps) {
   const { items, addItem, increase, decrease } = useCartStore();
-
+console.log(item)
   const cartItem = items.find((i) => i.id === item.id);
 
   return (

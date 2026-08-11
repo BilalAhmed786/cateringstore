@@ -10,7 +10,8 @@ import {
   SheetTitle,
 } from "@/app/(frontend)/components/ui/sheet";
 
-import AppCarousel from "../carousel/carousel";
+import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
+import { ReviewSection } from "@/app/(frontend)/components/reusables/reviewsection/reviewsection";
 import { ProductDetailsSheetProps } from "./types";
 
 export function ProductDetailsSheet({
@@ -18,6 +19,7 @@ export function ProductDetailsSheet({
   onOpenChange,
   data,
   isLoading,
+  onReviewSubmit,
 }: ProductDetailsSheetProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -25,24 +27,27 @@ export function ProductDetailsSheet({
         side="right"
         className="w-full overflow-y-auto sm:max-w-5xl"
       >
+        <SheetHeader className="border-b">
+          <SheetTitle>{data?.name}</SheetTitle>
+        </SheetHeader>
         {isLoading ? (
-          <div className="flex h-full min-h-[500px] items-center justify-center">
+          <div className="flex h-full min-h-125 items-center justify-center">
             <Loader2 className="h-10 w-10 animate-spin" />
           </div>
         ) : !data ? (
-          <div className="flex h-full min-h-[500px] items-center justify-center text-muted-foreground">
+          <div className="flex h-full min-h-125 items-center justify-center text-muted-foreground">
             No details found.
           </div>
         ) : (
           <>
-            <SheetHeader className="border-b">
-              <SheetTitle>{data.name}</SheetTitle>
-            </SheetHeader>
+            {/* Header */}
 
             <div className="space-y-10 p-6">
-              {/* Cover */}
+              {/* -------------------------------- */}
+              {/* Cover Image */}
+              {/* -------------------------------- */}
 
-              <div className="relative h-[420px] overflow-hidden rounded-xl">
+              <div className="relative h-105 overflow-hidden rounded-xl">
                 <Image
                   src={data.image || "/placeholder.png"}
                   alt={data.name}
@@ -51,12 +56,12 @@ export function ProductDetailsSheet({
                 />
               </div>
 
-              {/* Details */}
+              {/* -------------------------------- */}
+              {/* Basic Information */}
+              {/* -------------------------------- */}
 
               <section className="space-y-4">
-                <h2 className="text-4xl font-bold">
-                  {data.name}
-                </h2>
+                <h2 className="text-4xl font-bold">{data.name}</h2>
 
                 <div className="text-3xl font-bold text-primary">
                   Rs {data.finalPrice}
@@ -75,19 +80,21 @@ export function ProductDetailsSheet({
                 </div>
               </section>
 
+              {/* -------------------------------- */}
               {/* Description */}
+              {/* -------------------------------- */}
 
               <section className="space-y-3">
-                <h3 className="text-2xl font-semibold">
-                  Description
-                </h3>
+                <h3 className="text-2xl font-semibold">Description</h3>
 
                 <p className="leading-8 text-muted-foreground">
                   {data.description}
                 </p>
               </section>
 
-              {/* Menu Items */}
+              {/* -------------------------------- */}
+              {/* Included Menu Items */}
+              {/* -------------------------------- */}
 
               {data.items.length > 0 && (
                 <section className="space-y-5">
@@ -110,20 +117,20 @@ export function ProductDetailsSheet({
 
                         return (
                           <div className="overflow-hidden rounded-xl border bg-background">
-                            <div className="relative h-[350px]">
+                            <div className="relative h-87.5 w-full overflow-hidden">
                               <Image
                                 src={
-                                  menu.images?.[0]?.url ??
-                                  "/placeholder.png"
+                                  menu.images?.[0]?.url ?? "/placeholder.png"
                                 }
-                                alt={menu.title??""}
+                                alt={menu.title ?? "Menu item"}
                                 fill
+                                sizes="(max-width: 640px) 100vw, 800px"
                                 className="object-cover"
                               />
                             </div>
 
                             <div className="space-y-4 p-6">
-                              <div className="flex items-center justify-between">
+                              <div className="flex items-center justify-between gap-4">
                                 <h4 className="text-2xl font-semibold">
                                   {menu.title}
                                 </h4>
@@ -147,50 +154,15 @@ export function ProductDetailsSheet({
                 </section>
               )}
 
+              {/* -------------------------------- */}
               {/* Reviews */}
+              {/* -------------------------------- */}
 
-              <section className="space-y-5">
-                <h3 className="text-2xl font-semibold">
-                  Customer Reviews
-                </h3>
-
-                {data.reviews.length > 0 ? (
-                  data.reviews.map((review) => (
-                    <div
-                      key={review.id}
-                      className="rounded-xl border p-5"
-                    >
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold">
-                          {review.user.name}
-                        </h4>
-
-                        <div className="flex items-center gap-2">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-
-                          <span>{review.rating}</span>
-                        </div>
-                      </div>
-
-                      {review.comment && (
-                        <p className="mt-3 text-muted-foreground">
-                          {review.comment}
-                        </p>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-muted-foreground">
-                    No reviews yet.
-                  </p>
-                )}
-              </section>
-
-              {data.canReview && (
-                <section>
-                  {/* Review Form */}
-                </section>
-              )}
+              <ReviewSection
+                reviews={data.reviews}
+                canReview={data.canReview}
+                onSubmit={onReviewSubmit}
+              />
             </div>
           </>
         )}

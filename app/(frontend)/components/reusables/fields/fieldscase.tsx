@@ -6,6 +6,7 @@ import SelectInput from "./select";
 import ImageUploadInput from "./uploadfile";
 import { FieldProps } from "../types/types";
 import { ImagePreviewField } from "./imagespreview";
+import { RatingInput } from "./ratinginput";
 
 export const FormField: React.FC<FieldProps> = ({ field }) => {
   switch (field.type) {
@@ -30,12 +31,13 @@ export const FormField: React.FC<FieldProps> = ({ field }) => {
       return (
         <ImagePreviewField
           images={field.images || []}
-          image={field.image}   
+          image={field.image}
           isDeleting={field.isDeleting}
           onDelete={field.onDelete || (() => {})}
         />
       );
- 
+    case "rating":
+      return <RatingInput {...field} />;
     default:
       return null;
   }

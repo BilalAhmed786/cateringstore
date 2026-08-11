@@ -39,8 +39,7 @@ export const generateSchema = (fields: FieldConfig[]) => {
       case "select":
       case "radio":
       case "date": {
-        
-      const base = z.string();
+        const base = z.string();
 
         shape[field.name] = isRequired
           ? base.min(1, `${field.label} is required`)
@@ -98,6 +97,14 @@ export const generateSchema = (fields: FieldConfig[]) => {
       /* ================= IMAGE PREVIEW (NO VALIDATION) ================= */
       case "imagepreview": {
         // NOT a form input → ignore validation
+        break;
+      }
+      case "rating": {
+        shape[field.name] = z.coerce
+          .number()
+          .min(1, `${field.label} must be greater than 0`)
+          .max(5, `${field.label} not greater than 5`);
+
         break;
       }
 

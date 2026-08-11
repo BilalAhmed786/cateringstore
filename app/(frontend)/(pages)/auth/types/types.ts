@@ -9,7 +9,7 @@ export type LoginValues = {
   password: string;
 };
 
-export type UserRole = "ADMIN" | "CLIENT";
+export type UserRole = "ADMIN"| "SUPERADMIN" | "CLIENT"
 
 export interface User {
   id: string;
