@@ -3,9 +3,10 @@ import { FieldValues } from "react-hook-form";
 
 import { GridItem } from "../grid/gridtypes";
 import { Package } from "@/app/(frontend)/admin/packages/types/type";
+import { Hamper } from "@/app/(frontend)/admin/hampers/types/type";
 
 export type StorefrontType =
-  | "menu"
+  | "menuitem"
   | "package"
   | "hamper"
   | "event";
@@ -75,7 +76,7 @@ export interface ProductReview {
 /* -------------------------------- */
 
 export interface ProductDetailsSheetProps {
-  data?: Package;
+  data?: Package | Hamper;
   isLoading: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
