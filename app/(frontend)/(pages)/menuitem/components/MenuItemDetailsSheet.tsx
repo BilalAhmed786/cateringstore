@@ -63,7 +63,7 @@ export function MenuItemDetailsSheet({
             Menu item not found.
           </div>
         ) : (
-          <div className="space-y-10 px-6">
+          <div className="w-full space-y-10 px-6">
             {/* -------------------------------- */}
             {/* Images */}
             {/* -------------------------------- */}
@@ -72,7 +72,7 @@ export function MenuItemDetailsSheet({
               items={data.images}
               autoplay={false}
               loop={false}
-              showArrows
+              showArrows={false}
               itemClassName="basis-full"
               className="w-full"
               renderItem={(image) => (

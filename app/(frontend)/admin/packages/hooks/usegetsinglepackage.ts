@@ -15,7 +15,7 @@ export function useGetPackageDetails(id: string) {
       apiRequest<Package>({
         url: `/api/admin/packages/${id}`,
         method: "GET",
-        authRequired: false,
+        authRequired:"optional",
       }),
   });
 }

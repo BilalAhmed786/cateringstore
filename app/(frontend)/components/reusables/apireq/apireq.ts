@@ -4,10 +4,16 @@ import { getIdToken, onAuthStateChanged } from "firebase/auth";
 async function getCurrentUserToken(): Promise<string | null> {
   return new Promise((resolve) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      unsubscribe(); // Stop listening after first call
+      unsubscribe();
+
       if (user) {
-        const token = await getIdToken(user);
-        resolve(token);
+        try {
+          const token = await getIdToken(user);
+          resolve(token);
+        } catch (error) {
+          console.error("Failed to get Firebase token:", error);
+          resolve(null);
+        }
       } else {
         resolve(null);
       }
@@ -15,7 +21,10 @@ async function getCurrentUserToken(): Promise<string | null> {
   });
 }
 
-export async function apiRequest<TResponse = unknown, TBody = unknown>({
+export async function apiRequest<
+  TResponse = unknown,
+  TBody = unknown
+>({
   url,
   method = "GET",
   headers = {},
@@ -25,43 +34,80 @@ export async function apiRequest<TResponse = unknown, TBody = unknown>({
   url: string;
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   headers?: Record<string, string>;
-  authRequired?: boolean;
+  authRequired?: boolean | "optional";
   body?: TBody;
 }): Promise<TResponse> {
   let token: string | null = null;
 
-  if (authRequired) {
-    // Use async listener instead of auth.currentUser directly
+  // ---------------------------------------
+  // Authentication
+  // ---------------------------------------
+
+  if (authRequired === true || authRequired === "optional") {
     token = await getCurrentUserToken();
 
-    if (!token) {
+    // Only throw when authentication is REQUIRED
+    if (authRequired === true && !token) {
       throw new Error("User not authenticated");
     }
   }
 
   const isFormData = body instanceof FormData;
 
+  // ---------------------------------------
+  // Request
+  // ---------------------------------------
+
   const res = await fetch(url, {
     method,
     credentials: "include",
+
     headers: {
-      ...(isFormData ? {} : { "Content-Type": "application/json" }),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(isFormData
+        ? {}
+        : {
+            "Content-Type": "application/json",
+          }),
+
+      ...(token
+        ? {
+            Authorization: `Bearer ${token}`,
+          }
+        : {}),
+
       ...headers,
     },
-    body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
+
+    body: body
+      ? isFormData
+        ? body
+        : JSON.stringify(body)
+      : undefined,
   });
 
+  // ---------------------------------------
+  // Success
+  // ---------------------------------------
+
   if (res.ok) {
-    const data = await res.json();
-    return data;
+    return await res.json();
   }
 
-  if (res.status === 401 && authRequired) {
+  // ---------------------------------------
+  // Unauthorized
+  // ---------------------------------------
+
+  if (res.status === 401 && authRequired === true) {
     await auth.signOut();
+
     window.location.href = "/auth/login";
+
     throw new Error("Session expired");
   }
+
+  // ---------------------------------------
+  // Other errors
+  // ---------------------------------------
 
   throw new Error(await res.text());
 }

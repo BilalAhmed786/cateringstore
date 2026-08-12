@@ -12,7 +12,7 @@ export function useGetSingleHamperDetails(id?: string) {
       apiRequest({
         url: `/api/admin/hamper/${id}`,
         method: "GET",
-        authRequired: false,
+        authRequired:"optional",
       }),
     enabled: !!id,
   });

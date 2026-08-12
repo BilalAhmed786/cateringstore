@@ -21,6 +21,8 @@ export function ProductDetailsSheet({
   isLoading,
   onReviewSubmit,
 }: ProductDetailsSheetProps) {
+
+  console.log(data)
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
