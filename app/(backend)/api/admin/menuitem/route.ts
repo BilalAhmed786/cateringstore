@@ -1,8 +1,14 @@
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import { NextRequest, NextResponse } from "next/server";
-import { buildFilter } from "../../reusables/filters/filters";
 import { Prisma } from "@prisma/client";
+import { buildCategoryFilter } from "@/app/(backend)/lib/filters/buildCategoryFilter";
+import { buildDateFilter } from "@/app/(backend)/lib/filters/buildDateFilter";
+import { buildPriceFilter } from "@/app/(backend)/lib/filters/buildPriceFilter";
+import { buildSearchFilter } from "@/app/(backend)/lib/filters/buildSearchFilter";
+import { buildSort } from "@/app/(backend)/lib/filters/buildSort";
+import { buildStatusFilter } from "@/app/(backend)/lib/filters/buildStatusFilter";
+
 
 // your auth helper
 
@@ -33,49 +39,65 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const page = Number(searchParams.get("page") ?? 1);
-    const limit = Number(searchParams.get("limit") ?? 10);
-    const skip = (page - 1) * limit;
 
-    // New filters
-    const minPrice = searchParams.get("minPrice");
-    const maxPrice = searchParams.get("maxPrice");
-    const sort = searchParams.get("sort");
+    // --------------------------------
+    // Pagination
+    // --------------------------------
 
-    // Existing reusable filters
-    const where = buildFilter<Prisma.MenuItemWhereInput>(
-      {
-        status: searchParams.get("status"),
-        category: searchParams.get("category"),
-        search: searchParams.get("search"),
-        dateFilter: searchParams.get("dateFilter"),
-      },
-      {
-        hasCategory: true,
-        searchFields: ["title", "description"],
-      },
+    const page = Math.max(
+      Number(searchParams.get("page") ?? 1),
+      1,
     );
 
-    // Price filter (only applied if sent)
-    if (minPrice || maxPrice) {
-      where.price = {};
+    const limit = Math.max(
+      Number(searchParams.get("limit") ?? 10),
+      1,
+    );
 
-      if (minPrice) {
-        where.price.gte = Number(minPrice);
-      }
+    const skip = (page - 1) * limit;
 
-      if (maxPrice) {
-        where.price.lte = Number(maxPrice);
-      }
-    }
+    // --------------------------------
+    // Filters
+    // --------------------------------
 
-    // Default ordering remains unchanged
-    const orderBy: Prisma.MenuItemOrderByWithRelationInput =
-      sort === "asc"
-        ? { price: "asc" }
-        : sort === "desc"
-          ? { price: "desc" }
-          : { createdAt: "desc" };
+    const where: Prisma.MenuItemWhereInput = {
+      ...buildSearchFilter(
+        searchParams.get("search"),
+        ["title", "description"] as const,
+      ),
+
+      ...buildStatusFilter(
+        searchParams.get("status"),
+      ),
+
+      ...buildCategoryFilter(
+        searchParams.get("category"),
+      ),
+
+      ...buildDateFilter(
+        searchParams.get("dateFilter"),
+      ),
+
+      ...buildPriceFilter(
+        searchParams.get("minPrice"),
+        searchParams.get("maxPrice"),
+        "price",
+      ),
+    };
+
+    // --------------------------------
+    // Sorting
+    // --------------------------------
+
+    const orderBy =
+      buildSort(
+        searchParams.get("sort"),
+        "price",
+      ) as Prisma.MenuItemOrderByWithRelationInput;
+
+    // --------------------------------
+    // Database
+    // --------------------------------
 
     const [items, total] = await Promise.all([
       prisma.menuItem.findMany({
@@ -83,10 +105,16 @@ export async function GET(req: NextRequest) {
         skip,
         take: limit,
         orderBy,
+
         include: {
           category: true,
           images: true,
-          reviews: true,
+
+          _count: {
+            select: {
+              reviews: true,
+            },
+          },
         },
       }),
 
@@ -95,26 +123,55 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
-    const itemsWithRatings = items.map((item) => {
-      const totalReviews = item.reviews.length;
+    // --------------------------------
+    // Ratings
+    // --------------------------------
 
-      const averageRating =
-        totalReviews > 0
-          ? item.reviews.reduce((sum, review) => sum + review.rating, 0) /
-            totalReviews
-          : 0;
+    const ratings = await prisma.menuItemReview.groupBy({
+      by: ["menuItemId"],
 
-      return {
-        ...item,
-        averageRating,
-        totalReviews,
-        totalComments: totalReviews,
-      };
+      where: {
+        menuItemId: {
+          in: items.map((item) => item.id),
+        },
+      },
+
+      _avg: {
+        rating: true,
+      },
     });
 
+    const ratingMap = new Map(
+      ratings.map((rating) => [
+        rating.menuItemId,
+        rating._avg.rating ?? 0,
+      ]),
+    );
+
+    // --------------------------------
+    // Response Mapping
+    // --------------------------------
+
+    const mappedItems = items.map((item) => ({
+      ...item,
+
+      averageRating: ratingMap.get(item.id) ?? 0,
+
+      totalReviews: item._count.reviews,
+
+      totalComments: item._count.reviews,
+    }));
+
+    // --------------------------------
+    // Response
+    // --------------------------------
+
     return NextResponse.json({
-      items: itemsWithRatings,
+      items: mappedItems,
       total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
     });
   } catch (error) {
     console.error("MenuItem GET error:", error);
@@ -122,7 +179,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(
       {
         message:
-          error instanceof Error ? error.message : "Failed to fetch menu items",
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch menu items",
       },
       {
         status: 500,

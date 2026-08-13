@@ -8,7 +8,7 @@ export function useGetSingleEvent(id: string) {
     queryFn: () =>
       apiRequest<Event>({
         url: `/api/admin/event/${id}`,
-        authRequired: true,
+        authRequired: "optional",
       }),
     enabled: !!id,
   });

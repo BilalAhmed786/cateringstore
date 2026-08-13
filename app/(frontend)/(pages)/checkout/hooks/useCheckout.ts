@@ -23,9 +23,8 @@ export function useCheckout() {
   async function handleCheckout(
     data: FieldValues
   ) {
-    alert('yes')
-    console.log(customer)
-    setCustomer(data);
+  
+     setCustomer(data);
 
     await createPaymentIntent({
       customer: data,

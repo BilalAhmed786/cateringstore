@@ -19,8 +19,14 @@ export async function GET(
       );
     }
 
+    // ---------------------------------------
+    // Get event
+    // ---------------------------------------
+
     const event = await prisma.event.findUnique({
-      where: { id },
+      where: {
+        id,
+      },
       include: {
         category: true,
 
@@ -54,30 +60,37 @@ export async function GET(
     });
 
     if (!event) {
-      return NextResponse.json({ message: "Event not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Event not found" },
+        { status: 404 },
+      );
     }
 
-    /* -----------------------------
-       Calculate Rating
-    ----------------------------- */
+    // ---------------------------------------
+    // Calculate rating
+    // ---------------------------------------
 
     const totalReviews = event.reviews.length;
 
     const averageRating =
       totalReviews > 0
-        ? event.reviews.reduce((sum, review) => sum + review.rating, 0) /
-          totalReviews
+        ? event.reviews.reduce(
+            (sum, review) => sum + review.rating,
+            0,
+          ) / totalReviews
         : 0;
 
-    /* -----------------------------
-       Can Review
-    ----------------------------- */
+    // ---------------------------------------
+    // Check review permission
+    // ---------------------------------------
 
     let canReview = false;
 
     const user = await getCurrentUser(req);
 
     if (user) {
+      // Has the user purchased this event
+      // and has the order been delivered?
       const purchased = await prisma.orderEvent.findFirst({
         where: {
           eventId: id,
@@ -88,23 +101,33 @@ export async function GET(
         },
       });
 
-      const alreadyReviewed = await prisma.eventReview.findUnique({
-        where: {
-          userId_eventId: {
-            userId: user.id,
-            eventId: id,
+      // Has the user already reviewed this event?
+      const alreadyReviewed =
+        await prisma.eventReview.findUnique({
+          where: {
+            userId_eventId: {
+              userId: user.id,
+              eventId: id,
+            },
           },
-        },
-      });
+        });
 
-      canReview = !!purchased && !alreadyReviewed;
+      canReview = Boolean(purchased && !alreadyReviewed);
     }
+
+    // ---------------------------------------
+    // Response
+    // ---------------------------------------
 
     return NextResponse.json({
       ...event,
+
       averageRating,
       totalReviews,
       totalComments: totalReviews,
+
+      // false for guests
+      // true only if authenticated + purchased + not reviewed
       canReview,
     });
   } catch (error) {
@@ -113,7 +136,9 @@ export async function GET(
     return NextResponse.json(
       {
         message:
-          error instanceof Error ? error.message : "Failed to fetch event",
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch event",
       },
       { status: 500 },
     );

@@ -2,8 +2,12 @@ import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { CreatePackageBody } from "./types/type";
-import { buildFilter } from "../../reusables/filters/filters";
 import { Prisma } from "@prisma/client";
+import { buildPriceFilter } from "../../../lib/filters/buildPriceFilter";
+import { buildStatusFilter } from "../../../lib/filters/buildStatusFilter";
+import { buildDateFilter } from "../../../lib/filters/buildDateFilter";
+import { buildSearchFilter } from "../../../lib/filters/buildSearchFilter";
+import { buildSort } from "../../../lib/filters/buildSort";
 
 
 
@@ -73,41 +77,45 @@ export async function GET(req: NextRequest) {
     const limit = Number(searchParams.get("limit") ?? 10);
     const skip = (page - 1) * limit;
 
-    const minPrice = searchParams.get("minPrice");
-    const maxPrice = searchParams.get("maxPrice");
+    /* -------------------- FILTERS -------------------- */
 
-    const where = buildFilter<Prisma.PackageWhereInput>(
-      {
-        status: searchParams.get("status"),
-        search: searchParams.get("search"),
-        dateFilter: searchParams.get("dateFilter"),
-      },
-      {
-        searchFields: ["name", "description"],
-      },
-    );
+    const where: Prisma.PackageWhereInput = {
+      ...buildStatusFilter(searchParams.get("status")),
 
-    // Price filter
-    if (minPrice || maxPrice) {
-      where.finalPrice = {};
+      ...buildSearchFilter(
+        searchParams.get("search"),
+        ["name", "description"],
+      ),
 
-      if (minPrice) {
-        where.finalPrice.gte = Number(minPrice);
-      }
+      ...buildDateFilter(
+        searchParams.get("dateFilter"),
+      ),
 
-      if (maxPrice) {
-        where.finalPrice.lte = Number(maxPrice);
-      }
-    }
+      ...buildPriceFilter(
+        searchParams.get("minPrice"),
+        searchParams.get("maxPrice"),
+        "finalPrice",
+      ),
+    };
+
+    /* -------------------- SORT -------------------- */
+
+    const orderBy =
+      buildSort(
+        searchParams.get("sort"),
+        "finalPrice",
+        "createdAt",
+      );
+
+    /* -------------------- QUERY -------------------- */
 
     const [items, total] = await Promise.all([
       prisma.package.findMany({
         where,
         skip,
         take: limit,
-        orderBy: {
-          createdAt: "desc",
-        },
+        orderBy,
+
         include: {
           items: {
             include: {
@@ -128,18 +136,22 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
-    // Get average ratings for packages
-    const packageRatings = await prisma.packageReview.groupBy({
-      by: ["packageId"],
-      where: {
-        packageId: {
-          in: items.map((pkg) => pkg.id),
+    /* -------------------- RATINGS -------------------- */
+
+    const packageRatings =
+      await prisma.packageReview.groupBy({
+        by: ["packageId"],
+
+        where: {
+          packageId: {
+            in: items.map((pkg) => pkg.id),
+          },
         },
-      },
-      _avg: {
-        rating: true,
-      },
-    });
+
+        _avg: {
+          rating: true,
+        },
+      });
 
     const ratingMap = new Map(
       packageRatings.map((rating) => [
@@ -147,6 +159,8 @@ export async function GET(req: NextRequest) {
         rating._avg.rating ?? 0,
       ]),
     );
+
+    /* -------------------- RESPONSE -------------------- */
 
     const mappedItems = items.map((pkg) => ({
       ...pkg,
@@ -156,9 +170,14 @@ export async function GET(req: NextRequest) {
         0,
       ),
 
-      averageRating: ratingMap.get(pkg.id) ?? 0,
+      averageRating:
+        ratingMap.get(pkg.id) ?? 0,
 
-      totalReviews: pkg._count.reviews,
+      totalReviews:
+        pkg._count.reviews,
+
+      totalComments:
+        pkg._count.reviews,
     }));
 
     return NextResponse.json({

@@ -9,8 +9,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/app/(frontend)/components/ui/sheet";
+
 import { EventDetailsSheetProps } from "../types/type";
 import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
+import { FieldValues } from "react-hook-form";
+import { ReviewForm } from "@/app/(frontend)/components/reusables/reviewform/reviewform";
+import { useCreateEventReview } from "../hook/useCreateHamperReview";
 
 export function EventDetailsSheet({
   open,
@@ -18,12 +22,28 @@ export function EventDetailsSheet({
   data,
   isLoading,
 }: EventDetailsSheetProps) {
+  const { createReview, isPending } = useCreateEventReview();
+
+  const handleReviewSubmit = async (formData: FieldValues) => {
+    if (!data?.id) return;
+
+    await createReview({
+      eventId: data.id,
+      rating: Number(formData.rating),
+      comment: formData.comment || null,
+    });
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
         className="w-full overflow-y-auto sm:max-w-5xl"
       >
+        <SheetHeader className="border-b">
+          <SheetTitle>{data?.name}</SheetTitle>
+        </SheetHeader>
+
         {isLoading ? (
           <div className="flex h-full min-h-125 items-center justify-center">
             <Loader2 className="h-10 w-10 animate-spin" />
@@ -34,10 +54,6 @@ export function EventDetailsSheet({
           </div>
         ) : (
           <>
-            <SheetHeader className="border-b">
-              <SheetTitle>{data.name}</SheetTitle>
-            </SheetHeader>
-
             <div className="space-y-10 p-6">
               {/* Cover */}
 
@@ -107,7 +123,7 @@ export function EventDetailsSheet({
                           <div className="overflow-hidden rounded-xl border bg-background">
                             <div className="relative h-87.5">
                               <Image
-                                src={menu.images[0].url}
+                                src={menu.images[0]?.url || "/placeholder.png"}
                                 alt={menu.title}
                                 fill
                                 className="object-cover"
@@ -162,7 +178,7 @@ export function EventDetailsSheet({
                           <div className="overflow-hidden rounded-xl border bg-background">
                             <div className="relative h-87.5">
                               <Image
-                                src={pkg.image ?? "/placeholder.png"}
+                                src={pkg.image || "/placeholder.png"}
                                 alt={pkg.name}
                                 fill
                                 className="object-cover"
@@ -207,6 +223,7 @@ export function EventDetailsSheet({
 
                         <div className="flex items-center gap-2">
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+
                           <span>{review.rating}</span>
                         </div>
                       </div>
@@ -223,7 +240,20 @@ export function EventDetailsSheet({
                 )}
               </section>
 
-              {data.canReview && <section>{/* Review Form */}</section>}
+              {/* Review Form */}
+
+              {data.canReview && (
+                <section className="rounded-xl border p-5">
+                  <ReviewForm onSubmit={handleReviewSubmit} />
+
+                  {isPending && (
+                    <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Submitting review...
+                    </div>
+                  )}
+                </section>
+              )}
             </div>
           </>
         )}

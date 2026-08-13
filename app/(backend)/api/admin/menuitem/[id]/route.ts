@@ -1,6 +1,5 @@
 // app/api/admin/menu-items/[id]/route.ts
 import cloudinary from "@/app/(backend)/lib/cloudinary/cloudinary";
-import { getCurrentUser } from "@/app/(backend)/lib/guard/getCurrentuser";
 import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
@@ -17,16 +16,6 @@ export async function GET(
       include: {
         category: true,
         images: true,
-        reviews: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
       },
     });
 
@@ -37,59 +26,17 @@ export async function GET(
       );
     }
 
-    // -----------------------------
-    // Calculate rating
-    // -----------------------------
-    const totalReviews = menuItem.reviews.length;
-
-    const averageRating =
-      totalReviews > 0
-        ? menuItem.reviews.reduce((sum, review) => sum + review.rating, 0) /
-          totalReviews
-        : 0;
-
-    let canReview = false;
-
-    // -----------------------------
-    // Check logged in user
-    // -----------------------------
-    const user = await getCurrentUser(req);
-   
-    if (user) {
-        const purchased = await prisma.orderMenuItem.findFirst({
-          where: {
-            menuId: id,
-            order: {
-              userId: user.id,
-              status: "DELIVERED", 
-            },
-          },
-        });
-
-        const alreadyReviewed = await prisma.menuItemReview.findUnique({
-          where: {
-            userId_menuItemId: {
-              userId: user.id,
-              menuItemId: id,
-            },
-          },
-        });
-
-
-        canReview = !!purchased && !alreadyReviewed;
-      }
-     
-      return NextResponse.json({
-      ...menuItem,
-      averageRating,
-      totalReviews,
-      canReview,
-    });
+    return NextResponse.json(menuItem);
   } catch (error) {
-    console.error(error);
+    console.error("Menu item details error:", error);
 
     return NextResponse.json(
-      { message: "Internal Server Error" },
+      {
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch menu item",
+      },
       { status: 500 },
     );
   }
@@ -130,7 +77,7 @@ export async function DELETE(
 
     const { id } = await params;
 
-    // 1️⃣ Fetch all image publicIds
+    // 1 Fetch all image publicIds
     const menuItem = await prisma.menuItem.findUnique({
       where: { id },
       include: {
@@ -147,14 +94,14 @@ export async function DELETE(
       );
     }
 
-    // 2️⃣ Delete all images from Cloudinary
+    // 2 Delete all images from Cloudinary
     if (menuItem.images.length > 0) {
       await Promise.all(
         menuItem.images.map((img) => cloudinary.uploader.destroy(img.publicId)),
       );
     }
 
-    // 3️⃣ Delete menu item (MenuItemImage auto-deleted by cascade)
+    // 3 Delete menu item (MenuItemImage auto-deleted by cascade)
     await prisma.menuItem.delete({
       where: { id },
     });

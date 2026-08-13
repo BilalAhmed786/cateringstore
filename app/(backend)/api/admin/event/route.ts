@@ -1,60 +1,66 @@
 import { NextRequest, NextResponse } from "next/server";
-
 import { Prisma } from "@prisma/client";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
-import { buildFilter } from "../../reusables/filters/filters";
 import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import { EventBody } from "./types/type";
+import { buildSearchFilter } from "@/app/(backend)/lib/filters/buildSearchFilter";
+import { buildCategoryFilter } from "@/app/(backend)/lib/filters/buildCategoryFilter";
+import { buildStatusFilter } from "@/app/(backend)/lib/filters/buildStatusFilter";
+import { buildDateFilter } from "@/app/(backend)/lib/filters/buildDateFilter";
+import { buildPriceFilter } from "@/app/(backend)/lib/filters/buildPriceFilter";
+import { buildSort } from "../../../lib/filters/buildSort";
 
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
 
-    const page = Number(searchParams.get("page") ?? 1);
-    const limit = Number(searchParams.get("limit") ?? 10);
+    /* -------------------- PAGINATION -------------------- */
+
+    const page = Math.max(
+      1,
+      Number(searchParams.get("page") ?? 1)
+    );
+
+    const limit = Math.max(
+      1,
+      Number(searchParams.get("limit") ?? 10)
+    );
+
     const skip = (page - 1) * limit;
+
+    /* -------------------- QUERY PARAMS -------------------- */
+
+    const search = searchParams.get("search");
+    const category = searchParams.get("category");
+    const status = searchParams.get("status");
+    const dateFilter = searchParams.get("dateFilter");
 
     const minPrice = searchParams.get("minPrice");
     const maxPrice = searchParams.get("maxPrice");
+
     const sort = searchParams.get("sort");
 
-    /* -------------------- FILTERS -------------------- */
+    /* -------------------- WHERE -------------------- */
 
-    const where = buildFilter<Prisma.EventWhereInput>(
-      {
-        status: searchParams.get("status"),
-        category: searchParams.get("category"),
-        search: searchParams.get("search"),
-        dateFilter: searchParams.get("dateFilter"),
-      },
-      {
-        hasCategory: true,
-        searchFields: ["name", "description"],
-      }
-    );
-
-    /* -------------------- PRICE FILTER -------------------- */
-
-    if (minPrice || maxPrice) {
-      where.finalPrice = {};
-
-      if (minPrice) {
-        where.finalPrice.gte = Number(minPrice);
-      }
-
-      if (maxPrice) {
-        where.finalPrice.lte = Number(maxPrice);
-      }
-    }
+    const where: Prisma.EventWhereInput = {
+      ...buildSearchFilter(search, ["name", "description"]),
+      ...buildCategoryFilter(category, "categoryId"),
+      ...buildStatusFilter(status, "available"),
+      ...buildDateFilter(dateFilter),
+      ...buildPriceFilter(
+        minPrice,
+        maxPrice,
+      ),
+    };
 
     /* -------------------- SORT -------------------- */
 
-    const orderBy: Prisma.EventOrderByWithRelationInput =
-      sort === "asc"
-        ? { finalPrice: "asc" }
-        : sort === "desc"
-        ? { finalPrice: "desc" }
-        : { createdAt: "desc" };
+   const orderBy =
+  buildSort(
+    sort,
+    "finalPrice",
+    "createdAt",
+  );
 
     /* -------------------- QUERY -------------------- */
 
@@ -64,8 +70,10 @@ export async function GET(req: NextRequest) {
         skip,
         take: limit,
         orderBy,
+
         include: {
           category: true,
+
           menuItems: {
             include: {
               menuItem: {
@@ -75,12 +83,12 @@ export async function GET(req: NextRequest) {
               },
             },
           },
+
           packages: {
             include: {
               package: true,
             },
           },
-          reviews: true,
         },
       }),
 
@@ -89,30 +97,14 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
-    /* -------------------- MAPPING -------------------- */
-
-    const mappedItems = items.map((event) => {
-      const totalReviews = event.reviews.length;
-
-      const averageRating =
-        totalReviews > 0
-          ? event.reviews.reduce(
-              (sum, review) => sum + review.rating,
-              0
-            ) / totalReviews
-          : 0;
-
-      return {
-        ...event,
-        averageRating,
-        totalReviews,
-        totalComments: totalReviews,
-      };
-    });
+    /* -------------------- RESPONSE -------------------- */
 
     return NextResponse.json({
-      items: mappedItems,
+      items,
       total,
+      page,
+      limit,
+      hasMore: skip + items.length < total,
     });
   } catch (error) {
     console.error("Event GET error:", error);

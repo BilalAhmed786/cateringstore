@@ -18,7 +18,7 @@ export function useCurrentUser() {
 
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
+ console.log(user)
   const checkAuth = useCallback(async () => {
     try {
       const response = await apiRequest<AuthorizeResponse>({
