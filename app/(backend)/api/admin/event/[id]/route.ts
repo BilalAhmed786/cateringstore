@@ -2,7 +2,6 @@ import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import cloudinary from "@/app/(backend)/lib/cloudinary/cloudinary";
-import { getCurrentUser } from "@/app/(backend)/lib/guard/getCurrentuser";
 import { EventBody } from "../types/type";
 
 export async function GET(
@@ -19,14 +18,11 @@ export async function GET(
       );
     }
 
-    // ---------------------------------------
-    // Get event
-    // ---------------------------------------
-
     const event = await prisma.event.findUnique({
       where: {
         id,
       },
+
       include: {
         category: true,
 
@@ -45,17 +41,6 @@ export async function GET(
             package: true,
           },
         },
-
-        reviews: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
       },
     });
 
@@ -66,70 +51,7 @@ export async function GET(
       );
     }
 
-    // ---------------------------------------
-    // Calculate rating
-    // ---------------------------------------
-
-    const totalReviews = event.reviews.length;
-
-    const averageRating =
-      totalReviews > 0
-        ? event.reviews.reduce(
-            (sum, review) => sum + review.rating,
-            0,
-          ) / totalReviews
-        : 0;
-
-    // ---------------------------------------
-    // Check review permission
-    // ---------------------------------------
-
-    let canReview = false;
-
-    const user = await getCurrentUser(req);
-
-    if (user) {
-      // Has the user purchased this event
-      // and has the order been delivered?
-      const purchased = await prisma.orderEvent.findFirst({
-        where: {
-          eventId: id,
-          order: {
-            userId: user.id,
-            status: "DELIVERED",
-          },
-        },
-      });
-
-      // Has the user already reviewed this event?
-      const alreadyReviewed =
-        await prisma.eventReview.findUnique({
-          where: {
-            userId_eventId: {
-              userId: user.id,
-              eventId: id,
-            },
-          },
-        });
-
-      canReview = Boolean(purchased && !alreadyReviewed);
-    }
-
-    // ---------------------------------------
-    // Response
-    // ---------------------------------------
-
-    return NextResponse.json({
-      ...event,
-
-      averageRating,
-      totalReviews,
-      totalComments: totalReviews,
-
-      // false for guests
-      // true only if authenticated + purchased + not reviewed
-      canReview,
-    });
+    return NextResponse.json(event);
   } catch (error) {
     console.error("GET EVENT ERROR:", error);
 
@@ -140,7 +62,9 @@ export async function GET(
             ? error.message
             : "Failed to fetch event",
       },
-      { status: 500 },
+      {
+        status: 500,
+      },
     );
   }
 }

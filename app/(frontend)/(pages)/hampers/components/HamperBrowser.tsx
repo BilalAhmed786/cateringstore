@@ -67,7 +67,6 @@ export function HamperBrowser() {
   // ---------------------------------------
 
   const debouncedSearch = useDebounce(search, 500);
-
   const debouncedPriceRange = useDebounce(priceRange, 500);
 
   // ---------------------------------------

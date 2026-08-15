@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import { EventBody } from "./types/type";
@@ -18,12 +17,12 @@ export async function GET(req: NextRequest) {
 
     const page = Math.max(
       1,
-      Number(searchParams.get("page") ?? 1)
+      Number(searchParams.get("page") ?? 1),
     );
 
     const limit = Math.max(
       1,
-      Number(searchParams.get("limit") ?? 10)
+      Number(searchParams.get("limit") ?? 10),
     );
 
     const skip = (page - 1) * limit;
@@ -42,25 +41,38 @@ export async function GET(req: NextRequest) {
 
     /* -------------------- WHERE -------------------- */
 
-    const where: Prisma.EventWhereInput = {
-      ...buildSearchFilter(search, ["name", "description"]),
-      ...buildCategoryFilter(category, "categoryId"),
-      ...buildStatusFilter(status, "available"),
+    const where  = {
+      ...buildSearchFilter(
+        search,
+        ["name", "description"],
+      ),
+
+      ...buildCategoryFilter(
+        category,
+        "categoryId",
+      ),
+
+      ...buildStatusFilter(
+        status,
+        "available",
+      ),
+
       ...buildDateFilter(dateFilter),
+
       ...buildPriceFilter(
         minPrice,
         maxPrice,
+       "finalPrice",
       ),
     };
 
     /* -------------------- SORT -------------------- */
 
-   const orderBy =
-  buildSort(
-    sort,
-    "finalPrice",
-    "createdAt",
-  );
+    const orderBy = buildSort(
+      sort,
+      "finalPrice",
+      "createdAt",
+    );
 
     /* -------------------- QUERY -------------------- */
 
@@ -89,6 +101,12 @@ export async function GET(req: NextRequest) {
               package: true,
             },
           },
+
+          _count: {
+            select: {
+              reviews: true,
+            },
+          },
         },
       }),
 
@@ -97,10 +115,57 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
+    /* -------------------- RATINGS -------------------- */
+
+    const eventRatings =
+      await prisma.eventReview.groupBy({
+        by: ["eventId"],
+
+        where: {
+          eventId: {
+            in: items.map((event) => event.id),
+          },
+        },
+
+        _avg: {
+          rating: true,
+        },
+      });
+
+    const ratingMap = new Map(
+      eventRatings.map((rating) => [
+        rating.eventId,
+        rating._avg.rating ?? 0,
+      ]),
+    );
+
     /* -------------------- RESPONSE -------------------- */
 
+    const mappedItems = items.map((event) => ({
+      ...event,
+
+      totalItems:
+        event.menuItems.reduce(
+          (sum, item) => sum + item.quantity,
+          0,
+        ) +
+        event.packages.reduce(
+          (sum, item) => sum + item.quantity,
+          0,
+        ),
+
+      averageRating:
+        ratingMap.get(event.id) ?? 0,
+
+      totalReviews:
+        event._count.reviews,
+
+      totalComments:
+        event._count.reviews,
+    }));
+
     return NextResponse.json({
-      items,
+      items: mappedItems,
       total,
       page,
       limit,
@@ -118,10 +183,11 @@ export async function GET(req: NextRequest) {
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }
+
 
 export async function POST(req: NextRequest) {
   try {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FieldValues } from "react-hook-form";
 
 import { StorefrontGrid } from "@/app/(frontend)/components/reusables/storefront-grid/StorefrontGrid";
 import { ShoppingCart } from "@/app/(frontend)/components/reusables/shopping-cart/ShoppingCart";
@@ -21,19 +22,55 @@ import { useGetEvents } from "@/app/(frontend)/admin/events/hooks/usegetEvents";
 import { useGetSingleEvent } from "@/app/(frontend)/admin/events/hooks/usegetsingleevent";
 import { useEventCategories } from "@/app/(frontend)/admin/categories/event/hooks/useEventCategories";
 
+import { useCreateEventReview } from "../hook/useCreateHamperReview";
+import { useGetEventReviews } from "../hook/useGetEventReviews";
+
 export function EventBrowser() {
+  // ---------------------------------------
+  // Event Filters
+  // ---------------------------------------
+
   const [category, setCategory] = useState("all");
+
   const [search, setSearch] = useState("");
+
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
 
+  // ---------------------------------------
+  // Review Filters
+  // ---------------------------------------
+
+  const [rating, setRating] = useState("all");
+
+  const [sort, setSort] = useState<"asc" | "desc">("desc");
+
+  // ---------------------------------------
+  // Pagination
+  // ---------------------------------------
+
   const [page, setPage] = useState(1);
+
   const [items, setItems] = useState<GridItem[]>([]);
 
+  // ---------------------------------------
+  // Selected Event
+  // ---------------------------------------
+
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+
   const [detailsOpen, setDetailsOpen] = useState(false);
 
+  // ---------------------------------------
+  // Debounce
+  // ---------------------------------------
+
   const debouncedSearch = useDebounce(search, 500);
+
   const debouncedPriceRange = useDebounce(priceRange, 500);
+
+  // ---------------------------------------
+  // Events
+  // ---------------------------------------
 
   const { data, isLoading, isFetching } = useGetEvents({
     page,
@@ -44,6 +81,10 @@ export function EventBrowser() {
     maxPrice: debouncedPriceRange[1],
   });
 
+  // ---------------------------------------
+  // Categories
+  // ---------------------------------------
+
   const { data: cat } = useEventCategories({
     page: 1,
     limit: 1000,
@@ -51,19 +92,46 @@ export function EventBrowser() {
 
   const categories = cat?.categories ?? [];
 
-  const {
-    data: eventDetails,
-    isLoading: isDetailsLoading,
-  } = useGetSingleEvent(selectedEventId ?? "");
+  // ---------------------------------------
+  // Event Details
+  // ---------------------------------------
+
+  const { data: eventDetails, isLoading: isDetailsLoading } = useGetSingleEvent(
+    selectedEventId ?? "",
+  );
+
+  // ---------------------------------------
+  // Event Reviews
+  // ---------------------------------------
+
+  const { data: reviewData, isLoading: isReviewsLoading } = useGetEventReviews({
+    selectedEventId,
+    rating,
+    sort,
+  });
+
+  // ---------------------------------------
+  // Create Event Review
+  // ---------------------------------------
+
+  const { createReview } = useCreateEventReview(selectedEventId);
+
+  // ---------------------------------------
+  // Cart
+  // ---------------------------------------
 
   const { addItem } = useCartStore();
+
+  // ---------------------------------------
+  // Pagination
+  // ---------------------------------------
 
   const hasMore = items.length < (data?.total ?? 0);
 
   useEffect(() => {
     if (!data) return;
 
-    function dataRetrieve(data: GridItem[]) {
+    function retreiveData(data:GridItem[]) {
       if (page === 1) {
         setItems(data);
       } else {
@@ -71,8 +139,12 @@ export function EventBrowser() {
       }
     }
 
-    dataRetrieve(data.items);
+    retreiveData(data.items)
   }, [data, page]);
+
+  // ---------------------------------------
+  // Event Filters
+  // ---------------------------------------
 
   const handleCategoryChange = (value: string) => {
     setCategory(value);
@@ -89,16 +161,54 @@ export function EventBrowser() {
     setPage(1);
   };
 
+  // ---------------------------------------
+  // Infinite Scroll
+  // ---------------------------------------
+
   useInfiniteScroll({
     loading: isFetching,
     hasMore,
+
     onLoadMore: () => setPage((prev) => prev + 1),
   });
 
+  // ---------------------------------------
+  // Review Submit
+  // ---------------------------------------
+
+  const handleReviewSubmit = async (formData: FieldValues) => {
+    if (!selectedEventId) return;
+
+    await createReview({
+      eventId: selectedEventId,
+      rating: Number(formData.rating),
+      comment: formData.comment || null,
+    });
+  };
+
+  // ---------------------------------------
+  // Details Sheet
+  // ---------------------------------------
+
+  const handleDetailsOpenChange = (open: boolean) => {
+    if (!open) {
+      setRating("all");
+      setSort("desc");
+    }
+
+    setDetailsOpen(open);
+  };
+
   return (
     <div className="space-y-8 pt-28">
+      {/* -------------------------------- */}
+      {/* Filters */}
+      {/* -------------------------------- */}
+
       <div className="flex flex-col items-center space-y-8">
         <div className="flex w-full flex-col justify-center gap-10 px-5 lg:flex-row">
+          {/* Category */}
+
           <EntityFilters
             filters={[
               {
@@ -106,11 +216,13 @@ export function EventBrowser() {
                 label: "Category",
                 value: category,
                 onChange: handleCategoryChange,
+
                 options: [
                   {
                     label: "All",
                     value: "all",
                   },
+
                   ...categories.map((category) => ({
                     label: category.name,
                     value: category.id,
@@ -119,6 +231,8 @@ export function EventBrowser() {
               },
             ]}
           />
+
+          {/* Price */}
 
           <div className="w-full max-w-xs">
             <PriceFilter
@@ -131,6 +245,8 @@ export function EventBrowser() {
           </div>
         </div>
 
+        {/* Search */}
+
         <EntityFilters
           search={{
             value: search,
@@ -140,6 +256,10 @@ export function EventBrowser() {
           }}
         />
       </div>
+
+      {/* -------------------------------- */}
+      {/* Events */}
+      {/* -------------------------------- */}
 
       <div className="relative mx-7">
         <StorefrontGrid
@@ -153,7 +273,7 @@ export function EventBrowser() {
           renderActions={(event) => (
             <UniButton
               label="Add To Cart"
-              onClick={() => addItem(event,"event")}
+              onClick={() => addItem(event, "event")}
             />
           )}
         />
@@ -161,11 +281,22 @@ export function EventBrowser() {
 
       <ShoppingCart />
 
+      {/* -------------------------------- */}
+      {/* Event Details + Reviews */}
+      {/* -------------------------------- */}
+
       <EventDetailsSheet
         data={eventDetails}
         isLoading={isDetailsLoading}
         open={detailsOpen}
-        onOpenChange={setDetailsOpen}
+        onOpenChange={handleDetailsOpenChange}
+        reviewData={reviewData}
+        isReviewsLoading={isReviewsLoading}
+        rating={rating}
+        sort={sort}
+        onRatingChange={setRating}
+        onSortChange={setSort}
+        onReviewSubmit={handleReviewSubmit}
       />
     </div>
   );

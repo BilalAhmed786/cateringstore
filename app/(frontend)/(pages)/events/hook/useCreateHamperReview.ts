@@ -11,7 +11,7 @@ interface CreateEventReviewData {
   comment?: string | null;
 }
 
-export function useCreateEventReview() {
+export function useCreateEventReview(id:(string | null)) {
   const [isPending, setIsPending] = useState(false);
   const queryClient = useQueryClient();
 
@@ -20,7 +20,7 @@ export function useCreateEventReview() {
       setIsPending(true);
 
       const response = await apiRequest({
-        url: "/api/review/event",
+        url: `/api/review/event/${id}`,
         method: "POST",
         body: {
           eventId: data.eventId,

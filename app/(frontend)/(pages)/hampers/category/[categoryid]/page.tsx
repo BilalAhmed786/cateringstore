@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FieldValues } from "react-hook-form";
+import { useParams } from "next/navigation";
 
 import { EntityFilters } from "@/app/(frontend)/components/reusables/filters/entityfilters";
 import { PriceFilter } from "@/app/(frontend)/components/reusables/filters/pricefilter";
@@ -17,25 +19,72 @@ import { useGetSingleHamperDetails } from "@/app/(frontend)/admin/hampers/hooks/
 
 import { useCartStore } from "@/app/(frontend)/store/useCartStore";
 import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
-import { useParams } from "next/navigation";
+import { useGetHamperReviews } from "../../hook/useGetHamperReviews";
+import { useCreateHamperReview } from "../../hook/useCreateHamperReview";
+
+
 
 export default function HamperCategoryBrowser() {
   const params = useParams();
+
   const categoryId = params.categoryid as string;
+
+  // ---------------------------------------
+  // Hamper Filters
+  // ---------------------------------------
+
   const [search, setSearch] = useState("");
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
+
+  const [priceRange, setPriceRange] =
+    useState<[number, number]>([0, 5000]);
+
+  // ---------------------------------------
+  // Review Filters
+  // ---------------------------------------
+
+  const [rating, setRating] = useState("all");
+
+  const [sort, setSort] =
+    useState<"asc" | "desc">("desc");
+
+  // ---------------------------------------
+  // Pagination
+  // ---------------------------------------
 
   const [page, setPage] = useState(1);
-  const [items, setItems] = useState<GridItem[]>([]);
 
-  const [selectedHamperId, setSelectedHamperId] = useState<string | null>(null);
+  const [items, setItems] =
+    useState<GridItem[]>([]);
 
-  const [detailsOpen, setDetailsOpen] = useState(false);
+  // ---------------------------------------
+  // Selected Hamper
+  // ---------------------------------------
 
-  const debouncedSearch = useDebounce(search, 500);
-  const debouncedPrice = useDebounce(priceRange, 500);
+  const [selectedHamperId, setSelectedHamperId] =
+    useState<string | null>(null);
 
-  const { data, isLoading, isFetching } = useGetHampers({
+  const [detailsOpen, setDetailsOpen] =
+    useState(false);
+
+  // ---------------------------------------
+  // Debounce
+  // ---------------------------------------
+
+  const debouncedSearch =
+    useDebounce(search, 500);
+
+  const debouncedPrice =
+    useDebounce(priceRange, 500);
+
+  // ---------------------------------------
+  // Hampers
+  // ---------------------------------------
+
+  const {
+    data,
+    isLoading,
+    isFetching,
+  } = useGetHampers({
     page,
     limit: 4,
     category: categoryId,
@@ -44,81 +93,212 @@ export default function HamperCategoryBrowser() {
     maxPrice: debouncedPrice[1],
   });
 
-  const { data: hamperDetails, isLoading: isDetailsLoading } =
-    useGetSingleHamperDetails(selectedHamperId ?? "");
+  // ---------------------------------------
+  // Hamper Details
+  // ---------------------------------------
+
+  const {
+    data: hamperDetails,
+    isLoading: isDetailsLoading,
+  } = useGetSingleHamperDetails(
+    selectedHamperId ?? "",
+  );
+
+  // ---------------------------------------
+  // Hamper Reviews
+  // ---------------------------------------
+
+  const {
+    data: reviewData,
+    isLoading: isReviewsLoading,
+  } = useGetHamperReviews(
+    selectedHamperId ?? "",
+    rating,
+    sort,
+  );
+
+  // ---------------------------------------
+  // Create Review
+  // ---------------------------------------
+
+  const { createReview } =
+    useCreateHamperReview(
+      selectedHamperId ?? "",
+    );
+
+  // ---------------------------------------
+  // Cart
+  // ---------------------------------------
 
   const { addItem } = useCartStore();
 
-  const hasMore = items.length < (data?.total ?? 0);
+  // ---------------------------------------
+  // Pagination
+  // ---------------------------------------
+
+  const hasMore =
+    items.length < (data?.total ?? 0);
 
   useEffect(() => {
     if (!data) return;
 
-    function dataRetreive(data: GridItem[]) {
-      if (page === 1) {
-        setItems(data);
-      } else {
-        setItems((prev) => [...prev, ...data]);
-      }
+    function Dataretreive(data:GridItem[]){
+    if (page === 1) {
+      setItems(data);
+    } else {
+      setItems((prev) => [
+        ...prev,
+        ...data,
+      ]);
     }
-    dataRetreive(data.items);
+
+    }
+    Dataretreive(data.items)
+
   }, [data, page]);
+
+  // ---------------------------------------
+  // Search
+  // ---------------------------------------
+
+  const handleSearchChange = (
+    value: string,
+  ) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  // ---------------------------------------
+  // Price
+  // ---------------------------------------
+
+  const handlePriceChange = (
+    value: [number, number],
+  ) => {
+    setPriceRange(value);
+    setPage(1);
+  };
+
+  // ---------------------------------------
+  // Infinite Scroll
+  // ---------------------------------------
 
   useInfiniteScroll({
     loading: isFetching,
     hasMore,
-    onLoadMore: () => setPage((p) => p + 1),
+    onLoadMore: () =>
+      setPage((p) => p + 1),
   });
+
+  // ---------------------------------------
+  // Review Submit
+  // ---------------------------------------
+
+  const handleReviewSubmit = async (
+    formData: FieldValues,
+  ) => {
+    if (!selectedHamperId) return;
+
+    await createReview({
+      hamperId: selectedHamperId,
+      rating: Number(formData.rating),
+      comment: formData.comment || null,
+    });
+  };
+
+  // ---------------------------------------
+  // Details Sheet
+  // ---------------------------------------
+
+  const handleDetailsOpenChange = (
+    open: boolean,
+  ) => {
+    if (!open) {
+      setRating("all");
+      setSort("desc");
+    }
+
+    setDetailsOpen(open);
+  };
 
   return (
     <div className="space-y-8 pt-28">
+
+      {/* -------------------------------- */}
+      {/* Filters */}
+      {/* -------------------------------- */}
+
       <div className="flex flex-col items-center gap-6">
+
         <div className="w-full max-w-xs">
           <PriceFilter
             value={priceRange}
-            onChange={(value) => {
-              setPriceRange(value);
-              setPage(1);
-            }}
+            onChange={handlePriceChange}
             min={0}
             max={5000}
             step={100}
           />
         </div>
-        <div>
-          <EntityFilters
-            search={{
-              value: search,
-              onChange: setSearch,
-              placeholder: "Search...",
-              classname: "lg:w-5xl sm:w-xl",
-            }}
-          />
-        </div>
+
+        <EntityFilters
+          search={{
+            value: search,
+            onChange: handleSearchChange,
+            placeholder: "Search...",
+            classname: "lg:w-5xl sm:w-xl",
+          }}
+        />
+
       </div>
+
+      {/* -------------------------------- */}
+      {/* Hampers */}
+      {/* -------------------------------- */}
 
       <div className="relative mx-7">
         <StorefrontGrid
           items={items}
           type="hamper"
-          isLoading={isLoading && page === 1}
+          isLoading={
+            isLoading && page === 1
+          }
           onItemClick={(item) => {
             setSelectedHamperId(item.id);
             setDetailsOpen(true);
           }}
           renderActions={(item) => (
-            <UniButton label="Add To Cart" onClick={() => addItem(item,"hamper")} />
+            <UniButton
+              label="Add To Cart"
+              onClick={() =>
+                addItem(item, "hamper")
+              }
+            />
           )}
         />
       </div>
 
       <ShoppingCart />
 
+      {/* -------------------------------- */}
+      {/* Hamper Details + Reviews */}
+      {/* -------------------------------- */}
+
       <ProductDetailsSheet
         data={hamperDetails}
         isLoading={isDetailsLoading}
         open={detailsOpen}
-        onOpenChange={setDetailsOpen}
+        onOpenChange={handleDetailsOpenChange}
+
+        reviewData={reviewData}
+        isReviewsLoading={isReviewsLoading}
+
+        rating={rating}
+        sort={sort}
+
+        onRatingChange={setRating}
+        onSortChange={setSort}
+
+        onReviewSubmit={handleReviewSubmit}
       />
     </div>
   );
