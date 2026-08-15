@@ -5,6 +5,7 @@ import { GridItem } from "../grid/gridtypes";
 import { Package } from "@/app/(frontend)/admin/packages/types/type";
 import { Hamper } from "@/app/(frontend)/admin/hampers/types/type";
 
+
 export type StorefrontType =
   | "menuitem"
   | "package"
@@ -75,13 +76,47 @@ export interface ProductReview {
 /* Product Details Sheet */
 /* -------------------------------- */
 
+export interface PackageReview {
+  id: string;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+
+  user: {
+    id: string;
+    name: string | null;
+  };
+}
+
+
+export interface PackageReviewResponse {
+  reviews: PackageReview[];
+  totalReviews: number;
+  averageRating: number;
+  canReview: boolean;
+}
+
 export interface ProductDetailsSheetProps {
-  data?: Package | Hamper;
-  isLoading: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onReviewSubmit?: (
-    formData: FieldValues
+
+  data?: Package | Hamper;
+  isLoading: boolean;
+
+  reviewData?: PackageReviewResponse;
+  isReviewsLoading: boolean;
+
+  rating: string;
+  sort: "asc" | "desc";
+
+  onRatingChange: (value: string) => void;
+
+  onSortChange: (
+    value: "asc" | "desc",
+  ) => void;
+
+  onReviewSubmit: (
+    formData: FieldValues,
   ) => Promise<void>;
 }
 

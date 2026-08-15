@@ -21,7 +21,7 @@ export function ProductCard({
   const { items, addItem, increase, decrease } = useCartStore();
 
   const cartItem = items.find((i) => i.id === item.id);
-
+console.log(item)
   return (
     <Card
       onClick={onClick}

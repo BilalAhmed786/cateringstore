@@ -2,12 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
-
-interface CreatePackageReviewData {
-  packageId: string;
-  rating: number;
-  comment?: string | null;
-}
+import { CreatePackageReviewData } from "../types/type";
 
 export function useCreatePackageReview() {
   const queryClient = useQueryClient();

@@ -1,8 +1,6 @@
-import { Prisma } from "@prisma/client";
-
 export function buildRatingFilter(
   rating: string | null,
-): Prisma.MenuItemReviewWhereInput {
+): { rating?: number } {
   if (!rating || rating === "all") {
     return {};
   }

@@ -2,7 +2,7 @@ import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { HamperBody } from "../types/types";
-import { getCurrentUser } from "@/app/(backend)/lib/guard/getCurrentuser";
+
 
 
 export async function GET(
@@ -24,30 +24,16 @@ export async function GET(
     }
 
     // ---------------------------------------
-    // Get hamper
+    // Get Hamper
     // ---------------------------------------
 
     const hamper = await prisma.hamper.findUnique({
       where: {
         id,
       },
+
       include: {
         category: true,
-
-        reviews: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-
-          orderBy: {
-            createdAt: "desc",
-          },
-        },
 
         items: {
           include: {
@@ -61,6 +47,10 @@ export async function GET(
       },
     });
 
+    // ---------------------------------------
+    // Not Found
+    // ---------------------------------------
+
     if (!hamper) {
       return NextResponse.json(
         { message: "Hamper not found" },
@@ -69,21 +59,7 @@ export async function GET(
     }
 
     // ---------------------------------------
-    // Calculate rating
-    // ---------------------------------------
-
-    const totalReviews = hamper.reviews.length;
-
-    const averageRating =
-      totalReviews > 0
-        ? hamper.reviews.reduce(
-            (sum, review) => sum + review.rating,
-            0,
-          ) / totalReviews
-        : 0;
-
-    // ---------------------------------------
-    // Calculate total items
+    // Calculate Total Items
     // ---------------------------------------
 
     const totalItems = hamper.items.reduce(
@@ -92,55 +68,12 @@ export async function GET(
     );
 
     // ---------------------------------------
-    // Check review permission
-    // ---------------------------------------
-
-    let canReview = false;
-
-    const user = await getCurrentUser(req);
-    if (user) {
-      // Check whether user purchased and received hamper
-      const purchased = await prisma.orderHamper.findFirst({
-        where: {
-          hamperId: id,
-
-          order: {
-            userId: user.id,
-            status: "DELIVERED",
-          },
-        },
-      });
-
-      // Check whether user already reviewed hamper
-      const alreadyReviewed =
-        await prisma.hamperReview.findUnique({
-          where: {
-            userId_hamperId: {
-              userId: user.id,
-              hamperId: id,
-            },
-          },
-        });
-
-      canReview =  !!purchased && !alreadyReviewed;
-    }
-
-    // ---------------------------------------
     // Response
     // ---------------------------------------
 
     return NextResponse.json({
       ...hamper,
-
       totalItems,
-
-      averageRating: Number(averageRating.toFixed(1)),
-
-      totalReviews,
-
-      totalComments: totalReviews,
-
-      canReview,
     });
   } catch (error) {
     console.error("Hamper details error:", error);
@@ -150,7 +83,7 @@ export async function GET(
         message:
           error instanceof Error
             ? error.message
-            : "Failed to fetch hamper", 
+            : "Failed to fetch hamper",
       },
       {
         status: 500,

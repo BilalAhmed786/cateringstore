@@ -88,43 +88,44 @@ export async function GET(req: NextRequest) {
 
     const skip = (page - 1) * limit;
 
-    const search = searchParams.get("search");
-    const category = searchParams.get("category");
-    const status = searchParams.get("status");
-    const dateFilter = searchParams.get("dateFilter");
-
-    const minPrice = searchParams.get("minPrice");
-    const maxPrice = searchParams.get("maxPrice");
-
-    const sort = searchParams.get("sort");
-
-    // --------------------------------------------------
-    // BUILD WHERE
-    // --------------------------------------------------
+    /* -------------------- FILTERS -------------------- */
 
     const where: Prisma.HamperWhereInput = {
       AND: [
-        buildSearchFilter(search, ["name", "description"]),
-        buildCategoryFilter(category),
-        buildStatusFilter(status),
-        buildDateFilter(dateFilter),
-        buildPriceFilter(minPrice, maxPrice, "finalPrice"),
+        buildSearchFilter(
+          searchParams.get("search"),
+          ["name", "description"],
+        ),
+
+        buildCategoryFilter(
+          searchParams.get("category"),
+        ),
+
+        buildStatusFilter(
+          searchParams.get("status"),
+        ),
+
+        buildDateFilter(
+          searchParams.get("dateFilter"),
+        ),
+
+        buildPriceFilter(
+          searchParams.get("minPrice"),
+          searchParams.get("maxPrice"),
+          "finalPrice",
+        ),
       ].filter(Boolean) as Prisma.HamperWhereInput[],
     };
 
-    // --------------------------------------------------
-    // SORT
-    // --------------------------------------------------
+    /* -------------------- SORT -------------------- */
 
     const orderBy = buildSort(
-      sort,
+      searchParams.get("sort"),
       "finalPrice",
       "createdAt",
     );
 
-    // --------------------------------------------------
-    // QUERY
-    // --------------------------------------------------
+    /* -------------------- QUERY -------------------- */
 
     const [items, total] = await Promise.all([
       prisma.hamper.findMany({
@@ -141,6 +142,12 @@ export async function GET(req: NextRequest) {
               menuItem: true,
             },
           },
+
+          _count: {
+            select: {
+              reviews: true,
+            },
+          },
         },
       }),
 
@@ -149,14 +156,48 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
-    // --------------------------------------------------
-    // MAPPING
-    // --------------------------------------------------
+    /* -------------------- RATINGS -------------------- */
+
+    const hamperRatings =
+      await prisma.hamperReview.groupBy({
+        by: ["hamperId"],
+
+        where: {
+          hamperId: {
+            in: items.map((hamper) => hamper.id),
+          },
+        },
+
+        _avg: {
+          rating: true,
+        },
+      });
+
+    const ratingMap = new Map(
+      hamperRatings.map((rating) => [
+        rating.hamperId,
+        rating._avg.rating ?? 0,
+      ]),
+    );
+
+    /* -------------------- RESPONSE -------------------- */
 
     const mappedItems = items.map((hamper) => ({
       ...hamper,
 
-      totalItems: hamper.items.reduce((sum, item) => sum + item.quantity, 0),
+      totalItems: hamper.items.reduce(
+        (sum, item) => sum + item.quantity,
+        0,
+      ),
+
+      averageRating:
+        ratingMap.get(hamper.id) ?? 0,
+
+      totalReviews:
+        hamper._count.reviews,
+
+      totalComments:
+        hamper._count.reviews,
     }));
 
     return NextResponse.json({
@@ -169,7 +210,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(
       {
         message:
-          error instanceof Error ? error.message : "Failed to fetch hampers",
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch hampers",
       },
       {
         status: 500,

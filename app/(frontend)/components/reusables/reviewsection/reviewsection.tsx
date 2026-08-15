@@ -1,26 +1,7 @@
 "use client";
-
 import { Star } from "lucide-react";
-import { FieldValues } from "react-hook-form";
-
 import { ReviewForm } from "../reviewform/reviewform";
-
-export interface Review {
-  id: string;
-  rating: number;
-  comment?: string | null;
-  user: {
-    id: string;
-    name: string | null;
-  };
-}
-
-interface ReviewSectionProps {
-  reviews: Review[];
-  canReview: boolean;
-  onSubmit?: (formData: FieldValues) => Promise<void>;
-  title?: string;
-}
+import { ReviewSectionProps } from "./type";
 
 export function ReviewSection({
   reviews,

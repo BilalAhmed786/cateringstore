@@ -2,7 +2,7 @@ import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { CreatePackageBody } from "../types/type";
-import { getCurrentUser } from "@/app/(backend)/lib/guard/getCurrentuser";
+
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -111,17 +111,6 @@ export async function GET(
             },
           },
         },
-
-        reviews: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
       },
     });
 
@@ -132,53 +121,7 @@ export async function GET(
       );
     }
 
-    // Calculate rating
-
-    const totalReviews = packageData.reviews.length;
-
-    const averageRating =
-      totalReviews > 0
-        ? packageData.reviews.reduce(
-            (sum, review) => sum + review.rating,
-            0,
-          ) / totalReviews
-        : 0;
-
-    let canReview = false;
-
-    // Logged in user
-
-    const user = await getCurrentUser(req);
-
-    if (user) {
-      const purchased = await prisma.orderPackage.findFirst({
-        where: {
-          packageId: id,
-          order: {
-            userId: user.id,
-            status: "DELIVERED",
-          },
-        },
-      });
-
-      const alreadyReviewed = await prisma.packageReview.findUnique({
-        where: {
-          userId_packageId: {
-            userId: user.id,
-            packageId: id,
-          },
-        },
-      });
-
-      canReview = !!purchased && !alreadyReviewed;
-    }
-
-    return NextResponse.json({
-      ...packageData,
-      averageRating,
-      totalReviews,
-      canReview,
-    });
+    return NextResponse.json(packageData);
   } catch (error) {
     console.error(error);
 

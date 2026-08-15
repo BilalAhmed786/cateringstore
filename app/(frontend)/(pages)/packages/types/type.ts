@@ -1,5 +1,6 @@
 import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
 
+
 export interface PackageItem {
   id: string;
   quantity: number;
@@ -44,4 +45,34 @@ export interface PackageCustomizeSheetProps {
   packageId: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+}
+
+export interface PackageReview {
+  id: string;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+  user: {
+    id: string;
+    name: string | null;
+  };
+}
+export interface PackageReviewResponse {
+  reviews: PackageReview[];
+  totalReviews: number;
+  averageRating: number;
+  canReview: boolean;
+}
+
+export interface CreatePackageReviewData {
+  packageId: string;
+  rating: number;
+  comment?: string | null;
+}
+
+
+export interface GetPackageReviewsParams {
+  selectedPackageId :string | null;
+  rating?: string;
+  sort?: "asc" | "desc";
 }

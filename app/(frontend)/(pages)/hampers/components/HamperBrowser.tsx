@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
-
 import { StorefrontGrid } from "@/app/(frontend)/components/reusables/storefront-grid/StorefrontGrid";
 import { ShoppingCart } from "@/app/(frontend)/components/reusables/shopping-cart/ShoppingCart";
 import { ProductDetailsSheet } from "@/app/(frontend)/components/reusables/storefront-grid/ProductDetailsSheet";
@@ -17,38 +16,69 @@ import { useInfiniteScroll } from "@/app/(frontend)/components/reusables/hooks/u
 import { useCartStore } from "@/app/(frontend)/store/useCartStore";
 
 import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
+
 import { useGetHampers } from "@/app/(frontend)/admin/hampers/hooks/usegethampers";
 import { useGetSingleHamperDetails } from "@/app/(frontend)/admin/hampers/hooks/usegetsinglehamper";
 import { useHamperCategories } from "@/app/(frontend)/admin/categories/hamper/hooks/useHamperCategories";
+
 import { useCreateHamperReview } from "../hook/useCreateHamperReview";
-
-
+import { useGetHamperReviews } from "../hook/useGetHamperReviews";
 
 export function HamperBrowser() {
+  // ---------------------------------------
+  // Hamper Filters
+  // ---------------------------------------
+
   const [category, setCategory] = useState("all");
   const [search, setSearch] = useState("");
+
   const [priceRange, setPriceRange] = useState<[number, number]>([
     0,
     5000,
   ]);
 
+  // ---------------------------------------
+  // Review Filters
+  // ---------------------------------------
+
+  const [rating, setRating] = useState("all");
+  const [sort, setSort] = useState<"asc" | "desc">("desc");
+
+  // ---------------------------------------
+  // Pagination
+  // ---------------------------------------
+
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<GridItem[]>([]);
 
-  const [selectedHamperId, setSelectedHamperId] = useState<string | null>(
-    null
-  );
+
+
+  // ---------------------------------------
+  // Selected Hamper
+  // ---------------------------------------
+
+  const [selectedHamperId, setSelectedHamperId] =
+    useState<string | null>(null);
 
   const [detailsOpen, setDetailsOpen] = useState(false);
 
+  // ---------------------------------------
+  // Debounce
+  // ---------------------------------------
+
   const debouncedSearch = useDebounce(search, 500);
+
   const debouncedPriceRange = useDebounce(priceRange, 500);
 
   // ---------------------------------------
   // Hampers
   // ---------------------------------------
 
-  const { data, isLoading, isFetching } = useGetHampers({
+  const {
+    data,
+    isLoading,
+    isFetching,
+  } = useGetHampers({
     page,
     limit: 4,
     category,
@@ -69,19 +99,37 @@ export function HamperBrowser() {
   const categories = cat?.categories ?? [];
 
   // ---------------------------------------
-  // Selected Hamper Details
+  // Hamper Details
   // ---------------------------------------
 
   const {
     data: hamperDetails,
     isLoading: isDetailsLoading,
-  } = useGetSingleHamperDetails(selectedHamperId ?? "");
+  } = useGetSingleHamperDetails(
+    selectedHamperId ?? "",
+  );
 
   // ---------------------------------------
-  // Review
+  // Hamper Reviews
   // ---------------------------------------
 
-  const { createReview } = useCreateHamperReview(selectedHamperId??"");
+  const {
+    data: reviewData,
+    isLoading: isReviewsLoading,
+  } = useGetHamperReviews(
+    selectedHamperId ?? "",
+    rating,
+    sort,
+  );
+
+  // ---------------------------------------
+  // Create Hamper Review
+  // ---------------------------------------
+
+  const { createReview } =
+    useCreateHamperReview(
+      selectedHamperId ?? "",
+    );
 
   // ---------------------------------------
   // Cart
@@ -90,41 +138,52 @@ export function HamperBrowser() {
   const { addItem } = useCartStore();
 
   // ---------------------------------------
-  // Infinite scroll
+  // Pagination
   // ---------------------------------------
 
-  const hasMore = items.length < (data?.total ?? 0);
+  const hasMore =
+    items.length < (data?.total ?? 0);
 
   useEffect(() => {
     if (!data) return;
 
-      function retreiveData (data:GridItem[]){
-         if (page === 1) {
+    function dataRetreive(data:GridItem[]){
+    if (page === 1) {
       setItems(data);
     } else {
-      setItems((prev) => [...prev, ...data]);
+      setItems((prev) => [
+        ...prev,
+        ...data,
+      ]);
     }
 
-      }
-      retreiveData(data.items)
-   
+
+    }
+    dataRetreive(data.items)
+  
   }, [data, page]);
 
   // ---------------------------------------
-  // Filters
+  // Hamper Filters
   // ---------------------------------------
 
-  const handleCategoryChange = (value: string) => {
+  const handleCategoryChange = (
+    value: string,
+  ) => {
     setCategory(value);
     setPage(1);
   };
 
-  const handleSearchChange = (value: string) => {
+  const handleSearchChange = (
+    value: string,
+  ) => {
     setSearch(value);
     setPage(1);
   };
 
-  const handlePriceChange = (value: [number, number]) => {
+  const handlePriceChange = (
+    value: [number, number],
+  ) => {
     setPriceRange(value);
     setPage(1);
   };
@@ -136,14 +195,33 @@ export function HamperBrowser() {
   useInfiniteScroll({
     loading: isFetching,
     hasMore,
-    onLoadMore: () => setPage((prev) => prev + 1),
+    onLoadMore: () =>
+      setPage((prev) => prev + 1),
   });
+
+  // ---------------------------------------
+  // Details Sheet
+  // ---------------------------------------
+
+  const handleDetailsOpenChange = (
+    open: boolean,
+  ) => {
+    setDetailsOpen(open);
+
+    if (!open) {
+      // Reset review filters when closing
+      setRating("all");
+      setSort("desc");
+    }
+  };
 
   // ---------------------------------------
   // Review Submit
   // ---------------------------------------
 
-  const handleReviewSubmit = async (formData: FieldValues) => {
+  const handleReviewSubmit = async (
+    formData: FieldValues,
+  ) => {
     if (!selectedHamperId) return;
 
     await createReview({
@@ -153,36 +231,57 @@ export function HamperBrowser() {
     });
   };
 
+  // ---------------------------------------
+  // Render
+  // ---------------------------------------
+
   return (
     <div className="space-y-8 pt-28">
+
+      {/* -------------------------------- */}
       {/* Filters */}
+      {/* -------------------------------- */}
+
       <div className="flex flex-col items-center space-y-8">
+
         <div className="flex w-full flex-col justify-center gap-10 px-5 lg:flex-row">
+
+          {/* Category */}
+
           <EntityFilters
             filters={[
               {
                 key: "category",
                 label: "Category",
                 value: category,
-                onChange: handleCategoryChange,
+                onChange:
+                  handleCategoryChange,
+
                 options: [
                   {
                     label: "All",
                     value: "all",
                   },
-                  ...categories.map((category) => ({
-                    label: category.name,
-                    value: category.id,
-                  })),
+
+                  ...categories.map(
+                    (category) => ({
+                      label: category.name,
+                      value: category.id,
+                    }),
+                  ),
                 ],
               },
             ]}
           />
 
+          {/* Price */}
+
           <div className="w-full max-w-xs">
             <PriceFilter
               value={priceRange}
-              onChange={handlePriceChange}
+              onChange={
+                handlePriceChange
+              }
               min={0}
               max={5000}
               step={100}
@@ -190,44 +289,85 @@ export function HamperBrowser() {
           </div>
         </div>
 
+        {/* Search */}
+
         <EntityFilters
           search={{
             value: search,
-            onChange: handleSearchChange,
-            placeholder: "Search hampers...",
-            classname: "sm:w-xl lg:w-5xl",
+            onChange:
+              handleSearchChange,
+            placeholder:
+              "Search hampers...",
+            classname:
+              "sm:w-xl lg:w-5xl",
           }}
         />
       </div>
 
+      {/* -------------------------------- */}
       {/* Hampers */}
+      {/* -------------------------------- */}
+
       <div className="relative mx-7">
         <StorefrontGrid
           items={items}
           type="hamper"
-          isLoading={isLoading && page === 1}
+          isLoading={
+            isLoading && page === 1
+          }
           onItemClick={(hamper) => {
-            setSelectedHamperId(hamper.id);
+            setSelectedHamperId(
+              hamper.id,
+            );
+
             setDetailsOpen(true);
           }}
           renderActions={(hamper) => (
             <UniButton
               label="Add To Cart"
-              onClick={() => addItem(hamper, "hamper")}
+              onClick={() =>
+                addItem(
+                  hamper,
+                  "hamper",
+                )
+              }
             />
           )}
         />
       </div>
 
+      {/* -------------------------------- */}
+      {/* Shopping Cart */}
+      {/* -------------------------------- */}
+
       <ShoppingCart />
 
-      {/* Hamper Details + Reviews */}
+      {/* -------------------------------- */}
+      {/* Hamper Details */}
+      {/* -------------------------------- */}
+
       <ProductDetailsSheet
         data={hamperDetails}
         isLoading={isDetailsLoading}
         open={detailsOpen}
-        onOpenChange={setDetailsOpen}
-        onReviewSubmit={handleReviewSubmit}
+        onOpenChange={
+          handleDetailsOpenChange
+        }
+
+        reviewData={reviewData}
+        isReviewsLoading={
+          isReviewsLoading
+        }
+
+        rating={rating}
+        sort={sort}
+
+        onRatingChange={setRating}
+        onSortChange={setSort}
+
+        onReviewSubmit={
+          handleReviewSubmit
+        }
       />
     </div>
   );

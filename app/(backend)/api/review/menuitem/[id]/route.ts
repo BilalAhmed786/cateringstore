@@ -2,7 +2,6 @@ import { buildRatingFilter } from "@/app/(backend)/lib/filters/buildRatingFilter
 import { buildSort } from "@/app/(backend)/lib/filters/buildSort";
 import { getCurrentUser } from "@/app/(backend)/lib/guard/getCurrentuser";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
-import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -36,7 +35,7 @@ export async function GET(
        Used for overall statistics
     ----------------------------- */
 
-    const baseWhere: Prisma.MenuItemReviewWhereInput = {
+    const baseWhere = {
       menuItemId: id,
     };
 
@@ -44,7 +43,7 @@ export async function GET(
        Filtered Where
     ----------------------------- */
 
-    const where: Prisma.MenuItemReviewWhereInput = {
+    const where = {
       ...baseWhere,
 
       ...buildRatingFilter(rating),
@@ -127,12 +126,10 @@ export async function GET(
 
     return NextResponse.json({
       reviews,
-
-      // Overall statistics, NOT affected by filter
+                  // Overall statistics, NOT affected by filter
       totalReviews,
 
-      averageRating:
-        ratingAggregate._avg.rating ?? 0,
+      averageRating:ratingAggregate._avg.rating ?? 0,
 
       canReview,
     });

@@ -20,23 +20,36 @@ import { useGetPackageDetails } from "@/app/(frontend)/admin/packages/hooks/useg
 
 import { useCartStore } from "@/app/(frontend)/store/useCartStore";
 import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
+
 import { useCreatePackageReview } from "../hooks/useCreatePackageReview";
+import { useGetPackageReviews } from "../hooks/useGetPackageReviews";
 
 export function PackageBrowser() {
   const [search, setSearch] = useState("");
-  const [priceRange, setPriceRange] =
-    useState<[number, number]>([0, 5000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 5000]);
 
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<GridItem[]>([]);
 
-  const [selectedPackageId, setSelectedPackageId] =
-    useState<string | null>(null);
+  const [selectedPackageId, setSelectedPackageId] = useState<string | null>(
+    null,
+  );
 
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [customizeOpen, setCustomizeOpen] = useState(false);
+
+  // ---------------------------------------
+  // Review Filters
+  // ---------------------------------------
+
+  const [rating, setRating] = useState("all");
+  const [sort, setSort] = useState<"asc" | "desc">("desc");
   const debouncedSearch = useDebounce(search, 500);
   const debouncedPriceRange = useDebounce(priceRange, 500);
+
+  // ---------------------------------------
+  // Packages
+  // ---------------------------------------
 
   const { data, isLoading, isFetching } = useGetPackages({
     page,
@@ -48,20 +61,27 @@ export function PackageBrowser() {
 
   const { addItem } = useCartStore();
 
-  const {
-    data: packageDetails,
-    isLoading: isDetailsLoading,
-  } = useGetPackageDetails(selectedPackageId ?? "");
-
   // ---------------------------------------
-  // Package Review
+  // Package Details
   // ---------------------------------------
 
-  const { mutateAsync: createReview } =  useCreatePackageReview();
+  const { data: packageDetails, isLoading: isDetailsLoading } =
+    useGetPackageDetails(selectedPackageId ?? "");
 
-  const handleReviewSubmit = async (
-    formData: FieldValues,
-  ) => {
+  // ---------------------------------------
+  // Package Reviews
+  // ---------------------------------------
+
+  const { data: reviewData, isLoading: isReviewsLoading } =
+    useGetPackageReviews({ selectedPackageId, rating, sort });
+
+  // ---------------------------------------
+  // Create Package Review
+  // ---------------------------------------
+
+  const { mutateAsync: createReview } = useCreatePackageReview();
+
+  const handleReviewSubmit = async (formData: FieldValues) => {
     if (!selectedPackageId) return;
 
     await createReview({
@@ -75,13 +95,12 @@ export function PackageBrowser() {
   // Pagination
   // ---------------------------------------
 
-  const hasMore =
-    items.length < (data?.total ?? 0);
+  const hasMore = items.length < (data?.total ?? 0);
 
   useEffect(() => {
     if (!data) return;
 
-    function Dataretreive(data: GridItem[]) {
+    function Dataretreive(data:GridItem[]) {
       if (page === 1) {
         setItems(data);
       } else {
@@ -89,7 +108,7 @@ export function PackageBrowser() {
       }
     }
 
-    Dataretreive(data.items);
+    Dataretreive(data.items)
   }, [data, page]);
 
   const handleSearchChange = (value: string) => {
@@ -97,18 +116,28 @@ export function PackageBrowser() {
     setPage(1);
   };
 
-  const handlePriceChange = (
-    value: [number, number],
-  ) => {
+  const handlePriceChange = (value: [number, number]) => {
     setPriceRange(value);
     setPage(1);
+  };
+
+  // ---------------------------------------
+  // Reset review filters when closing
+  // ---------------------------------------
+
+  const handleDetailsOpenChange = (value: boolean) => {
+    if (!value) {
+      setRating("all");
+      setSort("desc");
+    }
+
+    setDetailsOpen(value);
   };
 
   useInfiniteScroll({
     loading: isFetching,
     hasMore,
-    onLoadMore: () =>
-      setPage((prev) => prev + 1),
+    onLoadMore: () => setPage((prev) => prev + 1),
   });
 
   return (
@@ -148,17 +177,13 @@ export function PackageBrowser() {
             setDetailsOpen(true);
           }}
           renderSubtitle={(pkg) => (
-            <span>
-              {pkg.items?.length ?? 0} Menu Items Included
-            </span>
+            <span>{pkg.items?.length ?? 0} Menu Items Included</span>
           )}
           renderActions={(pkg) => (
             <>
               <UniButton
                 label="Add To Cart"
-                onClick={() =>
-                  addItem(pkg, "package")
-                }
+                onClick={() => addItem(pkg, "package")}
               />
 
               <UniButton
@@ -182,7 +207,13 @@ export function PackageBrowser() {
         data={packageDetails}
         isLoading={isDetailsLoading}
         open={detailsOpen}
-        onOpenChange={setDetailsOpen}
+        onOpenChange={handleDetailsOpenChange}
+        reviewData={reviewData}
+        isReviewsLoading={isReviewsLoading}
+        rating={rating}
+        sort={sort}
+        onRatingChange={setRating}
+        onSortChange={setSort}
         onReviewSubmit={handleReviewSubmit}
       />
 
