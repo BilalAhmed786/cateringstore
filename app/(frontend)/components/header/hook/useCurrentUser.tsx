@@ -16,16 +16,20 @@ type AuthorizeResponse = {
 export function useCurrentUser() {
   const router = useRouter();
 
-  const [user, setUser] = useState<CurrentUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
- console.log(user)
+  const [user, setUser] =
+    useState<CurrentUser | null>(null);
+
+  const [isLoading, setIsLoading] =
+    useState(true);
+
   const checkAuth = useCallback(async () => {
     try {
-      const response = await apiRequest<AuthorizeResponse>({
-        url: "/api/auth/authorize",
-        method: "GET",
-        authRequired:true
-      });
+      const response =
+        await apiRequest<AuthorizeResponse>({
+          url: "/api/auth/authorize/jwt",
+          method: "GET",
+          authRequired: false,
+        });
 
       setUser(response?.user ?? null);
     } catch {
@@ -42,7 +46,10 @@ export function useCurrentUser() {
   const goToDashboard = useCallback(() => {
     if (!user) return;
 
-    if (user.role === "ADMIN" || user.role === "SUPERADMIN") {
+    if (
+      user.role === "ADMIN" ||
+      user.role === "SUPERADMIN"
+    ) {
       router.push("/admin/dashboard");
     } else {
       router.push("/client/dashboard");
@@ -53,6 +60,10 @@ export function useCurrentUser() {
     user,
     isLoading,
     isAuthenticated: !!user,
+
+    // manually re-check cookie/JWT
+    refreshUser: checkAuth,
+
     goToDashboard,
   };
 }

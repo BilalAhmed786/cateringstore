@@ -37,3 +37,17 @@ export interface FeaturedEventCategory {
   image: string | null;
   publicId: string | null;
 }
+
+export interface Testimonial {
+  id: string;
+  name: string;
+  review: string;
+  rating: number;
+  type: "MENU_ITEM" | "PACKAGE" | "HAMPER" | "EVENT";
+  itemName: string;
+  createdAt: string;
+}
+
+export interface GetTestimonialsResponse {
+  reviews: Testimonial[];
+}

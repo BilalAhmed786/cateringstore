@@ -124,10 +124,11 @@
   }
 }
 
-html,
-body 
-{
-   scrollbar-gutter: stable;  /*  very important concept scroll bar hide show page width will stable */
-   width: 100%;
+html.public-scrollbar {
+  scrollbar-gutter: stable;
+  
 }
 
+body{
+  width: 100%;
+}

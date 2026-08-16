@@ -2,18 +2,23 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import Image from "next/image";
+
 import Cateringlogo from "../../assets/saif catering.png";
-import { UniButton } from "../reusables/button/button";
+
 import { Loader } from "../reusables/loader/loader";
 import { useLogout } from "@/app/(frontend)/admin/dashboard/hooks/useLogout";
 import { useHeaderScroll } from "./hook/useHeaderScroll";
 import { useCurrentUser } from "./hook/useCurrentUser";
 import { MobileMenu } from "./components/MobileMenu";
 
-
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/app/(frontend)/components/ui/dropdown-menu";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -32,20 +37,42 @@ export default function Header() {
     user,
     isLoading: authLoading,
     goToDashboard,
+    refreshUser,
   } = useCurrentUser();
 
-  const { logout, isPending } = useLogout();
+  const {
+    logoutAsync,
+    isPending,
+  } = useLogout();
 
   const isLoggedIn = !!user;
 
+  // ---------------------------------------
+  // Logout
+  // ---------------------------------------
+
+  const handleLogout = async () => {
+    try {
+      await logoutAsync();
+
+      // Re-check JWT cookie after logout
+      await refreshUser();
+    } catch {
+      // useLogout already handles the error/toast
+    }
+  };
+
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-40 border-b bg-white/90 backdrop-blur-md shadow-sm transition-transform duration-300 ${
-        showHeader ? "translate-y-0" : "-translate-y-full"
+      className={`fixed inset-x-0 top-0 z-40 border-b bg-white/90 shadow-sm backdrop-blur-md transition-transform duration-300 ${
+        showHeader
+          ? "translate-y-0"
+          : "-translate-y-full"
       }`}
     >
       {/* Header Top */}
-      <div className="flex items-center justify-between px-6 py-3 md:px-8">
+      <div className="flex w-full items-center justify-between px-6 py-3 md:px-8">
+
         {/* Logo */}
         <Link href="/">
           <Image
@@ -70,49 +97,65 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Desktop Actions */}
-        <div className="hidden min-w-47.5 items-center justify-end gap-3 md:flex">
+        {/* Desktop User Dropdown */}
+        <div className="hidden min-w-12.5 justify-end md:flex">
           {authLoading ? (
             <Loader
               variant="inline"
               size={20}
-              className="min-w-47.5"
             />
-          ) : isLoggedIn ? (
-            <>
-              <UniButton
-                variant="outline"
-                onClick={goToDashboard}
-                label="Dashboard"
-              />
-
-              <UniButton
-                variant="destructive"
-                onClick={logout}
-                disabled={isPending}
-                label={
-                  isPending
-                    ? "Logging out..."
-                    : "Logout"
-                }
-              />
-            </>
           ) : (
-            <>
-              <Link href="/auth/login">
-                <UniButton
-                  variant="ghost"
-                  label="Login"
-                />
-              </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border bg-background transition hover:bg-muted focus:outline-none"
+                  aria-label="User menu"
+                >
+                  <User className="w-4" />
+                </button>
+              </DropdownMenuTrigger>
 
-              <Link href="/auth/register">
-                <UniButton
-                  variant="default"
-                  label="Register"
-                />
-              </Link>
-            </>
+              <DropdownMenuContent
+                align="end"
+                className="w-44"
+              >
+                {isLoggedIn ? (
+                  <>
+                    <DropdownMenuItem
+                      onClick={goToDashboard}
+                      className="cursor-pointer"
+                    >
+                      Dashboard
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      disabled={isPending}
+                      className="cursor-pointer text-destructive focus:text-destructive"
+                    >
+                      {isPending
+                        ? "Logging out..."
+                        : "Logout"}
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/auth/login">
+                        Login
+                      </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild>
+                      <Link href="/auth/register">
+                        Register
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
 
@@ -120,23 +163,33 @@ export default function Header() {
         <button
           type="button"
           className="md:hidden"
-          onClick={() => setOpen((prev) => !prev)}
-          aria-label={open ? "Close menu" : "Open menu"}
+          onClick={() =>
+            setOpen((prev) => !prev)
+          }
+          aria-label={
+            open
+              ? "Close menu"
+              : "Open menu"
+          }
         >
-          {open ? <X size={28} /> : <Menu size={28} />}
+          {open ? (
+            <X size={28} />
+          ) : (
+            <Menu size={28} />
+          )}
         </button>
       </div>
 
       {/* Mobile Menu */}
       <MobileMenu
         navItems={navItems}
-          isOpen={open}
+        isOpen={open}
         onClose={() => setOpen(false)}
         authLoading={authLoading}
         isLoggedIn={isLoggedIn}
         isPending={isPending}
         onDashboard={goToDashboard}
-        onLogout={logout}
+        onLogout={handleLogout}
       />
     </header>
   );

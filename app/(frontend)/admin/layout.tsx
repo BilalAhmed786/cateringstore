@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }:DashboardLayoutProps) {
         <Header onLogout={logout} />
 
         {/* Page Content */}
-        <main className="overflow-auto">{children}</main>
+        <main className="overflow-auto w-full">{children}</main>
       </div>
     </div>
   )
