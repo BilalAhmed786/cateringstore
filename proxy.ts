@@ -16,7 +16,7 @@ export function proxy(req: NextRequest) {
     if (pathname.startsWith("/auth")) {
       if (decoded) {
         // User already logged in → redirect based on role
-        if (decoded.role === "ADMIN" || decoded.role === "SUPERADMIN") {
+        if (decoded.role === "ADMIN" || decoded.role === "SUPER_ADMIN") {
           return NextResponse.redirect(new URL("/admin/dashboard", req.url));
         } else if (decoded.role === "CLIENT") {
           return NextResponse.redirect(new URL("/client/dashboard", req.url));
@@ -30,7 +30,7 @@ export function proxy(req: NextRequest) {
       if (!decoded) {
         return NextResponse.redirect(new URL("/auth/login", req.url));
       }
-      if (decoded.role === "ADMIN" || decoded.role === "SUPERADMIN") {
+      if (decoded.role === "ADMIN" || decoded.role === "SUPER_ADMIN") {
         return NextResponse.next();
       } else {
         return NextResponse.redirect(new URL("/client/dashboard", req.url));

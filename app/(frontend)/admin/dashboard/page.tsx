@@ -6,13 +6,11 @@ import StatsGrid from "./(components)/StatsGrid";
 import RecentOrders from "./(components)/RecentOrders";
 
 import { useDashboardStats } from "./hooks/useDashboardStats";
-import { useRecentOrders } from "./hooks/useRecentOrders";
-
 import type { duration, StatsPeriod } from "./types/types";
-
 import { formatDashboardStats } from "./(components)/formatDashboardStats";
 
 import { MenuItemDropdown } from "@/app/(frontend)/components/reusables/actiondropdown/actiondropdown";
+import { useGetOrders } from "../orders/hooks/useOrders";
 
 const periods:duration[] = [
   {
@@ -37,23 +35,31 @@ export default function AdminDashboard() {
   const [period, setPeriod] = useState<StatsPeriod>("1m");
 
   const statsQuery = useDashboardStats(period);
-  const ordersQuery = useRecentOrders();
+
+  const ordersQuery = useGetOrders({
+    page: 1,
+    limit: 5,
+    search: "",
+    status:""
+  });
 
   const stats = statsQuery.data
     ? formatDashboardStats(statsQuery.data)
     : [];
 
-  const orders = ordersQuery.data ?? [];
-  const selectedPeriod =  periods.find((item) => item.value === period)?.label ?? "1 Month";
+  const orders = ordersQuery.data?.orders ?? [];
+
+  const selectedPeriod =
+    periods.find((item) => item.value === period)?.label ??
+    "1 Month";
 
   return (
     <div className="flex min-h-screen bg-slate-950">
       <div className="flex-1 overflow-auto">
-        <div className="p-8 space-y-8">
+        <div className="space-y-8 p-8">
 
-          {/* Period Dropdown */}
-          <div className="flex justify-end items-center gap-3 text-white">
-            <span className="text-sm text-white">
+          <div className="flex items-center justify-end gap-3 text-white">
+            <span className="text-sm">
               Period:
             </span>
 
@@ -62,10 +68,9 @@ export default function AdminDashboard() {
                 label: item.label,
                 onClick: () => setPeriod(item.value),
               }))}
-      
             />
-            
-            <span className="text-sm text-white">
+
+            <span className="text-sm">
               {selectedPeriod}
             </span>
           </div>

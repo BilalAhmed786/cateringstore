@@ -6,7 +6,7 @@ import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq"
 
 export type CurrentUser = {
   id: string;
-  role: "CLIENT" | "ADMIN" | "SUPERADMIN";
+  role: "CLIENT" | "ADMIN" | "SUPER_ADMIN";
 };
 
 type AuthorizeResponse = {
@@ -48,7 +48,7 @@ export function useCurrentUser() {
 
     if (
       user.role === "ADMIN" ||
-      user.role === "SUPERADMIN"
+      user.role === "SUPER_ADMIN"
     ) {
       router.push("/admin/dashboard");
     } else {

@@ -11,7 +11,7 @@ const validPeriods: StatsPeriod[] = [
 ];
 
 export async function GET(req: NextRequest) {
-  const auth = await requireRole(req, ["ADMIN"]);
+  const auth = await requireRole(req, ["ADMIN","SUPER_ADMIN"]);
 
   if (auth instanceof NextResponse) {
     return auth;

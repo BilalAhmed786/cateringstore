@@ -1,4 +1,5 @@
 ﻿import type { ComponentType } from "react"
+import { AdminOrderListItem } from "../../orders/types/type"
 
 export type SidebarProps = {
   open: boolean
@@ -33,8 +34,8 @@ export interface Order {
   createdAt: string;
 };
 
-export interface RecentOrdersProps{
-  orders: Order[]
+export interface RecentOrdersProps {
+  orders: AdminOrderListItem[];
 }
 
 export type OrderStatus = "PENDING" | "CONFIRMED" | "COOKING" | "DELIVERED" | "CANCELLED";

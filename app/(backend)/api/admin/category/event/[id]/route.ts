@@ -8,7 +8,7 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const userOrResponse = await requireRole(req, ["ADMIN"]);
+  const userOrResponse = await requireRole(req, ["ADMIN","SUPER_ADMIN"]);
   if (userOrResponse instanceof NextResponse) return userOrResponse;
 
   try {

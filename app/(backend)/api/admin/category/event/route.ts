@@ -7,7 +7,7 @@ import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { Prisma } from "@prisma/client";
 
 export async function POST(req: NextRequest) {
-  const userOrResponse = await requireRole(req, ["ADMIN"]);
+  const userOrResponse = await requireRole(req, ["ADMIN","SUPER_ADMIN"]);
   if (userOrResponse instanceof NextResponse) return userOrResponse;
 
   try {

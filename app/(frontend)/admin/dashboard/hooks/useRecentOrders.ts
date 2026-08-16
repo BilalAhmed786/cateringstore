@@ -6,7 +6,7 @@ import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq"
 
 export function useRecentOrders() {
   return useQuery<Order[]>({
-    queryKey: ["dashboard", "recentOrders"],
+    queryKey: ["recentOrders"],
 
     queryFn: async () => {
       return apiRequest<Order[]>({

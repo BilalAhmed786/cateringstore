@@ -3,9 +3,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
 
+type OrderStatus =
+  | "PENDING"
+  | "CONFIRMED"
+  | "COOKING"
+  | "DELIVERED"
+  | "CANCELLED";
+
 type UpdateOrderStatusPayload = {
   id: string;
-  status:string;
+  status: OrderStatus;
 };
 
 export function useUpdateOrderStatus() {
@@ -16,18 +23,39 @@ export function useUpdateOrderStatus() {
       id,
       status,
     }: UpdateOrderStatusPayload) => {
-      return apiRequest({
-        url:`/api/admin/order/${id}`,
+      console.log("🔵 1. Sending status update:", {
+        orderId: id,
+        status,
+      });
+
+      const response = await apiRequest({
+        url: `/api/admin/order/${id}`,
         method: "PATCH",
-        body:{status},
-        authRequired:true,
+        body: {
+          status,
+        },
+        authRequired: true,
+      });
+
+      return response;
+    },
+
+    onSuccess: (data, variables) => {
+      console.log("Status update successful");
+
+      // Refresh dashboard/recent orders
+      queryClient.invalidateQueries({
+        queryKey: ["admin-orders"],
+      });
+
+      // Refresh specific order details
+      queryClient.invalidateQueries({
+        queryKey: ["admin-order", variables.id],
       });
     },
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["dashboard", "recentOrders"],
-      });
+    onError: (error) => {
+      console.error("Status update failed:", error);
     },
   });
 }

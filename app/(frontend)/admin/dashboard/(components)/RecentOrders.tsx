@@ -4,13 +4,12 @@ import React from "react";
 import { Card } from "@/app/(frontend)/components/ui/card";
 import { MenuItemDropdown } from "@/app/(frontend)/components/reusables/actiondropdown/actiondropdown";
 
-import type { Order, OrderStatus } from "../types/types";
+import type { OrderStatus, RecentOrdersProps } from "../types/types";
 import { useUpdateOrderStatus } from "../hooks/useUpdateOrderStatus";
 import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
-type RecentOrdersProps = {
-  orders: Order[];
-};
+
+
 
 const statuses: OrderStatus[] = [
   "PENDING",
@@ -20,9 +19,11 @@ const statuses: OrderStatus[] = [
   "CANCELLED",
 ];
 
+
 export default function RecentOrders({
-  orders,
+  orders
 }: RecentOrdersProps) {
+
   const updateOrderStatus = useUpdateOrderStatus();
 
   if(orders.length === 0) return <Loader/>
@@ -60,7 +61,7 @@ export default function RecentOrders({
           </thead>
 
           <tbody>
-            {orders.map((order, i) => (
+            {orders?.map((order, i) => (
               <tr
                 key={i}
                 className="border-b border-slate-700 hover:bg-slate-700/30 transition-all"
@@ -70,11 +71,11 @@ export default function RecentOrders({
                 </td>
 
                 <td className="px-6 py-4 text-sm text-slate-300">
-                  {order.customer}
+                  {order.guestName}
                 </td>
 
                 <td className="px-6 py-4 text-sm font-medium text-white">
-                  {order.amount}
+                  {order.total}
                 </td>
 
                 <td className="px-6 py-4 text-sm">
