@@ -7,9 +7,8 @@ import { MenuItemDropdown } from "@/app/(frontend)/components/reusables/actiondr
 import type { OrderStatus, RecentOrdersProps } from "../types/types";
 import { useUpdateOrderStatus } from "../hooks/useUpdateOrderStatus";
 import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
-
-
-
+import { useCurrentUser } from "@/app/(frontend)/components/header/hook/useCurrentUser";
+import { toast } from "sonner";
 
 const statuses: OrderStatus[] = [
   "PENDING",
@@ -19,20 +18,14 @@ const statuses: OrderStatus[] = [
   "CANCELLED",
 ];
 
-
-export default function RecentOrders({
-  orders
-}: RecentOrdersProps) {
-
+export default function RecentOrders({ orders }: RecentOrdersProps) {
   const updateOrderStatus = useUpdateOrderStatus();
-
-  if(orders.length === 0) return <Loader/>
-
+  const { user } = useCurrentUser();
+  if (orders.length === 0) return <Loader />;
+  console.log(user);
   return (
     <Card className="bg-slate-800/50 border-slate-700">
-      <h2 className="p-6 text-xl font-semibol text-white">
-        Recent Orders
-      </h2>
+      <h2 className="p-6 text-xl font-semibol text-white">Recent Orders</h2>
 
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -66,9 +59,7 @@ export default function RecentOrders({
                 key={i}
                 className="border-b border-slate-700 hover:bg-slate-700/30 transition-all"
               >
-                <td className="px-6 py-4 text-sm text-white">
-                  {order.id}
-                </td>
+                <td className="px-6 py-4 text-sm text-white">{order.id}</td>
 
                 <td className="px-6 py-4 text-sm text-slate-300">
                   {order.guestName}
@@ -101,6 +92,11 @@ export default function RecentOrders({
                     actions={statuses.map((status) => ({
                       label: status,
                       onClick: () => {
+                        if (user?.role !== "SUPER_ADMIN") {
+
+                          toast.error("unauthorize user")
+                        }
+
                         updateOrderStatus.mutate({
                           id: order.id,
                           status,
