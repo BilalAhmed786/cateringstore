@@ -106,7 +106,7 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
             <SubNav label="Hamper Categories" icon={Gift} href="/admin/categories/hamper" />
           </div>
         )}
-
+        <NavItem open={open} icon={Star} label="Reviews" href="/admin/reviews" />
         <NavItem open={open} icon={Star} label="Surveys" href="/admin/surveys" />
         <NavItem open={open} icon={Settings} label="Settings" href="/admin/settings" />
       </nav>

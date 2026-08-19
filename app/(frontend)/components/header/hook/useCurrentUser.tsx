@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
+import { signOut } from "firebase/auth";
+import { auth } from "@/app/(frontend)/lib/firebase/firebase";
+
 
 export type CurrentUser = {
   id: string;
@@ -28,12 +31,14 @@ export function useCurrentUser() {
         await apiRequest<AuthorizeResponse>({
           url: "/api/auth/authorize/jwt",
           method: "GET",
-          authRequired: false,
+          
         });
 
       setUser(response?.user ?? null);
     } catch {
       setUser(null);
+      await signOut(auth);
+    
     } finally {
       setIsLoading(false);
     }

@@ -23,7 +23,7 @@ export async function getJwtUser(req: NextRequest) {
       role: decoded.role as
         | "CLIENT"
         | "ADMIN"
-        | "SUPERADMIN",
+        | "SUPER_ADMIN",
     };
   } catch {
     return null;
