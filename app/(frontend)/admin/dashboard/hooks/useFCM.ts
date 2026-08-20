@@ -48,7 +48,7 @@ export function useFCM() {
         await apiRequest({
           url: "/api/admin/notification",
           method: "POST",
-          body: token,
+          body: {token},
           authRequired:true
         });
 
