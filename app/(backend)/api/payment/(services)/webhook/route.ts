@@ -4,10 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { stripe } from "@/app/(backend)/lib/stripe/stripe";
 import { createOrder } from "../../utils/order/createOrder";
+import { sendAdminNotification } from "@/app/(backend)/lib/notifications/sendAdminNotification";
 
 export async function POST(req: NextRequest) {
- 
-
   const body = await req.text();
 
   // ---------------------------------------
@@ -25,12 +24,12 @@ export async function POST(req: NextRequest) {
       },
       {
         status: 400,
-      }
+      },
     );
   }
 
   // ---------------------------------------
-  // 4. Verify Stripe webhook
+  // 2. Verify Stripe webhook
   // ---------------------------------------
 
   let event: import("stripe").default.Event;
@@ -39,10 +38,13 @@ export async function POST(req: NextRequest) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      process.env.STRIPE_WEBHOOK_SECRET!,
     );
   } catch (error) {
-    console.error("Stripe webhook verification failed:", error);
+    console.error(
+      "Stripe webhook verification failed:",
+      error,
+    );
 
     return NextResponse.json(
       {
@@ -50,28 +52,29 @@ export async function POST(req: NextRequest) {
       },
       {
         status: 400,
-      }
+      },
     );
   }
 
   // ---------------------------------------
-  // 2. Handle successful payment
+  // 3. Handle successful payment
   // ---------------------------------------
 
   if (event.type === "payment_intent.succeeded") {
     const paymentIntent = event.data.object;
 
     try {
-      const session = await prisma.checkoutSession.findUnique({
-        where: {
-          paymentIntentId: paymentIntent.id,
-        },
-      });
+      const session =
+        await prisma.checkoutSession.findUnique({
+          where: {
+            paymentIntentId: paymentIntent.id,
+          },
+        });
 
       if (!session) {
         console.error(
           "CheckoutSession not found:",
-          paymentIntent.id
+          paymentIntent.id,
         );
 
         return NextResponse.json({
@@ -87,7 +90,7 @@ export async function POST(req: NextRequest) {
       if (session.status === "COMPLETED") {
         console.log(
           "CheckoutSession already completed:",
-          paymentIntent.id
+          paymentIntent.id,
         );
 
         return NextResponse.json({
@@ -99,8 +102,9 @@ export async function POST(req: NextRequest) {
       // ---------------------------------------
       // Create order
       // ---------------------------------------
-      await createOrder({
-        userId:session.userId,
+
+      const order = await createOrder({
+        userId: session.userId,
         fullName: session.fullName,
         email: session.email,
         phone: session.phone,
@@ -123,30 +127,74 @@ export async function POST(req: NextRequest) {
         },
       });
 
+      // ---------------------------------------
+      // Get ADMIN + SUPERADMIN FCM tokens
+      // ---------------------------------------
+
+      const adminUsers = await prisma.user.findMany({
+        where: {
+          role: {
+            in: ["ADMIN", "SUPER_ADMIN"],
+          },
+        },
+        include: {
+          fcmTokens: true,
+        },
+      });
+
+      const adminTokens = adminUsers.flatMap(
+        (user) =>
+          user.fcmTokens.map(
+            (fcmToken) => fcmToken.token,
+          ),
+      );
+
+      // ---------------------------------------
+      // Send notification
+      // ---------------------------------------
+
+      for (const token of adminTokens) {
+        try {
+          await sendAdminNotification({
+            token,
+            title: "New Order",
+            body: `New order from ${session.fullName}`,
+            orderId: order.id,
+          });
+        } catch (error) {
+          // Don't fail the entire webhook because
+          // one FCM notification failed.
+          console.error(
+            "Failed to notify FCM token:",
+            token,
+            error,
+          );
+        }
+      }
+
       console.log(
         "Order successfully created:",
-        paymentIntent.id
+        paymentIntent.id,
       );
     } catch (error) {
       console.error(
         "Error processing successful payment:",
-        error
+        error,
       );
 
-      
       return NextResponse.json(
         {
           message: "Order processing failed",
         },
         {
           status: 500,
-        }
+        },
       );
     }
   }
 
   // ---------------------------------------
-  //  Handle failed payment
+  // 4. Handle failed payment
   // ---------------------------------------
 
   if (event.type === "payment_intent.payment_failed") {
@@ -164,12 +212,12 @@ export async function POST(req: NextRequest) {
 
       console.log(
         "CheckoutSession marked FAILED:",
-        paymentIntent.id
+        paymentIntent.id,
       );
     } catch (error) {
       console.error(
         "Failed to update CheckoutSession:",
-        error
+        error,
       );
 
       return NextResponse.json(
@@ -178,16 +226,16 @@ export async function POST(req: NextRequest) {
         },
         {
           status: 500,
-        }
+        },
       );
     }
   }
 
   // ---------------------------------------
-  // Tell Stripe we received the event
+  // 5. Tell Stripe we received the event
   // ---------------------------------------
 
   return NextResponse.json({
     received: true,
   });
-} 
+}

@@ -2,7 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X, User } from "lucide-react";
+import {
+  Menu,
+  X,
+  User,
+  Bell,
+} from "lucide-react";
 import Image from "next/image";
 
 import Cateringlogo from "../../assets/saif catering.png";
@@ -55,7 +60,6 @@ export default function Header() {
     try {
       await logoutAsync();
 
-      // Re-check JWT cookie after logout
       await refreshUser();
     } catch {
       // useLogout already handles the error/toast
@@ -97,66 +101,87 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Desktop User Dropdown */}
-        <div className="hidden min-w-12.5 justify-end md:flex">
-          {authLoading ? (
-            <Loader
-              variant="inline"
-              size={20}
-            />
-          ) : (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className="flex h-8 w-8 items-center justify-center rounded-full border bg-background transition hover:bg-muted focus:outline-none"
-                  aria-label="User menu"
-                >
-                  <User className="w-4" />
-                </button>
-              </DropdownMenuTrigger>
+        {/* Desktop Right Side */}
+        <div className="hidden items-center gap-3 md:flex">
 
-              <DropdownMenuContent
-                align="end"
-                className="w-44"
-              >
-                {isLoggedIn ? (
-                  <>
-                    <DropdownMenuItem
-                      onClick={goToDashboard}
-                      className="cursor-pointer"
-                    >
-                      Dashboard
-                    </DropdownMenuItem>
+          {/* Notification Bell */}
+          {isLoggedIn && (
+            <button
+              type="button"
+              aria-label="Notifications"
+              className="relative flex h-9 w-9 items-center justify-center rounded-full border bg-background transition hover:bg-muted focus:outline-none"
+            >
+              <Bell className="h-4 w-4" />
 
-                    <DropdownMenuItem
-                      onClick={handleLogout}
-                      disabled={isPending}
-                      className="cursor-pointer text-destructive focus:text-destructive"
-                    >
-                      {isPending
-                        ? "Logging out..."
-                        : "Logout"}
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <>
-                    <DropdownMenuItem asChild>
-                      <Link href="/auth/login">
-                        Login
-                      </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem asChild>
-                      <Link href="/auth/register">
-                        Register
-                      </Link>
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+              {/* Unread notification count */}
+              {/* Connect this later with notification state */}
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                0
+              </span>
+            </button>
           )}
+
+          {/* User Dropdown */}
+          <div className="min-w-12.5 justify-end">
+            {authLoading ? (
+              <Loader
+                variant="inline"
+                size={20}
+              />
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border bg-background transition hover:bg-muted focus:outline-none"
+                    aria-label="User menu"
+                  >
+                    <User className="w-4" />
+                  </button>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent
+                  align="end"
+                  className="w-44"
+                >
+                  {isLoggedIn ? (
+                    <>
+                      <DropdownMenuItem
+                        onClick={goToDashboard}
+                        className="cursor-pointer"
+                      >
+                        Dashboard
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem
+                        onClick={handleLogout}
+                        disabled={isPending}
+                        className="cursor-pointer text-destructive focus:text-destructive"
+                      >
+                        {isPending
+                          ? "Logging out..."
+                          : "Logout"}
+                      </DropdownMenuItem>
+                    </>
+                  ) : (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link href="/auth/login">
+                          Login
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild>
+                        <Link href="/auth/register">
+                          Register
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
         </div>
 
         {/* Mobile Menu Toggle */}

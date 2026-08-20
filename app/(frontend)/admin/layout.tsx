@@ -3,6 +3,7 @@ import Header from "./dashboard/(components)/Header"
 import { useState } from "react"
 import Sidebar from "./dashboard/(components)/Sidebar"
 import { useLogout } from "./dashboard/hooks/useLogout"
+import FCMInitializer from "./dashboard/(components)/FCMInitializer"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -23,6 +24,8 @@ export default function DashboardLayout({ children }:DashboardLayoutProps) {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
+   
+        <FCMInitializer />
         {/* Header */}
         <Header onLogout={logout} />
 
@@ -32,3 +35,4 @@ export default function DashboardLayout({ children }:DashboardLayoutProps) {
     </div>
   )
 }
+    
