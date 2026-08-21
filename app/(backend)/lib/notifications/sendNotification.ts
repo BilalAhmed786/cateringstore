@@ -3,16 +3,20 @@ type AdminNotificationData = {
   token: string;
   title: string;
   body: string;
+  type:string;
   orderId: string;
 };
 
-export async function sendAdminNotification({
+export async function sendNotification({
   token,
   title,
   body,
+  type,
   orderId,
 }: AdminNotificationData) {
   try {
+
+    console.log("Sending FCM to token:", token);
     const response = await admin.messaging().send({
       token,
 
@@ -22,7 +26,7 @@ export async function sendAdminNotification({
       },
 
       data: {
-        type: "NEW_ORDER",
+        type,
         orderId,
       },
 

@@ -18,12 +18,14 @@ import { useHeaderScroll } from "./hook/useHeaderScroll";
 import { useCurrentUser } from "./hook/useCurrentUser";
 import { MobileMenu } from "./components/MobileMenu";
 
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/app/(frontend)/components/ui/dropdown-menu";
+import { useNotificationStore } from "../../store/notificationStore";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -35,6 +37,9 @@ const navItems = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+
+  const [notificationOpen, setNotificationOpen] =
+    useState(false);
 
   const { showHeader } = useHeaderScroll();
 
@@ -51,6 +56,15 @@ export default function Header() {
   } = useLogout();
 
   const isLoggedIn = !!user;
+
+  // Notifications
+  const notifications = useNotificationStore(
+    (state) => state.notifications
+  );
+
+  const clearNotifications = useNotificationStore(
+    (state) => state.clearNotifications
+  );
 
   // ---------------------------------------
   // Logout
@@ -106,19 +120,86 @@ export default function Header() {
 
           {/* Notification Bell */}
           {isLoggedIn && (
-            <button
-              type="button"
-              aria-label="Notifications"
-              className="relative flex h-9 w-9 items-center justify-center rounded-full border bg-background transition hover:bg-muted focus:outline-none"
-            >
-              <Bell className="h-4 w-4" />
+            <div className="relative">
 
-              {/* Unread notification count */}
-              {/* Connect this later with notification state */}
-              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
-                0
-              </span>
-            </button>
+              <button
+                type="button"
+                aria-label="Notifications"
+                onClick={() =>
+                  setNotificationOpen(
+                    (prev) => !prev
+                  )
+                }
+                className="relative flex h-9 w-9 items-center justify-center rounded-full border bg-background transition hover:bg-muted focus:outline-none"
+              >
+                <Bell className="h-4 w-4" />
+
+                {/* Notification count */}
+                {notifications.length > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                    {notifications.length}
+                  </span>
+                )}
+              </button>
+
+              {/* Notification Dropdown */}
+              {notificationOpen && (
+                <div className="absolute right-0 top-11 z-50 w-80 overflow-hidden rounded-lg border bg-white shadow-xl">
+
+                  {/* Dropdown Header */}
+                  <div className="flex items-center justify-between border-b px-4 py-3">
+                    <h3 className="font-semibold">
+                      Notifications
+                    </h3>
+
+                    {notifications.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={clearNotifications}
+                        className="text-xs text-gray-500 transition hover:text-black"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Empty */}
+                  {notifications.length === 0 ? (
+                    <div className="px-4 py-6 text-center text-sm text-gray-500">
+                      No notifications
+                    </div>
+                  ) : (
+                    <div className="max-h-96 overflow-y-auto">
+
+                      {notifications.map(
+                        (notification) => (
+                          <div
+                            key={notification.id}
+                            className="cursor-pointer border-b px-4 py-3 transition hover:bg-gray-50"
+                          >
+                            <p className="font-medium text-gray-900">
+                              {notification.title}
+                            </p>
+
+                            <p className="mt-1 text-sm text-gray-500">
+                              {notification.body}
+                            </p>
+
+                            {notification.orderId && (
+                              <p className="mt-1 text-xs text-gray-400">
+                                Order ID:{" "}
+                                {notification.orderId}
+                              </p>
+                            )}
+                          </div>
+                        )
+                      )}
+
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           )}
 
           {/* User Dropdown */}

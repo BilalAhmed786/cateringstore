@@ -13,3 +13,23 @@ export interface CartStore {
 
   clearCart: ()=> void;
 }
+
+export type AdminNotification = {
+  id: string;
+  title: string;
+  body: string;
+  type?: string;
+  orderId?: string;
+};
+
+export interface NotificationStore {
+  notifications: AdminNotification[];
+
+  addNotification: (
+    notification: AdminNotification
+  ) => void;
+
+  removeNotification: (id: string) => void;
+
+  clearNotifications: () => void;
+}

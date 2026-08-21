@@ -25,16 +25,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Optional: only allow admin roles
-    if (
-      user.role !== "ADMIN" &&
-      user.role !== "SUPER_ADMIN"
-    ) {
-      return NextResponse.json(
-        { message: "Forbidden" },
-        { status: 403 },
-      );
-    }
 
     // Create token or update existing token
     const fcmToken = await prisma.fcmToken.upsert({

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Header from "../components/header/header";
 import Footer from "../components/footer/footer";
+import FCMInitializer from "../admin/dashboard/(components)/FCMInitializer";
 
 export default function PublicLayout({
   children,
@@ -19,6 +20,7 @@ export default function PublicLayout({
 
   return (
     <div className="w-full">
+      <FCMInitializer />
       <Header />
 
       <main className="w-full min-h-screen">

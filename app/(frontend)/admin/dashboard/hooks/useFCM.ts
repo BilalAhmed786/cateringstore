@@ -1,10 +1,16 @@
 "use client";
 
 import { useEffect } from "react";
-import {getMessaging,getToken,onMessage} from "firebase/messaging";
+import {
+  getMessaging,
+  getToken,
+  onMessage,
+} from "firebase/messaging";
 
 import { app } from "@/app/(frontend)/lib/firebase/firebase";
 import { apiRequest } from "@/app/(frontend)/components/reusables/apireq/apireq";
+import { useNotificationStore } from "@/app/(frontend)/store/notificationStore";
+
 
 export function useFCM() {
   useEffect(() => {
@@ -20,24 +26,64 @@ export function useFCM() {
           return;
         }
 
-        const permission = await Notification.requestPermission();
+        const permission =
+          await Notification.requestPermission();
 
         if (permission !== "granted") {
           console.log(
-            "Notification permission denied",
+            "Notification permission denied"
           );
           return;
         }
 
         const messaging = getMessaging(app);
 
+        // Register foreground listener
+        unsubscribe = onMessage(
+          messaging,
+          (payload) => {
+            console.log(
+              "FCM foreground message:",
+              payload
+            );
+
+            // Add notification to Zustand
+            useNotificationStore
+              .getState()
+              .addNotification({
+                id:
+                  payload.messageId ??
+                  crypto.randomUUID(),
+
+                title:
+                  payload.notification?.title ??
+                  "New Notification",
+
+                body:
+                  payload.notification?.body ??
+                  "",
+
+                type: payload.data?.type,
+
+                orderId: payload.data?.orderId,
+              });
+          }
+        );
+
+        console.log(
+          "FCM foreground listener registered"
+        );
+
+        // Get FCM token
         const token = await getToken(messaging, {
-          vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+          vapidKey:
+            process.env
+              .NEXT_PUBLIC_FIREBASE_VAPID_KEY,
         });
 
         if (!token) {
           console.log(
-            "FCM token was not generated",
+            "FCM token was not generated"
           );
           return;
         }
@@ -48,24 +94,13 @@ export function useFCM() {
         await apiRequest({
           url: "/api/admin/notification",
           method: "POST",
-          body: {token},
-          authRequired:true
+          body: { token },
+          authRequired: true,
         });
-
-        // Listen for foreground messages
-        unsubscribe = onMessage(
-          messaging,
-          (payload) => {
-            console.log(
-              "FCM foreground message:",
-              payload,
-            );
-          },
-        );
       } catch (error) {
         console.error(
           "FCM initialization failed:",
-          error,
+          error
         );
       }
     };
