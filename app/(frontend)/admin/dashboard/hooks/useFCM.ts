@@ -26,8 +26,7 @@ export function useFCM() {
           return;
         }
 
-        const permission =
-          await Notification.requestPermission();
+        const permission = await Notification.requestPermission();
 
         if (permission !== "granted") {
           console.log(
@@ -42,12 +41,7 @@ export function useFCM() {
         unsubscribe = onMessage(
           messaging,
           (payload) => {
-            console.log(
-              "FCM foreground message:",
-              payload
-            );
-
-            // Add notification to Zustand
+              // Add notification to Zustand
             useNotificationStore
               .getState()
               .addNotification({
@@ -69,28 +63,16 @@ export function useFCM() {
               });
           }
         );
-
-        console.log(
-          "FCM foreground listener registered"
-        );
-
-        // Get FCM token
+    // Get FCM token
         const token = await getToken(messaging, {
           vapidKey:
             process.env
               .NEXT_PUBLIC_FIREBASE_VAPID_KEY,
         });
 
-        if (!token) {
-          console.log(
-            "FCM token was not generated"
-          );
-          return;
-        }
-
-        console.log("FCM token:", token);
-
-        // Save FCM token
+        if (!token) return;
+        
+            // Save FCM token
         await apiRequest({
           url: "/api/admin/notification",
           method: "POST",
