@@ -1,10 +1,12 @@
 import { admin } from "@/app/(backend)/lib/firebase/firebase-admin";
+
 type AdminNotificationData = {
   token: string;
   title: string;
   body: string;
-  type:string;
-  orderId: string;
+  type: string;
+  orderId?: string; 
+  inquiryId?: string;
 };
 
 export async function sendNotification({
@@ -13,10 +15,23 @@ export async function sendNotification({
   body,
   type,
   orderId,
+  inquiryId,
 }: AdminNotificationData) {
   try {
-
     console.log("Sending FCM to token:", token);
+
+    const data: Record<string, string> = {
+      type,
+    };
+
+    if (orderId) { 
+      data.orderId = orderId;
+    }
+
+    if (inquiryId) {
+      data.inquiryId = inquiryId;
+    }
+
     const response = await admin.messaging().send({
       token,
 
@@ -25,10 +40,7 @@ export async function sendNotification({
         body,
       },
 
-      data: {
-        type,
-        orderId,
-      },
+      data,
 
       webpush: {
         notification: {

@@ -1,10 +1,13 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
-import { UniButton } from "@/app/(frontend)/components/reusables/button/button"
-import { Separator } from "@/app/(frontend)/components/ui/separator"
-import { NavItem, SubNav } from "@/app/(frontend)/components/reusables/navitem/navitem"
-import { SidebarProps } from "../types/types"
+import { useState } from "react";
+import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
+import { Separator } from "@/app/(frontend)/components/ui/separator";
+import {
+  NavItem,
+  SubNav,
+} from "@/app/(frontend)/components/reusables/navitem/navitem";
+import { SidebarProps } from "../types/types";
 
 import {
   Home,
@@ -21,21 +24,23 @@ import {
   Calendar,
   Layers,
   Star,
-} from "lucide-react"
+  CalendarCheck,
+} from "lucide-react";
 
 export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [categoryOpen, setCategoryOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [categoryOpen, setCategoryOpen] = useState(false);
 
   return (
     <aside
       className={`${
         open ? "w-64" : "w-20"
-      } bg-slate-900 border-r border-slate-800 transition-all duration-300 flex flex-col`}
+      } flex flex-col border-r border-slate-800 bg-slate-900 transition-all duration-300`}
     >
       {/* Header */}
-      <div className="p-6 flex items-center justify-between">
+      <div className="flex items-center justify-between p-6">
         {open && <h1 className="text-xl font-bold text-white">Dashboard</h1>}
+
         <button
           onClick={() => setOpen(!open)}
           className="text-slate-400 hover:text-white"
@@ -47,20 +52,50 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
       <Separator className="bg-slate-800" />
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2 text-slate-300">
-        <NavItem open={open} icon={Home} label="Dashboard" href="/admin/dashboard" />
-        <NavItem open={open} icon={ShoppingCart} label="Orders" href="/admin/orders" />
-        <NavItem open={open} icon={Users} label="Customers" href="/admin/customers" />
+      <nav className="flex-1 space-y-2 p-4 text-slate-300">
+        {/* Dashboard */}
+        <NavItem
+          open={open}
+          icon={Home}
+          label="Dashboard"
+          href="/admin/dashboard"
+        />
+
+        {/* Orders */}
+        <NavItem
+          open={open}
+          icon={ShoppingCart}
+          label="Orders"
+          href="/admin/orders"
+        />
+
+        {/* Tasting Inquiries */}
+        <NavItem
+          open={open}
+          icon={CalendarCheck}
+          label="Tasting Inquiries"
+          href="/admin/tasting"
+        />
+
+        {/* Customers */}
+        <NavItem
+          open={open}
+          icon={Users}
+          label="Customers"
+          href="/admin/customers"
+        />
 
         {/* MENU DROPDOWN */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+          className="flex w-full items-center gap-3 rounded-lg px-4 py-2 text-slate-400 transition hover:bg-slate-800 hover:text-white"
         >
           <Layers size={20} />
+
           {open && (
             <>
               <span className="text-sm font-medium">Menu</span>
+
               <ChevronDown
                 size={16}
                 className={`ml-auto transition-transform ${
@@ -73,9 +108,16 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
 
         {menuOpen && open && (
           <div className="ml-6 space-y-1">
-            <SubNav label="Menu Items" icon={Utensils} href="/admin/menu-items" />
+            <SubNav
+              label="Menu Items"
+              icon={Utensils}
+              href="/admin/menu-items"
+            />
+
             <SubNav label="Packages" icon={Package} href="/admin/packages" />
+
             <SubNav label="Hampers" icon={Gift} href="/admin/hampers" />
+
             <SubNav label="Events" icon={Calendar} href="/admin/events" />
           </div>
         )}
@@ -83,12 +125,14 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
         {/* CATEGORIES DROPDOWN */}
         <button
           onClick={() => setCategoryOpen(!categoryOpen)}
-          className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+          className="flex w-full items-center gap-3 rounded-lg px-4 py-2 text-slate-400 transition hover:bg-slate-800 hover:text-white"
         >
           <Package size={20} />
+
           {open && (
             <>
               <span className="text-sm font-medium">Categories</span>
+
               <ChevronDown
                 size={16}
                 className={`ml-auto transition-transform ${
@@ -101,14 +145,41 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
 
         {categoryOpen && open && (
           <div className="ml-6 space-y-1">
-            <SubNav label="Food Categories" icon={Utensils} href="/admin/categories/menu" />
-            <SubNav label="Event Categories" icon={Calendar} href="/admin/categories/event" />
-            <SubNav label="Hamper Categories" icon={Gift} href="/admin/categories/hamper" />
+            <SubNav
+              label="Food Categories"
+              icon={Utensils}
+              href="/admin/categories/menu"
+            />
+
+            <SubNav
+              label="Event Categories"
+              icon={Calendar}
+              href="/admin/categories/event"
+            />
+
+            <SubNav
+              label="Hamper Categories"
+              icon={Gift}
+              href="/admin/categories/hamper"
+            />
           </div>
         )}
-        <NavItem open={open} icon={Star} label="Reviews" href="/admin/reviews" />
-        <NavItem open={open} icon={Star} label="Surveys" href="/admin/surveys" />
-        <NavItem open={open} icon={Settings} label="Settings" href="/admin/settings" />
+
+        {/* Reviews */}
+        <NavItem
+          open={open}
+          icon={Star}
+          label="Reviews"
+          href="/admin/reviews"
+        />
+
+        {/* Settings */}
+        <NavItem
+          open={open}
+          icon={Settings}
+          label="Settings"
+          href="/admin/settings"
+        />
       </nav>
 
       <Separator className="bg-slate-800" />
@@ -118,11 +189,11 @@ export default function Sidebar({ open, setOpen, onLogout }: SidebarProps) {
         <UniButton
           onClick={onLogout}
           variant="ghost"
-          className="w-full justify-start text-slate-300 hover:text-red-400 hover:bg-slate-800"
+          className="w-full justify-start text-slate-300 hover:bg-slate-800 hover:text-red-400"
           icon={<LogOut size={20} />}
           label={open ? "Logout" : ""}
         />
       </div>
     </aside>
-  )
+  );
 }

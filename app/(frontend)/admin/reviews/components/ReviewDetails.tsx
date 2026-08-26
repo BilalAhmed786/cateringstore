@@ -51,6 +51,7 @@ export function ReviewDetails({ id }: Props) {
       {/* Back */}
       <Link href="/admin/reviews">
         <UniButton
+          className="mb-5"
           label="Back to Reviews"
           variant="outline"
           icon={
@@ -60,7 +61,7 @@ export function ReviewDetails({ id }: Props) {
       </Link>
 
       {/* Product */}
-      <Card>
+      <Card className="p-5">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
@@ -104,7 +105,7 @@ export function ReviewDetails({ id }: Props) {
       </Card>
 
       {/* Customer */}
-      <Card>
+      <Card className="p-5">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
@@ -148,7 +149,7 @@ export function ReviewDetails({ id }: Props) {
       </Card>
 
       {/* Review */}
-      <Card>
+      <Card className="p-5">
         <CardHeader>
           <CardTitle>
             Customer Review

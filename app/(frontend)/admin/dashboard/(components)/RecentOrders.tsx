@@ -22,7 +22,7 @@ export default function RecentOrders({ orders }: RecentOrdersProps) {
   const updateOrderStatus = useUpdateOrderStatus();
   const { user } = useCurrentUser();
   if (orders.length === 0) return <Loader />;
-  console.log(user);
+
   return (
     <Card className="bg-slate-800/50 border-slate-700">
       <h2 className="p-6 text-xl font-semibol text-white">Recent Orders</h2>

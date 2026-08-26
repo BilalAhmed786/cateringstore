@@ -27,6 +27,8 @@ model User {
   menuReviews    MenuItemReview[]
   orders         Order[]
   packageReviews PackageReview[]
+  tastingInquiry TastingInquiry[]
+  
 }
 
 
@@ -309,6 +311,28 @@ model HamperReview {
   @@unique([userId, hamperId])
 }
 
+model TastingInquiry {
+  id              String   @id @default(uuid())
+
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+
+  eventType       String
+  guests          String
+  date            DateTime
+  time            String
+  foodPreferences String[]
+  name            String
+  email           String
+  phone           String
+  message         String?
+
+  status         TastingInquiryStatus @default(PENDING)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
 enum Role {
   SUPER_ADMIN
   ADMIN
@@ -340,4 +364,11 @@ enum CheckoutStatus {
 enum DiscountType {
   PERCENTAGE
   FIXED
+}
+
+enum TastingInquiryStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
 }
