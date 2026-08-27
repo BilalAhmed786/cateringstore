@@ -55,7 +55,7 @@ export default function FeaturedMenuCategories() {
           itemClassName="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
           showArrows={false}
           renderItem={(category) => (
-            <div className="overflow-hidden rounded-2xl bg-white shadow transition-shadow duration-300 hover:shadow-xl">
+            <div className="overflow-hidden rounded-2xl shadow transition-shadow duration-300 hover:shadow-xl">
               <div className="group relative h-64 overflow-hidden">
                 <Image
                   src={category.image || "/placeholder.jpg"}

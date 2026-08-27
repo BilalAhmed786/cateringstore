@@ -1,38 +1,46 @@
-'use client'
-import Header from "./dashboard/(components)/Header"
-import { useState } from "react"
-import Sidebar from "./dashboard/(components)/Sidebar"
-import { useLogout } from "./dashboard/hooks/useLogout"
-import FCMInitializer from "./dashboard/(components)/FCMInitializer"
+"use client";
+
+import Header from "./dashboard/(components)/Header";
+import { useState } from "react";
+import Sidebar from "./dashboard/(components)/Sidebar";
+import { useLogout } from "./dashboard/hooks/useLogout";
+import FCMInitializer from "./dashboard/(components)/FCMInitializer";
+import ThemeProvider from "@/app/(frontend)/components/providers/ThemeProvider";
 
 interface DashboardLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
-export default function DashboardLayout({ children }:DashboardLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false) 
-  const { logout } = useLogout()
+export default function DashboardLayout({
+  children,
+}: DashboardLayoutProps) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const { logout } = useLogout();
 
   return (
-    <div className="flex h-screen bg-slate-100 overflow-hidden">
-      {/* Sidebar */}
-      <Sidebar
-        open={sidebarOpen}
-        setOpen={setSidebarOpen}
-        onLogout={logout}
-      />
+    <ThemeProvider>
+      <div className="flex h-screen overflow-hidden bg-background text-foreground">
+        {/* Sidebar */}
+        <Sidebar
+          open={sidebarOpen}
+          setOpen={setSidebarOpen}
+          onLogout={logout}
+        />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
-   
-        <FCMInitializer />
-        {/* Header */}
-        <Header onLogout={logout} />
+        {/* Right side */}
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+          <FCMInitializer />
 
-        {/* Page Content */}
-        <main className="overflow-auto w-full">{children}</main>
+          {/* Header */}
+          <Header onLogout={logout} />
+
+          {/* Main */}
+          <main className="min-h-0 flex-1 overflow-y-auto bg-background">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
-  )
+    </ThemeProvider>
+  );
 }
-    

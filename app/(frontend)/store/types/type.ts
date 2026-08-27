@@ -33,3 +33,31 @@ export interface NotificationStore {
 
   clearNotifications: () => void;
 }
+
+export type SidebarState =
+  | "expanded"
+  | "collapsed";
+
+export type AccentColor =
+  | "default"
+  | "blue"
+  | "green"
+  | "purple";
+
+export interface DashboardSettingsState {
+  sidebar: SidebarState;
+  rememberSidebar: boolean;
+  accentColor: AccentColor;
+
+  setSidebar: (
+    sidebar: SidebarState,
+  ) => void;
+
+  setRememberSidebar: (
+    value: boolean,
+  ) => void;
+
+  setAccentColor: (
+    color: AccentColor,
+  ) => void;
+}

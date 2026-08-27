@@ -44,7 +44,7 @@ export function DynamicShadcnForm({
 
       <CardContent>
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)} id="dynamic-form">
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
             <FieldGroup>
               {fields.map((field) => (
                 <FormField key={field.name} field={field} />
@@ -61,7 +61,6 @@ export function DynamicShadcnForm({
               )}
               <UniButton
                 type="submit"
-                form="dynamic-form"
                 loading={methods.formState.isSubmitting}
                 label={submitLabel}
               />

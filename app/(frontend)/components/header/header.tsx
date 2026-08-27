@@ -75,7 +75,7 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-40 border-b bg-white/90 shadow-sm backdrop-blur-md transition-transform duration-300 ${
+      className={`fixed inset-x-0 top-0 z-40 border-b bg-background/90 text-foreground shadow-sm backdrop-blur-md transition-transform duration-300 ${
         showHeader ? "translate-y-0" : "-translate-y-full"
       }`}
     >
@@ -263,7 +263,7 @@ export default function Header() {
 
       {/* Mobile Menu */}
       <MobileMenu
-        navItems={navItems}
+        navItems={[...navItems, ...moreItems]}
         isOpen={open}
         onClose={() => setOpen(false)}
         authLoading={authLoading}
