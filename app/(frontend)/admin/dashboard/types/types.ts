@@ -10,7 +10,7 @@ export type SidebarProps = {
 
 export type HeaderProps = {
   title?: string
-  onLogout: () => void
+  
 }
 
 export type StatItem = {
