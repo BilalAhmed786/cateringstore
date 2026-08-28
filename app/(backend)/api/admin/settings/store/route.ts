@@ -48,6 +48,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
+
 export async function PATCH(req: NextRequest) {
   try {
     const auth = await requireRole(req, [
@@ -69,14 +70,10 @@ export async function PATCH(req: NextRequest) {
       address,
       city,
       website,
-
-      // Configuration
       currency,
       timezone,
       storeStatus,
       maintenanceMessage,
-
-      // Store state
       isActive,
     } = body;
 
@@ -85,9 +82,7 @@ export async function PATCH(req: NextRequest) {
         {
           message: "Store name is required",
         },
-        {
-          status: 400,
-        }
+        { status: 400 }
       );
     }
 
@@ -142,11 +137,12 @@ export async function PATCH(req: NextRequest) {
         {
           message:
             "Store settings created successfully",
+
+          storeId: store.id,
+
           store,
         },
-        {
-          status: 201,
-        }
+        { status: 201 }
       );
     }
 
@@ -201,11 +197,12 @@ export async function PATCH(req: NextRequest) {
       {
         message:
           "Store settings updated successfully",
+
+        storeId: store.id,
+
         store,
       },
-      {
-        status: 200,
-      }
+      { status: 200 }
     );
   } catch (error) {
     console.error(
@@ -215,11 +212,10 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json(
       {
-        message: "Failed to update store settings",
+        message:
+          "Failed to update store settings",
       },
-      {
-        status: 500,
-      }
+      { status: 500 }
     );
   }
 }

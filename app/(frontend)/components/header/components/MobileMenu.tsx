@@ -19,7 +19,7 @@ export function MobileMenu({
   if (!isOpen) return null;
 
   return (
-    <div className="border-t bg-white md:hidden">
+    <div className="border-t b md:hidden">
       <nav className="flex flex-col p-4">
         {navItems.map((item) => (
           <Link

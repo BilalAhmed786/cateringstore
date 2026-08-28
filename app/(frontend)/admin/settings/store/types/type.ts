@@ -1,9 +1,13 @@
+export type StoreStatus = "OPEN" | "CLOSED";
+
 export interface StoreSettings {
   id: string;
 
   // Step 1 - Basic
   name: string;
   description: string | null;
+  logo: string | null;
+  logoPublicId: string | null;
 
   // Step 2 - Contact
   email: string | null;
@@ -15,11 +19,15 @@ export interface StoreSettings {
   // Step 3 - Configuration
   currency: string;
   timezone: string;
-  storeStatus: "OPEN" | "CLOSED";
+  storeStatus: StoreStatus;
   maintenanceMessage: string | null;
 
   // Store state
   isActive: boolean;
+
+  // Database timestamps
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface GetStoreSettingsResponse {
@@ -27,28 +35,36 @@ export interface GetStoreSettingsResponse {
 }
 
 export interface UpdateStoreSettingsPayload {
-  // Step 1 - Basic
   name: string;
   description?: string;
 
-  // Step 2 - Contact
   email?: string;
   phone?: string;
   address?: string;
   city?: string;
   website?: string;
 
-  // Step 3 - Configuration
   currency: string;
   timezone: string;
   storeStatus: "OPEN" | "CLOSED";
   maintenanceMessage?: string;
 
-  // Store state
   isActive: boolean;
+
+  // FileUploadInput returns File[]
+  file?: File[];
 }
 
 export interface UpdateStoreSettingsResponse {
   message: string;
+  storeId: string;
   store: StoreSettings;
+}
+
+export interface UploadStoreLogoResponse {
+  success: boolean;
+  message: string;
+  storeId: string;
+  logo: string | null;
+  logoPublicId: string | null;
 }

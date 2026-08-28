@@ -330,29 +330,29 @@ model TastingInquiry {
 }
 
 model StoreSettings {
-  id                 String      @id @default(uuid())
+  id String @id @default(uuid())
 
-  // Basic
-  name               String
-  description        String?
+  name String
+  description String?
 
-  // Contact
-  email              String?
-  phone              String?
-  address            String?
-  city               String?
-  website            String?
+  email String?
+  phone String?
+  address String?
+  city String?
+  website String?
 
-  // Configuration
-  currency           String      @default("PKR")
-  timezone           String      @default("Asia/Karachi")
-  storeStatus        StoreStatus @default(OPEN)
+  currency String @default("PKR")
+  timezone String @default("Asia/Karachi")
+  storeStatus StoreStatus @default(OPEN)
   maintenanceMessage String?
 
-  // Store state
-  isActive           Boolean     @default(true)
+  isActive Boolean @default(true)
 
-  updatedAt          DateTime    @updatedAt
+  logo String?
+  logoPublicId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum StoreStatus {

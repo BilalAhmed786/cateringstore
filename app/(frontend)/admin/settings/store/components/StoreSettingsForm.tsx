@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FieldValues, FormProvider, useForm } from "react-hook-form";
+import {
+  FieldValues,
+  FormProvider,
+  useForm,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -37,6 +41,19 @@ const fields = [
     label: "Store Description",
     type: "textarea" as const,
     required: false,
+  },
+  {
+    name: "logo",
+    label: "Store Logo",
+    type: "imagepreview" as const,
+    required: false,
+  },
+  {
+    name: "file",
+    label: "Upload New Logo",
+    type: "file" as const,
+    required: false,
+    multiple: false,
   },
   {
     name: "email",
@@ -103,31 +120,46 @@ export default function StoreSettingsForm() {
   const methods = useForm({
     resolver: zodResolver(generateSchema(fields)),
 
+    // IMPORTANT:
+    // Keep values when step components unmount.
+    shouldUnregister: false,
+
     defaultValues: {
       name: "",
       description: "",
+
+      // Existing Cloudinary URL
+      logo: "",
+
+      // FileUploadInput stores File[]
+      file: [] as File[],
+
       email: "",
       phone: "",
       address: "",
       city: "",
       website: "",
+
       currency: "PKR",
       timezone: "Asia/Karachi",
       storeStatus: "OPEN",
+
       maintenanceMessage: "",
     },
   });
 
-  /*
-   * Populate the SAME multistep form
-   * with database values.
-   */
   useEffect(() => {
     if (!data?.store) return;
 
     methods.reset({
       name: data.store.name ?? "",
       description: data.store.description ?? "",
+
+      // Existing logo URL
+      logo: data?.store.logo ?? "",
+
+      // Never put existing URL into file
+      file: [],
 
       email: data.store.email ?? "",
       phone: data.store.phone ?? "",
@@ -139,23 +171,30 @@ export default function StoreSettingsForm() {
       timezone: data.store.timezone ?? "Asia/Karachi",
       storeStatus: data.store.storeStatus ?? "OPEN",
 
-      maintenanceMessage: data.store.maintenanceMessage ?? "",
+      maintenanceMessage:
+        data.store.maintenanceMessage ?? "",
     });
-
-    // IMPORTANT:
-    // Don't setStep here.
-    // User stays on Step 1.
   }, [data, methods]);
 
   const nextStep = async () => {
     let fieldsToValidate: string[] = [];
 
     if (step === 1) {
-      fieldsToValidate = ["name", "description"];
+      fieldsToValidate = [
+        "name",
+        "description",
+        // Don't need to validate logo/file if optional
+      ];
     }
 
     if (step === 2) {
-      fieldsToValidate = ["email", "phone", "address", "city", "website"];
+      fieldsToValidate = [
+        "email",
+        "phone",
+        "address",
+        "city",
+        "website",
+      ];
     }
 
     const valid = await methods.trigger(fieldsToValidate);
@@ -170,31 +209,47 @@ export default function StoreSettingsForm() {
   };
 
   const handleSubmit = async (values: FieldValues) => {
+  
+
     await updateStore.mutateAsync({
-      name: values.name.trim(),
+      name: values.name?.trim(),
+
       description: values.description?.trim(),
 
       email: values.email?.trim(),
+
       phone: values.phone?.trim(),
+
       address: values.address?.trim(),
+
       city: values.city?.trim(),
+
       website: values.website?.trim(),
 
       currency: values.currency,
+
       timezone: values.timezone,
+
       storeStatus: values.storeStatus,
 
-      maintenanceMessage: values.maintenanceMessage?.trim(),
+      maintenanceMessage:
+        values.maintenanceMessage?.trim(),
 
-      // Keep existing database value
       isActive: data?.store.isActive ?? true,
+
+      // FileUploadInput returns File[]
+      file: Array.isArray(values.file)
+        ? values.file
+        : [],
     });
   };
 
   if (isLoading) {
     return (
       <Card>
-        <CardContent className="p-6">Loading store settings...</CardContent>
+        <CardContent className="p-6">
+          Loading store settings...
+        </CardContent>
       </Card>
     );
   }
@@ -205,14 +260,16 @@ export default function StoreSettingsForm() {
         <CardTitle>Store Settings</CardTitle>
 
         <CardDescription>
-          Manage your catering store information and configuration.
+          Manage your catering store information
+          and configuration.
         </CardDescription>
 
-        {/* Step indicator */}
         <div className="flex items-center gap-3 pt-4 text-sm">
           <span
             className={
-              step === 1 ? "font-semibold text-slate-900" : "text-slate-400"
+              step === 1
+                ? "font-semibold text-slate-900"
+                : "text-slate-400"
             }
           >
             1. Basic
@@ -222,7 +279,9 @@ export default function StoreSettingsForm() {
 
           <span
             className={
-              step === 2 ? "font-semibold text-slate-900" : "text-slate-400"
+              step === 2
+                ? "font-semibold text-slate-900"
+                : "text-slate-400"
             }
           >
             2. Contact
@@ -232,7 +291,9 @@ export default function StoreSettingsForm() {
 
           <span
             className={
-              step === 3 ? "font-semibold text-slate-900" : "text-slate-400"
+              step === 3
+                ? "font-semibold text-slate-900"
+                : "text-slate-400"
             }
           >
             3. Configuration
@@ -242,13 +303,17 @@ export default function StoreSettingsForm() {
 
       <CardContent>
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(handleSubmit)}>
+          <form
+            onSubmit={methods.handleSubmit(handleSubmit)}
+          >
             <FieldGroup>
-              {step === 1 && <StoreBasicStep />}
+              {step === 1 && <StoreBasicStep logo={data?.store?.logo || ""} />}
 
               {step === 2 && <StoreContactStep />}
 
-              {step === 3 && <StoreConfigurationStep />}
+              {step === 3 && (
+                <StoreConfigurationStep />
+              )}
             </FieldGroup>
 
             <div className="mt-6 flex justify-end gap-2">
@@ -262,13 +327,18 @@ export default function StoreSettingsForm() {
               )}
 
               {step < 3 ? (
-                <UniButton type="button" label="Next" onClick={nextStep} />
+                <UniButton
+                  type="button"
+                  label="Next"
+                  onClick={nextStep}
+                />
               ) : (
                 <UniButton
                   type="submit"
                   label="Save Store Settings"
                   loading={
-                    methods.formState.isSubmitting || updateStore.isPending
+                    methods.formState.isSubmitting ||
+                    updateStore.isPending
                   }
                 />
               )}

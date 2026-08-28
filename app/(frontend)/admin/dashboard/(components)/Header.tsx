@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { useNotificationStore } from "@/app/(frontend)/store/notificationStore";
+import { useDashboardSettingsStore } from "@/app/(frontend)/store/dashboardSettingsStore";
 
 interface HeaderProps {
   title?: string;
@@ -22,9 +23,9 @@ export default function Header({
 
   const [notificationOpen, setNotificationOpen] = useState(false);
 
-  const notifications = useNotificationStore(
-    (state) => state.notifications,
-  );
+  const notifications = useNotificationStore((state) => state.notifications);
+  const setSidebar = useDashboardSettingsStore((state) => state.setSidebar);
+  ;
 
   const clearNotifications = useNotificationStore(
     (state) => state.clearNotifications,
@@ -32,22 +33,22 @@ export default function Header({
 
   return (
     <div className="sticky top-0 z-30 flex w-full items-center justify-between border-b border-slate-800 bg-slate-900 px-4 py-4 backdrop-blur-sm md:px-8">
-      
       {/* Left side */}
       <div className="flex items-center gap-3">
         {/* Mobile menu button */}
         <button
           type="button"
-          onClick={() => setMobileOpen(!mobileOpen)}
+          onClick={() => {
+            setMobileOpen(!mobileOpen);
+            setSidebar("expanded");
+          }}
           className="flex h-9 w-9 items-center justify-center rounded-md text-white transition hover:bg-slate-800 md:hidden"
           aria-label={mobileOpen ? "Close sidebar" : "Open sidebar"}
         >
           {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
 
-        <h2 className="text-xl font-bold text-white md:text-2xl">
-          {title}
-        </h2>
+        <h2 className="text-xl font-bold text-white md:text-2xl">{title}</h2>
       </div>
 
       {/* Right side */}
@@ -72,9 +73,7 @@ export default function Header({
           {notificationOpen && (
             <div className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-lg border border-slate-700 bg-slate-900 shadow-xl">
               <div className="flex items-center justify-between border-b border-slate-700 px-4 py-3">
-                <h3 className="font-semibold text-white">
-                  Notifications
-                </h3>
+                <h3 className="font-semibold text-white">Notifications</h3>
 
                 {notifications.length > 0 && (
                   <button

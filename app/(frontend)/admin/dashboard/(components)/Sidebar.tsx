@@ -97,7 +97,7 @@ export default function Sidebar({
         {/* Header */}
         <div className="flex h-16 shrink-0 items-center justify-between px-4">
           {desktopExpanded && (
-            <h1 className="text-xl font-bold text-white">
+            <h1 className="text-xl font-bold">
               Dashboard
             </h1>
           )}
@@ -118,7 +118,7 @@ export default function Sidebar({
           {/* Mobile close button */}
           <button
             type="button"
-            onClick={() => setMobileOpen(false)}
+            onClick={() => {setMobileOpen(false); setSidebar("collapsed") }}
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-800 hover:text-white md:hidden"
           >
             <X size={20} />
@@ -128,7 +128,7 @@ export default function Sidebar({
         <Separator className="shrink-0 bg-slate-800" />
 
         {/* Navigation */}
-        <nav className="min-h-0 flex-1 overflow-y-auto p-4">
+        <nav className="min-h-0 flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:w-2">
           <div className="space-y-2">
 
             <NavItem
@@ -165,7 +165,7 @@ export default function Sidebar({
               onClick={() =>
                 setMenuOpen((previous) => !previous)
               }
-              className="flex w-full items-center gap-3 rounded-lg px-4 py-2 text-slate-400 transition hover:bg-slate-800 hover:text-white"
+              className="flex w-full items-center gap-3 rounded-lg px-4 py-2 transition hover:bg-slate-800 hover:text-white"
             >
               <Layers size={20} />
 
