@@ -7,12 +7,14 @@ interface CartCollapseProps {
   itemsCount: number;
   total:string;
   children: React.ReactNode;
+  currency?:string
 }
 
 export function CartCollapse({
   itemsCount,
   total,
   children,
+  currency
 }: CartCollapseProps) {
   const [open, setOpen] = useState(true);
 
@@ -36,7 +38,7 @@ export function CartCollapse({
               </p>
 
               <p className="text-sm text-muted-foreground">
-                Rs {total}
+                {currency} {total}
               </p>
             </div>
           </div>

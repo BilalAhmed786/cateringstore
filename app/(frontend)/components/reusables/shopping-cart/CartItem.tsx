@@ -8,8 +8,9 @@ import { UniButton } from "../button/button";
 import { CartItemProps } from "./carttypes";
 
 export function CartItem({
-  item
-}:CartItemProps) {
+  item,
+  currency
+ }:CartItemProps) {
   const increase = useCartStore((s) => s.increase);
   const decrease = useCartStore((s) => s.decrease);
   const removeItem = useCartStore((s) => s.removeItem);
@@ -38,7 +39,7 @@ export function CartItem({
           </h3>
 
           <p className="text-sm text-muted-foreground">
-            Rs {item.price ?? item.finalPrice}
+            {currency} {item.price ?? item.finalPrice}
           </p>
         </div>
 

@@ -11,10 +11,10 @@ import {
 
 import { Separator } from "@/app/(frontend)/components/ui/separator";
 import { useCartStore } from "@/app/(frontend)/store/useCartStore";
-
+import { useGetStoreSettings } from "@/app/(frontend)/admin/settings/store/hooks/useGetStoreSettings";
 export function OrderSummary() {
   const { items } = useCartStore();
-
+  const {data} = useGetStoreSettings()
   const total = items.reduce(
     (sum, item) => sum + (item.finalPrice ?? item.price ?? 0) * item.quantity,
     0
@@ -57,10 +57,10 @@ export function OrderSummary() {
                       Quantity: {item.quantity}
                     </p>
 
-                    <p>Rs {price.toFixed(2)}</p>
+                    <p>{data?.store.currency} {price.toFixed(2)}</p>
 
                     <p className="font-medium">
-                      Subtotal: Rs {(price * item.quantity).toFixed(2)}
+                      Subtotal: {data?.store.currency} {(price * item.quantity).toFixed(2)}
                     </p>
                   </div>
                 </div>
@@ -133,7 +133,7 @@ export function OrderSummary() {
           <div className="flex justify-between text-lg font-bold">
             <span>Total</span>
 
-            <span>Rs {total.toFixed(2)}</span>
+            <span>{data?.store.currency} {total.toFixed(2)}</span>
           </div>
         </div>
       </CardContent>

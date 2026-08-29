@@ -111,7 +111,6 @@ export const useCartStore = create<CartStore>()(
 // Useful selectors
 
 export const useCartItems = () => useCartStore((state) => state.items);
-
 export const useCartCount = () =>
   useCartStore((state) =>
     state.items.reduce((sum, item) => sum + item.quantity, 0),
@@ -120,7 +119,7 @@ export const useCartCount = () =>
 export const useCartSubtotal = () =>
   useCartStore((state) =>
     state.items.reduce(
-      (sum, item) => sum + (item.finalPrice ?? 0) * item.quantity,
+      (sum, item) => sum + (item.finalPrice || item.price || 0) * item.quantity,
       0,
     ),
   );
