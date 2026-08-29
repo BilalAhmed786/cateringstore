@@ -17,7 +17,7 @@ import { useCreateMenuItemReview } from "../hook/useCreateMenuItemReview";
 import { ReviewSection } from "@/app/(frontend)/components/reusables/reviewsection/reviewsection";
 import { BaseSelect } from "@/app/(frontend)/components/reusables/filters/filterselect";
 import { useGetMenuItemReviews } from "../hook/useGetMenuItemReviews";
-
+import { useGetStoreSettings } from "@/app/(frontend)/admin/settings/store/hooks/useGetStoreSettings";
 interface MenuItemDetailsSheetProps {
   id: string | null;
   open: boolean;
@@ -45,6 +45,7 @@ export function MenuItemDetailsSheet({
 }: MenuItemDetailsSheetProps) {
   const [rating, setRating] = useState("all");
   const [sort, setSort] = useState("desc");
+  const {data:storedata} = useGetStoreSettings()
   // Product details API
   const { data, isLoading } = useGetMenuItemById(id ?? "");
   // Reviews API
@@ -126,7 +127,7 @@ export function MenuItemDetailsSheet({
             <div className="space-y-3">
               <h2 className="text-3xl font-bold">{data.title}</h2>
 
-              <p className="text-3xl font-bold text-primary">Rs {data.price}</p>
+              <p className="text-3xl font-bold text-primary">{storedata?.store.currency} {data.price}</p>
 
               {/* Rating summary now comes from reviews API */}
               <div className="flex items-center gap-2">

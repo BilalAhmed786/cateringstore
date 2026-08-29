@@ -4,15 +4,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { Menu, X, User, Bell, ChevronDown } from "lucide-react";
 import Image from "next/image";
-
-import Cateringlogo from "../../assets/saif catering.png";
-
 import { Loader } from "../reusables/loader/loader";
 import { UniButton } from "../reusables/button/button";
 
 import { useLogout } from "@/app/(frontend)/admin/dashboard/hooks/useLogout";
 import { useHeaderScroll } from "./hook/useHeaderScroll";
 import { useCurrentUser } from "./hook/useCurrentUser";
+import { useGetStoreSettings } from "../../admin/settings/store/hooks/useGetStoreSettings";
 import { MobileMenu } from "./components/MobileMenu";
 
 import {
@@ -40,7 +38,8 @@ const moreItems = [
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
-
+ const  {data}= useGetStoreSettings()
+ 
   const { showHeader } = useHeaderScroll();
 
   const {
@@ -93,15 +92,20 @@ export default function Header() {
         {/* ================================================= */}
 
         <div className="flex w-[65px] shrink-0 items-center">
+          {!data?.store.logo ? 
+          
+          <Loader/> : 
           <Link href="/">
             <Image
-              src={Cateringlogo}
-              alt="Catering Logo"
+              src={data?.store?.logo ?? ""}
+              alt="data.store.name"
               width={65}
               height={50}
               className="rounded-full object-cover"
             />
           </Link>
+          
+        }
         </div>
 
         {/* ================================================= */}

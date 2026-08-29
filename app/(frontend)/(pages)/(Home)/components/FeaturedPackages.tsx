@@ -10,11 +10,12 @@ import { PackageCustomizeSheet } from "../../packages/components/PackageCustomiz
 import { useState } from "react";
 import { useGetPackages } from "@/app/(frontend)/admin/packages/hooks/usegetpackages";
 import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
-
+import { useGetStoreSettings } from "@/app/(frontend)/admin/settings/store/hooks/useGetStoreSettings";
 export default function FeaturedPackages() {
   const { data: packages, isLoading } = useGetPackages({page:1,limit:1000});
   const [customizeOpen, setCustomizeOpen] = useState(false);
-   const [selectedPackageId, setSelectedPackageId] = useState<string | null>(null);
+  const [selectedPackageId, setSelectedPackageId] = useState<string | null>(null);
+  const {data:storedata} =useGetStoreSettings()
   if (isLoading) {
     return (
       <section className="py-24">
@@ -73,7 +74,7 @@ export default function FeaturedPackages() {
                 />
 
                 <div className="absolute right-4 top-4 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow">
-                  Rs. {pkg.finalPrice}
+                   {storedata?.store?.currency} {pkg.finalPrice}
                 </div>
               </div>
 

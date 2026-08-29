@@ -10,7 +10,7 @@ import { QuantitySelector } from "./QuantitySelector";
 import { UniButton } from "../button/button";
 import { useCartStore } from "@/app/(frontend)/store/useCartStore";
 import { ProductCardProps } from "./types";
-
+import { useGetStoreSettings } from "@/app/(frontend)/admin/settings/store/hooks/useGetStoreSettings";
 export function ProductCard({
   item,
   type,
@@ -19,9 +19,9 @@ export function ProductCard({
   renderActions,
 }: ProductCardProps) {
   const { items, addItem, increase, decrease } = useCartStore();
-
+  const {data} = useGetStoreSettings()
   const cartItem = items.find((i) => i.id === item.id);
-console.log(item)
+
   return (
     <Card
       onClick={onClick}
@@ -73,7 +73,7 @@ console.log(item)
 
         <div className="flex items-center justify-between">
           <span className="text-xl font-bold text-primary">
-            Rs {item.price ?? item.finalPrice}
+             {data?.store.currency} {item.price ?? item.finalPrice}
           </span>
 
           <div onClick={(e) => e.stopPropagation()}>

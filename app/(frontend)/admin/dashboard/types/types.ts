@@ -17,7 +17,7 @@ export type StatItem = {
   label: string
   value: string
   trend?: string
-  icon: ComponentType<{ size?: number; className?: string }>
+ icon: ComponentType<{ size?: number; className?: string }>
 }
 
 export type StatCardProps = StatItem

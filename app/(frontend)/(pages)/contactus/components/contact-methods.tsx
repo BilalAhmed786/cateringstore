@@ -1,28 +1,35 @@
-import { Mail, MapPin, Phone } from "lucide-react";
+'use client'
 
+import { Mail, MapPin, Phone } from "lucide-react";
+import { useGetStoreSettings } from "@/app/(frontend)/admin/settings/store/hooks/useGetStoreSettings";
+import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 export default function ContactMethods() {
+
+  const {data} =useGetStoreSettings()
+ 
+  if (!data)  return <Loader variant="page"/>
   return (
+    
     <section className="border-b">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-3">
           <ContactMethod
             icon={<Phone className="h-6 w-6" />}
             title="Call Us"
-            value="YOUR PHONE NUMBER"
+            value={data?.store.phone??""}
             description="Speak directly with our catering team."
           />
-
           <ContactMethod
             icon={<Mail className="h-6 w-6" />}
             title="Email Us"
-            value="YOUR EMAIL ADDRESS"
+            value={data?.store.email??""}
             description="Send us your questions or event details."
           />
 
           <ContactMethod
             icon={<MapPin className="h-6 w-6" />}
             title="Find Us"
-            value="YOUR BUSINESS ADDRESS"
+            value={data?.store.address || ""}
             description="Visit our catering location."
           />
         </div>

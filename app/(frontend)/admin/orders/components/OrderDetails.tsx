@@ -6,7 +6,6 @@ import { OrderItemsSection } from "./OrderItemsSection";
 import { OrderSummaryCards } from "./OrderSummaryCards";
 import { OrderTotal } from "./OrderTotal";
 
-
 interface OrderDetailsProps {
   order: Order;
 }

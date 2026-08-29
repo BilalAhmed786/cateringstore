@@ -2,17 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { requireRole } from "@/app/(backend)/lib/guard/roleGuard";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const auth = await requireRole(req, [
-      "ADMIN",
-      "SUPER_ADMIN",
-    ]);
-
-    if (auth instanceof NextResponse) {
-      return auth;
-    }
-
+ 
     const store = await prisma.storeSettings.findFirst();
 
     if (!store) {

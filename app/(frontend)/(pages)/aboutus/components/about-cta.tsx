@@ -30,7 +30,7 @@ export default function AboutCTA() {
                 />
               </Link>
 
-              <Link href="/contact">
+              <Link href="/contactus">
                 <UniButton
                   label="Contact Us"
                   variant="default"

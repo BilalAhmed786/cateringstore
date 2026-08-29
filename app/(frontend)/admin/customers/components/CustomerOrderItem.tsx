@@ -1,11 +1,9 @@
 "use client";
 
 import Link from "next/link";
-
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
-
 import type { CustomerOrder } from "../types/type";
-
+import { useGetStoreSettings } from "../../settings/store/hooks/useGetStoreSettings";
 interface Props {
   order: CustomerOrder;
 }
@@ -13,6 +11,8 @@ interface Props {
 export function CustomerOrderItem({
   order,
 }: Props) {
+
+  const {data} = useGetStoreSettings()
   return (
     <div className="flex flex-wrap items-center justify-between gap-4 rounded-md border p-4">
 
@@ -33,7 +33,7 @@ export function CustomerOrderItem({
       <div className="flex items-center gap-4">
 
         <span className="font-medium">
-          Rs {order.total.toLocaleString()}
+          {data?.store.currency} {order.total.toLocaleString()}
         </span>
 
         <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium">

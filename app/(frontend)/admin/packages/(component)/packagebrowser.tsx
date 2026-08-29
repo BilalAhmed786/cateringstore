@@ -138,10 +138,10 @@ export default function PackageBrowser({
         onSelect={onSelectItem} 
         renderPrice={(i) => (
           <span>
-            Rs {i.finalPrice}{" "}
+             {i.finalPrice}{" "}
             {i.originalPrice && (
               <span className="line-through text-sm text-gray-400 ml-2">
-                Rs {i.originalPrice}
+               {i.originalPrice}
               </span>
             )}
           </span>

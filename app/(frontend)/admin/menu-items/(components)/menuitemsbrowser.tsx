@@ -121,7 +121,7 @@ export default function MenuItemBrowser({
         selectable={selectable}
         onSelect={onSelectItem}
         actions={getActions}
-        renderPrice={(i) => <span>Rs {i.price}</span>}
+        renderPrice={(i) => <span>{i.price}</span>}
         renderMeta={(i) => (
           <RatingSummary rating={i.averageRating} count={i.totalReviews} />
         )}

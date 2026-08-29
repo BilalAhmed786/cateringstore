@@ -5,7 +5,7 @@ import { Button } from "@/app/(frontend)/components/ui/button";
 
 import { EntityCartProps } from "../types/types";
 import { CartCollapse } from "./cartcollapse";
-
+import { useGetStoreSettings } from "@/app/(frontend)/admin/settings/store/hooks/useGetStoreSettings";
 export function EntityCart({
   title = "Selected Items",
   items,
@@ -16,6 +16,8 @@ export function EntityCart({
   const removeItem = (id: string) => {
     onChange(items.filter((i) => i.id !== id));
   };
+  
+  const {data} = useGetStoreSettings()
 
   const updateQty = (id: string, qty: number) => {
     onChange(
@@ -72,7 +74,7 @@ export function EntityCart({
             </p>
 
             <p className="text-sm text-muted-foreground">
-              Rs {item.price || item.finalPrice}
+              {data?.store.currency} {item.price || item.finalPrice}
             </p>
 
             <div className="mt-2 flex items-center gap-2">
@@ -112,7 +114,7 @@ export function EntityCart({
 
       {showTotal && items.length > 0 && (
         <div className="border-t pt-3 text-right font-semibold">
-          Total: Rs {Math.floor(total * 10) / 10}
+          Total: {data?.store.currency} {Math.floor(total * 10) / 10}
         </div>
       )}
     </div>

@@ -3,13 +3,16 @@
 import Image from "next/image";
 import { Package } from "lucide-react";
 import { OrderItemDisplay } from "../types/type";
-
+import { useGetStoreSettings } from "../../settings/store/hooks/useGetStoreSettings";
 
 interface Props {
   item: OrderItemDisplay;
 }
 
 export function OrderProduct({ item }: Props) {
+
+  const {data} = useGetStoreSettings()
+
   return (
     <div className="flex items-center gap-4 m-5">
       {/* Image */}
@@ -43,12 +46,11 @@ export function OrderProduct({ item }: Props) {
       {/* Price */}
       <div className="text-right">
         <p className="font-semibold">
-          Rs {item.price.toLocaleString()}
+          {data?.store.currency} {item.price.toLocaleString()}
         </p>
 
         <p className="text-sm text-muted-foreground">
-          Rs{" "}
-          {(item.price * item.quantity).toLocaleString()}
+           {data?.store.currency} {(item.price * item.quantity).toLocaleString()}
         </p>
       </div>
     </div>

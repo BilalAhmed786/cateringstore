@@ -15,7 +15,7 @@ import { EventDetailsSheetProps } from "../types/type";
 import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
 import { ReviewSection } from "@/app/(frontend)/components/reusables/reviewsection/reviewsection";
 import { BaseSelect } from "@/app/(frontend)/components/reusables/filters/filterselect";
-
+import { useGetStoreSettings } from "@/app/(frontend)/admin/settings/store/hooks/useGetStoreSettings";
 const ratingOptions = [
   { label: "All Ratings", value: "all" },
   { label: "5 Stars", value: "5" },
@@ -47,8 +47,8 @@ export function EventDetailsSheet({
   onReviewSubmit,
 }: EventDetailsSheetProps) {
 
- 
-  return (
+ const {data:storedata} = useGetStoreSettings()
+   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
@@ -99,7 +99,7 @@ export function EventDetailsSheet({
               </h2>
 
               <div className="text-3xl font-bold text-primary">
-                Rs {data.finalPrice}
+                {storedata?.store?.currency} {data.finalPrice}
               </div>
 
               {/* Rating comes from review API */}

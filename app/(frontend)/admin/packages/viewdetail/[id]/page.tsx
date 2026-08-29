@@ -9,6 +9,7 @@ import { Menuitemdetail } from "../../../../components/reusables/menuitemdetail/
 
 
 
+
 export default function ViewPackageItemsPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();

@@ -1,3 +1,4 @@
+"use client"
 import {
   ShoppingCart,
   Users,
@@ -9,10 +10,13 @@ import type {
   DashboardStats,
   StatItem,
 } from "../types/types";
-
 export function formatDashboardStats(
-  stats: DashboardStats
+  stats: DashboardStats,
+  currency?:string
+  
 ): StatItem[] {
+
+   
   return [
     {
       label: "Total Orders",
@@ -30,7 +34,7 @@ export function formatDashboardStats(
 
     {
       label: "Revenue",
-      value: `Rs ${stats.revenue.value.toLocaleString()}`,
+      value: `${currency} ${stats.revenue.value.toLocaleString()}`,
       trend: `${stats.revenue.trend >= 0 ? "+" : ""}${stats.revenue.trend.toFixed(1)}%`,
       icon: TrendingUp,
     },

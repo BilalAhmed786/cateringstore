@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { useGetStoreSettings } from "../../admin/settings/store/hooks/useGetStoreSettings";
 import {
   Facebook,
   Instagram,
@@ -8,8 +9,10 @@ import {
   Phone,
   Twitter,
 } from "lucide-react";
-import Cateringlogo from "../../assets/saif catering.png";
+import { Loader } from "../reusables/loader/loader";
 export default function Footer() {
+  const { data } = useGetStoreSettings();
+
   return (
     <footer className="border-t bg-gray-950 text-gray-300">
       <div className="mx-auto max-w-11/12 px-6 py-14">
@@ -17,24 +20,25 @@ export default function Footer() {
           {/* Column 1 */}
           <div>
             <Link href="/" className="flex items-center gap-3">
-              <Image
-                src={Cateringlogo}
-                className="rounded-full"
-                alt="Saif Catering Logo"
-                width={70}
-                priority
-              />
+              {data?.store?.logo && (
+                <Image
+                  src={data.store.logo}
+                  className="rounded-full"
+                  alt={data.store.name || "Store logo"}
+                  width={70}
+                  height={70}
+                  priority
+                />
+              )}
               <div>
                 <span className="text-2xl font-bold text-white">
-                  Saif Catering
+                  {data?.store.name}
                 </span>
               </div>
             </Link>
 
             <p className="mt-4 text-sm leading-7 text-gray-400">
-              Delicious food, elegant presentation, and unforgettable catering
-              services for weddings, birthdays, corporate events, and family
-              gatherings.
+             {data?.store.description}
             </p>
 
             <div className="mt-6 flex gap-4">
@@ -120,23 +124,26 @@ export default function Footer() {
             <h3 className="mb-5 text-lg font-semibold text-white">
               Contact Us
             </h3>
+            {!data?.store ? (
+              <Loader variant="inline" className="flex justify-start" />
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <MapPin className="mt-1 text-amber-500" size={18} />
+                  <p>{data?.store.city}</p>
+                </div>
 
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <MapPin className="mt-1 text-amber-500" size={18} />
-                <p>Rawalpindi, Pakistan</p>
-              </div>
+                <div className="flex items-center gap-3">
+                  <Phone className="text-amber-500" size={18} />
+                  <p>{data?.store.phone}</p>
+                </div>
 
-              <div className="flex items-center gap-3">
-                <Phone className="text-amber-500" size={18} />
-                <p>+92 300 1234567</p>
+                <div className="flex items-center gap-3">
+                  <Mail className="text-amber-500" size={18} />
+                  <p>{data?.store.email}</p>
+                </div>
               </div>
-
-              <div className="flex items-center gap-3">
-                <Mail className="text-amber-500" size={18} />
-                <p>info@cateringstore.com</p>
-              </div>
-            </div>
+            )}
           </div>
         </div>
 

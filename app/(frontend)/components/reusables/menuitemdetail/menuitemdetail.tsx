@@ -5,11 +5,12 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/app/(frontend)/comp
 import { Badge } from "@/app/(frontend)/components/ui/badge";
 import { PackageMenuItem } from "../../../admin/packages/types/type";
 import { HampereMenuItem } from "../../../admin/hampers/types/type";
+import { useGetStoreSettings } from "@/app/(frontend)/admin/settings/store/hooks/useGetStoreSettings";
 
 
 
 export function Menuitemdetail({ items }: { items:PackageMenuItem[] | HampereMenuItem[]} ) {
-
+const {data} = useGetStoreSettings()
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {items?.map((item,index) => {
@@ -43,7 +44,7 @@ export function Menuitemdetail({ items }: { items:PackageMenuItem[] | HampereMen
             {/* Card Content */}
             <CardContent className="flex flex-col gap-2">
               <h3 className="text-lg font-semibold line-clamp-1">{item.menuItem.title}</h3>
-              <p className="text-gray-600 font-medium">Rs {item.menuItem.price}</p>
+              <p className="text-gray-600 font-medium">{data?.store.currency} {item.menuItem.price}</p>
               <p className="text-gray-500 text-sm">
                 Quantity: <strong>{item.quantity}</strong>
               </p>

@@ -11,7 +11,7 @@ export function useGetStoreSettings() {
         return await apiRequest<GetStoreSettingsResponse>({
           url: "/api/admin/settings/store",
           method: "GET",
-          authRequired: true,
+          
         });
       } catch (error: unknown) {
         console.error("Get store settings error:", error);

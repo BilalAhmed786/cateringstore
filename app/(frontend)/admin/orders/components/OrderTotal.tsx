@@ -9,7 +9,7 @@ import { MenuItemDropdown } from "@/app/(frontend)/components/reusables/actiondr
 import { Order } from "../types/type";
 import { useCurrentUser } from "@/app/(frontend)/components/header/hook/useCurrentUser";
 import { useUpdateOrderStatus } from "../../dashboard/hooks/useUpdateOrderStatus";
-
+import { useGetStoreSettings } from "../../settings/store/hooks/useGetStoreSettings";
 
 interface Props {
   order: Order;
@@ -27,7 +27,7 @@ export function OrderTotal({ order }: Props) {
   const { user } = useCurrentUser();
 
   const updateOrderStatus = useUpdateOrderStatus();
-
+  const {data} = useGetStoreSettings()
   const isSuperAdmin = user?.role === "SUPER_ADMIN";
 
   return (
@@ -39,7 +39,7 @@ export function OrderTotal({ order }: Props) {
           </p>
 
           <p className="text-2xl font-bold">
-            Rs {order.total.toLocaleString()}
+            {data?.store.currency} {order.total.toLocaleString()}
           </p>
         </div>
 

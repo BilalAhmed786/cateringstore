@@ -11,6 +11,7 @@ import { formatDashboardStats } from "./(components)/formatDashboardStats";
 
 import { MenuItemDropdown } from "@/app/(frontend)/components/reusables/actiondropdown/actiondropdown";
 import { useGetOrders } from "../orders/hooks/useOrders";
+import { useGetStoreSettings } from "../settings/store/hooks/useGetStoreSettings";
 
 const periods:duration[] = [
   {
@@ -35,7 +36,7 @@ export default function AdminDashboard() {
   const [period, setPeriod] = useState<StatsPeriod>("1m");
 
   const statsQuery = useDashboardStats(period);
-
+  const {data} = useGetStoreSettings()
   const ordersQuery = useGetOrders({
     page: 1,
     limit: 5,
@@ -43,9 +44,7 @@ export default function AdminDashboard() {
     status:""
   });
 
-  const stats = statsQuery.data
-    ? formatDashboardStats(statsQuery.data)
-    : [];
+  const stats = statsQuery.data? formatDashboardStats(statsQuery.data,data?.store.currency): [];
 
   const orders = ordersQuery.data?.orders ?? [];
 

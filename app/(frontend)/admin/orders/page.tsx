@@ -12,7 +12,7 @@ import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 import { useGetOrders } from "./hooks/useOrders";
-
+import { useGetStoreSettings } from "../settings/store/hooks/useGetStoreSettings";
 
 const statusOptions = [
   { label: "All", value: "all" },
@@ -31,7 +31,7 @@ export default function OrdersPage() {
   const limit = 10;
 
   const debouncedSearch = useDebounce(search, 700);
-
+  const {data:storedata} = useGetStoreSettings()
   const { data, isFetching } = useGetOrders({
     page,
     limit,
@@ -132,7 +132,7 @@ export default function OrdersPage() {
                   header: "Total",
                   accessor: (order) => (
                     <span className="font-medium">
-                      Rs {order.total.toLocaleString()}
+                      {storedata?.store.currency} {order.total.toLocaleString()}
                     </span>
                   ),
                 },

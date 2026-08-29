@@ -7,6 +7,7 @@ import { MenuItemDropdown } from "@/app/(frontend)/components/reusables/actiondr
 import { RatingSummary } from "../ratingsummary/ratingsummary";
 import { EntityGridProps } from "./gridtypes";
 import { Loader } from "../loader/loader";
+import { useGetStoreSettings } from "@/app/(frontend)/admin/settings/store/hooks/useGetStoreSettings";
 
 export function EntityGrid({
   items,
@@ -15,6 +16,8 @@ export function EntityGrid({
   onSelect,
   actions,
 }: EntityGridProps) {
+
+  const {data} = useGetStoreSettings()
 
   if (isLoading) {
     return (
@@ -84,7 +87,7 @@ export function EntityGrid({
 
             <CardFooter className="mt-4 flex items-center justify-between p-0">
               {"price" in item && (
-                <span className="font-medium text-gray-800">Rs {item.price}</span>
+                <span className="font-medium text-gray-800">{data?.store.currency} {item.price}</span>
               )}
 
               {"finalPrice" in item && (
@@ -92,14 +95,14 @@ export function EntityGrid({
                   {item.originalPrice ? (
                     <>
                       <span className="text-xs line-through text-gray-400">
-                        Rs {item.originalPrice}
+                        {data?.store.currency} {item.originalPrice}
                       </span>
                       <span className="font-semibold text-green-600">
-                        Rs {item.finalPrice}
+                        {data?.store.currency} {item.finalPrice}
                       </span>
                     </>
                   ) : (
-                    <span className="font-semibold">Rs {item.finalPrice}</span>
+                    <span className="font-semibold">{data?.store.currency} {item.finalPrice}</span>
                   )}
                 </div>
               )}

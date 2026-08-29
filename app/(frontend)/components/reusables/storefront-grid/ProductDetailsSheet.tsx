@@ -13,7 +13,7 @@ import {
 import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
 import { ReviewSection } from "@/app/(frontend)/components/reusables/reviewsection/reviewsection";
 import { BaseSelect } from "@/app/(frontend)/components/reusables/filters/filterselect";
-
+import { useGetStoreSettings } from "@/app/(frontend)/admin/settings/store/hooks/useGetStoreSettings";
 import { ProductDetailsSheetProps } from "./types";
 
 const ratingOptions = [
@@ -44,7 +44,8 @@ export function ProductDetailsSheet({
   onReviewSubmit,
 }: ProductDetailsSheetProps) {
 
-  return (
+  const {data:storedata} = useGetStoreSettings()
+   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
@@ -99,7 +100,7 @@ export function ProductDetailsSheet({
               </h2>
 
               <div className="text-3xl font-bold text-primary">
-                Rs {data.finalPrice}
+                {storedata?.store.currency} {data.finalPrice}
               </div>
 
               {/* Rating Summary */}
