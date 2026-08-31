@@ -9,6 +9,8 @@ export function ReviewSection({
   onSubmit,
   title = "Customer Reviews",
 }: ReviewSectionProps) {
+
+  
   return (
     <section className="space-y-5">
       <h3 className="text-2xl font-semibold">
@@ -48,7 +50,6 @@ export function ReviewSection({
           No reviews yet.
         </p>
       )}
-
       {/* Review Form */}
       {canReview && onSubmit && (
         <div className="rounded-xl border border-primary bg-primary/5 p-5">

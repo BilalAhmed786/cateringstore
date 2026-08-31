@@ -2,7 +2,7 @@
 import { Label } from "../../ui/label";
 import { Slider } from "../../ui/slider";
 import { PriceFilterProps } from "../types/types";
-
+import { useGetStoreSettings } from "@/app/(frontend)/admin/settings/store/hooks/useGetStoreSettings";
 
 export function PriceFilter({
   label = "Price Range",
@@ -12,7 +12,10 @@ export function PriceFilter({
   step = 100,
   onChange,
 }: PriceFilterProps) {
+  const {data} = useGetStoreSettings()
+
   return (
+
     <div className="space-y-3">
       <Label>{label}</Label>
 
@@ -25,8 +28,8 @@ export function PriceFilter({
       />
 
       <div className="flex justify-between  text-sm text-muted-foreground">
-        <span>Rs {value[0]}</span>
-        <span>Rs {value[1]}</span>
+        <span>{data?.store.currency} {value[0]}</span>
+        <span>{data?.store.currency}  {value[1]}</span>
       </div>
     </div>
   );
