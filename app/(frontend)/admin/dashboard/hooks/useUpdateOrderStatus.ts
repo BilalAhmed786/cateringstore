@@ -23,7 +23,7 @@ export function useUpdateOrderStatus() {
       id,
       status,
     }: UpdateOrderStatusPayload) => {
-      console.log("🔵 1. Sending status update:", {
+      console.log("1. Sending status update:", {
         orderId: id,
         status,
       });

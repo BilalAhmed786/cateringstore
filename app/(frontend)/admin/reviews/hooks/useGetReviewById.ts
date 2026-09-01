@@ -12,7 +12,7 @@ export function useGetReviewById(id: string) {
 
     queryFn: () =>
       apiRequest<AdminReview>({
-        url: `/api/review/${id}`,
+        url: `/api/admin/review/${id}`,
         method: "GET",
         authRequired: true,
       }),

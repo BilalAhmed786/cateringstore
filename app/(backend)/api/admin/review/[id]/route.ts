@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { requireRole } from "../../../lib/guard/roleGuard";
+import { requireRole } from "../../../../lib/guard/roleGuard";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
-import { normalizeMenuItemReview, normalizePackageReview, normalizeEventReview, normalizeHamperReview } from "../utils/normalizeReview";
+import { normalizeMenuItemReview, normalizePackageReview, normalizeEventReview, normalizeHamperReview } from "../../../review/utils/normalizeReview";
 
 
 interface Params {

@@ -29,7 +29,7 @@ export function useGetReviews({
 
     queryFn: () =>
       apiRequest<GetReviewsResponse>({
-        url: `/api/review?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`,
+        url: `/api/admin/review?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`,
         method: "GET",
         authRequired: true,
       }),
