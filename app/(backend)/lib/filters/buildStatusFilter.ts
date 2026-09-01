@@ -3,10 +3,16 @@ export function buildStatusFilter(
   field = "available",
 ) {
   if (!status || status === "all") {
-    return {} 
+    return {};
+  }
+
+  if (field === "available") {
+    return {
+      [field]: status === "true",
+    };
   }
 
   return {
-    [field]: status === "true",
+    [field]: status,
   }
 }

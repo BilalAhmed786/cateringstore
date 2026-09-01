@@ -38,8 +38,8 @@ export function OrderTotal({ order }: Props) {
             Order Total
           </p>
 
-          <p className="text-2xl font-bold">
-            {data?.store.currency} {order.total.toLocaleString()}
+         <p className="text-2xl font-bold">
+            {data?.store.currency} {order?.total.toLocaleString()}
           </p>
         </div>
 
