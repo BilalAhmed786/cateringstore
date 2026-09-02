@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import Image from "next/image";
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -16,6 +17,9 @@ import {
   X,
   ChevronDown,
 } from "lucide-react";
+import { useGetStoreSettings } from "@/app/(frontend)/admin/settings/store/hooks/useGetStoreSettings";
+import ContentSkeleton from "@/app/(frontend)/components/reusables/skeleton/ContentSkeleton";
+import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
 const menuItems = [
   {
@@ -52,6 +56,7 @@ export default function ClientSidebar() {
     setMobileOpen(false);
   };
 
+  const { data } = useGetStoreSettings();
   return (
     <>
       {/* Mobile Menu Button */}
@@ -74,25 +79,31 @@ export default function ClientSidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50 flex w-64 flex-col
-          border-r bg-background
-          transition-transform duration-300
-          md:translate-x-0
-          ${
-            mobileOpen
-              ? "translate-x-0"
-              : "-translate-x-full"
-          }
-        `}
+    fixed inset-y-0 left-0 z-50 flex w-64 flex-col
+    border-r bg-background
+    transition-transform duration-300
+    md:static md:z-auto md:translate-x-0 md:shrink-0
+    ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
+  `}
       >
         {/* Header */}
-        <div className="flex h-16 items-center justify-between border-b px-6">
+        <div className="flex h-20 items-center justify-between border-b px-6">
           <Link
             href="/"
             onClick={closeMobileSidebar}
             className="text-xl font-bold"
           >
-            Saif Catering
+            {!data?.store?.logo ? (
+              <Loader />
+            ) : (
+              <Image
+                src={data?.store.logo || ""}
+                alt="Store logo"
+                width={65}
+                height={65}
+                className="rounded-full object-contain"
+              />
+            )}
           </Link>
 
           {/* Mobile Close */}
@@ -111,8 +122,7 @@ export default function ClientSidebar() {
             const Icon = item.icon;
 
             const active =
-              pathname === item.href ||
-              pathname.startsWith(`${item.href}/`);
+              pathname === item.href || pathname.startsWith(`${item.href}/`);
 
             return (
               <Link
@@ -163,9 +173,7 @@ export default function ClientSidebar() {
                   href="/client/settings/account"
                   onClick={closeMobileSidebar}
                   className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition-colors ${
-                    pathname.startsWith(
-                      "/client/settings/account",
-                    )
+                    pathname.startsWith("/client/settings/account")
                       ? "bg-muted font-medium text-foreground"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}
@@ -179,9 +187,7 @@ export default function ClientSidebar() {
                   href="/client/settings/application"
                   onClick={closeMobileSidebar}
                   className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition-colors ${
-                    pathname.startsWith(
-                      "/client/settings/application",
-                    )
+                    pathname.startsWith("/client/settings/application")
                       ? "bg-muted font-medium text-foreground"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}

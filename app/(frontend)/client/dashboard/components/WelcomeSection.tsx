@@ -25,8 +25,8 @@ export default function WelcomeSection() {
 
     if(!user) return <ContentSkeleton/>
   return (
-    <section className="relative overflow-hidden rounded-2xl border bg-background p-6 shadow-sm sm:p-8">
-      <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-primary/10 blur-3xl" />
+    <section className="relative rounded-2xl border bg-background shadow-sm p-8">
+      <div className="pointer-events-none w-56 rounded-full bg-primary/10 blur-3xl" />
 
       <div className="relative">
         <p className="mb-2 text-sm font-medium text-primary">

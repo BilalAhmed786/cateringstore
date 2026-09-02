@@ -100,7 +100,7 @@ export default function Header() {
               src={data?.store?.logo ?? ""}
               alt="data.store.name"
               width={65}
-              height={50}
+              height={65}
               className="rounded-full object-cover"
             />
           </Link>

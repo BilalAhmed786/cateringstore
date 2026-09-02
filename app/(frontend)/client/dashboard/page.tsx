@@ -5,12 +5,9 @@ import RecentReviews from "./components/RecentReviews";
 import TastingRequests from "./components/TastingRequests";
 import WelcomeSection from "./components/WelcomeSection";
 
-
-
 export default function ClientDashboardPage() {
   return (
     <div className="space-y-6">
-
       {/* Welcome */}
       <WelcomeSection />
 
@@ -22,16 +19,12 @@ export default function ClientDashboardPage() {
 
       {/* Main dashboard content */}
       <div className="grid gap-6 lg:grid-cols-2">
-
         <RecentOrders />
-
         <TastingRequests />
-
       </div>
 
       {/* Reviews */}
       <RecentReviews />
-
     </div>
   );
 }

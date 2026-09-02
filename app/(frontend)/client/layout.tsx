@@ -1,6 +1,8 @@
+"use client";
 
 import ClientHeader from "./dashboard/components/ClientHeader";
 import ClientSidebar from "./dashboard/components/ClientSidebar";
+import ThemeProvider from "@/app/(frontend)/components/providers/ThemeProvider";
 
 export default function ClientLayout({
   children,
@@ -8,20 +10,23 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen overflow-hidden bg-muted/30">
-      {/* Sidebar */}
-      <ClientSidebar />
+    <ThemeProvider>
+      <div className="flex h-screen overflow-hidden bg-muted/30">
+        {/* Sidebar */}
+        <ClientSidebar />
 
-      {/* Main area */}
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden md:pl-64">
-        {/* Header */}
-        <ClientHeader />
-
-        {/* Page content */}
-        <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-4 pt-20 sm:p-6 sm:pt-20 lg:p-8 lg:pt-20">
-          {children}
-        </main>
+        {/* Right side */}
+        <div className="flex flex-1 flex-col">
+          {/* Fixed/Sticky Header */}
+          <ClientHeader />
+          {/* Children */}
+          <main className="flex-1 overflow-y-auto p-5 pt-5 sm:pt-5 sm:p-5 lg:p-5 lg:pt-5">
+           
+              {children}
+          
+          </main>
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 }
