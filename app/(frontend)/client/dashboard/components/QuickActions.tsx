@@ -2,7 +2,7 @@ import Link from "next/link";
 import {
   ShoppingBag,
   Utensils,
-  Star,
+  
 } from "lucide-react";
 
 const actions = [

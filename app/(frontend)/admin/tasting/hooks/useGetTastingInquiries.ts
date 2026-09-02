@@ -43,7 +43,7 @@ export function useGetTastingInquiries({
       params.set("limit", String(limit));
 
       return apiRequest<GetTastingInquiriesResponse>({
-        url: `/api/tasting?${params.toString()}`,
+        url: `/api/admin/tasting?${params.toString()}`,
         method: "GET",
         authRequired: true,
       });

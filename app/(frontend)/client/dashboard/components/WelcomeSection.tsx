@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/app/(frontend)/lib/firebase/firebase";
 import { Hand } from "lucide-react";
+import ContentSkeleton from "@/app/(frontend)/components/reusables/skeleton/ContentSkeleton";
 
 
 export default function WelcomeSection() {
@@ -22,6 +23,7 @@ export default function WelcomeSection() {
     user?.email?.split("@")[0] ||
     "there";
 
+    if(!user) return <ContentSkeleton/>
   return (
     <section className="relative overflow-hidden rounded-2xl border bg-background p-6 shadow-sm sm:p-8">
       <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-primary/10 blur-3xl" />

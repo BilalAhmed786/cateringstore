@@ -11,7 +11,7 @@ export function useGetTastingInquiry(id: string) {
 
     queryFn: () =>
       apiRequest<GetSingleTastingInquiryResponse>({
-        url: `/api/tasting/${id}`,
+        url: `/api/admin/tasting/${id}`,
         method: "GET",
         authRequired: true,
       }),

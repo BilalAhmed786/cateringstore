@@ -10,11 +10,9 @@ import { MenuItemsTableProps } from "../types/types";
 
 export function DataTable<T>({
   items,
-  isLoading,
   columns,
 }: MenuItemsTableProps<T>) {
-  if (isLoading) return <div className="py-10 text-center">Loading...</div>;
-
+ 
   return (
     <div className="rounded-md border">
       <Table>

@@ -6,6 +6,8 @@ import { ArrowRight, Package } from "lucide-react";
 import { useGetClientOrders } from "@/app/(frontend)/client/orders/hooks/useGetClientOrders";
 import OrderStatusBadge from "@/app/(frontend)/client/orders/components/OrderStatusBadge";
 import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
+import { Content } from "next/font/google";
+import ContentSkeleton from "@/app/(frontend)/components/reusables/skeleton/ContentSkeleton";
 
 export default function RecentOrders() {
   const {
@@ -20,6 +22,7 @@ export default function RecentOrders() {
 
   const orders = data?.orders ?? [];
 
+  if(isLoading) return <ContentSkeleton/>
   return (
     <section className="rounded-2xl border bg-background shadow-sm">
       {/* Header */}

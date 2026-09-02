@@ -12,6 +12,7 @@ import OrderFilters from "./OrderFilters";
 import { useGetClientOrders } from "../hooks/useGetClientOrders";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
 import { DataTable } from "@/app/(frontend)/components/reusables/table/table";
+import ContentSkeleton from "@/app/(frontend)/components/reusables/skeleton/ContentSkeleton";
 
 export default function MyOrders() {
   const [page, setPage] = useState(1);
@@ -98,6 +99,9 @@ export default function MyOrders() {
       ),
     },
   ];
+
+
+  if(isLoading) return <ContentSkeleton/>
 
   return (
     <div className="space-y-6">

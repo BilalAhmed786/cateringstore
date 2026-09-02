@@ -1,36 +1,40 @@
-
 "use client";
 
-import { MessageSquare } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 
-import ReviewCard from "./ReviewCard";
-import { useGetMyReviews } from "../hooks/useGetMyReviews";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
-import { GetMyReviewsParams } from "../types/type";
+
+import TastingCard from "./TastingCard";
+
+
+import {
+  TastingInquiryStatus,
+} from "../types/type";
+import { useGetMyTastings } from "../hooks/useGetMyTastings";
 import ContentSkeleton from "@/app/(frontend)/components/reusables/skeleton/ContentSkeleton";
 
-interface ReviewListProps {
+interface TastingListProps {
   search: string;
-  type: GetMyReviewsParams["type"];
+  status: TastingInquiryStatus | "ALL";
   page: number;
   limit: number;
   onPageChange: (page: number) => void;
 }
 
-export default function ReviewList({
+export default function TastingList({
   search,
-  type,
+  status,
   page,
   limit,
   onPageChange,
-}: ReviewListProps) {
+}: TastingListProps) {
   const {
     data,
     isLoading,
     isError,
-  } = useGetMyReviews({
+  } = useGetMyTastings({
     search,
-    type,
+    status,
     page,
     limit,
   });
@@ -43,7 +47,7 @@ export default function ReviewList({
             key={index}
             className="animate-pulse rounded-2xl border bg-background p-5"
           >
-              <ContentSkeleton/>
+            <ContentSkeleton/>
           </div>
         ))}
       </div>
@@ -53,30 +57,32 @@ export default function ReviewList({
   if (isError) {
     return (
       <div className="rounded-2xl border bg-background py-12 text-center">
-        <MessageSquare className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
+        <CalendarDays className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
 
         <h2 className="font-semibold">
-          Unable to load reviews
+          Unable to load tasting requests
         </h2>
 
         <p className="mt-1 text-sm text-muted-foreground">
-          Something went wrong while fetching your reviews.
+          Something went wrong while fetching your
+          tasting requests.
         </p>
       </div>
     );
   }
 
-  if (!data?.reviews?.length) {
+  if (!data?.inquiries?.length) {
     return (
       <div className="rounded-2xl border bg-background py-12 text-center">
-        <MessageSquare className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
+        <CalendarDays className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
 
         <h2 className="font-semibold">
-          No reviews found
+          No tasting requests found
         </h2>
 
         <p className="mt-1 text-sm text-muted-foreground">
-          No reviews match your search or selected filter.
+          No tasting requests match your search or
+          selected status.
         </p>
       </div>
     );
@@ -85,18 +91,18 @@ export default function ReviewList({
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        {data.reviews.map((review) => (
-          <ReviewCard
-            key={`${review.type}-${review.id}`}
-            review={review}
+        {data.inquiries.map((inquiry) => (
+          <TastingCard
+            key={inquiry.id}
+            inquiry={inquiry}
           />
         ))}
       </div>
 
       <ItemsPagination
-        page={page}
+        page={data.page}
         total={data.total}
-        limit={limit}
+        limit={data.limit}
         onPageChange={onPageChange}
       />
     </div>

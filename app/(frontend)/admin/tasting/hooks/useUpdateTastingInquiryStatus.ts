@@ -21,7 +21,7 @@ export function useUpdateTastingInquiryStatus() {
       status,
     }: UpdateStatusPayload) =>
       apiRequest<UpdateTastingInquiryResponse>({
-        url: `/api/tasting/${id}`,
+        url: `/api/admin/tasting/${id}`,
         method: "PATCH",
         authRequired: true,
         body: {
