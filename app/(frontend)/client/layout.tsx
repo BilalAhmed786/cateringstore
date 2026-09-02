@@ -1,5 +1,5 @@
 "use client";
-
+import FCMInitializer from "../admin/dashboard/(components)/FCMInitializer";
 import ClientHeader from "./dashboard/components/ClientHeader";
 import ClientSidebar from "./dashboard/components/ClientSidebar";
 import ThemeProvider from "@/app/(frontend)/components/providers/ThemeProvider";
@@ -17,6 +17,7 @@ export default function ClientLayout({
 
         {/* Right side */}
         <div className="flex flex-1 flex-col">
+          <FCMInitializer />
           {/* Fixed/Sticky Header */}
           <ClientHeader />
           {/* Children */}
