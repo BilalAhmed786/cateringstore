@@ -6,6 +6,8 @@ import {
 } from "lucide-react";
 
 import { ClientTastingInquiry } from "../../types/type";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/app/(frontend)/components/ui/card";
+
 
 interface TastingEventInfoProps {
   tasting: ClientTastingInquiry;
@@ -15,49 +17,52 @@ export default function TastingEventInfo({
   tasting,
 }: TastingEventInfoProps) {
   return (
-    <section className="rounded-2xl border bg-background shadow-sm">
-      <div className="border-b px-5 py-4">
-        <h2 className="font-semibold">
+    <Card className="p-5">
+      <CardHeader>
+        <CardTitle className="text-base">
           Event Information
-        </h2>
+        </CardTitle>
 
-        <p className="mt-1 text-sm text-muted-foreground">
+        <CardDescription>
           Information about your tasting event.
-        </p>
-      </div>
+        </CardDescription>
+      </CardHeader>
 
-      <div className="grid gap-5 p-5 sm:grid-cols-2">
-        <Info
-          icon={Utensils}
-          label="Event Type"
-          value={tasting.eventType}
-        />
+      <CardContent>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Info
+            icon={Utensils}
+            label="Event Type"
+            value={tasting.eventType}
+          />
 
-        <Info
-          icon={Users}
-          label="Guests"
-          value={tasting.guests}
-        />
+          <Info
+            icon={Users}
+            label="Guests"
+            value={tasting.guests}
+          />
 
-        <Info
-          icon={CalendarDays}
-          label="Event Date"
-          value={new Date(
-            tasting.date,
-          ).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        />
+          <Info
+            icon={CalendarDays}
+            label="Event Date"
+            value={new Date(tasting.date).toLocaleDateString(
+              "en-US",
+              {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              },
+            )}
+          />
 
-        <Info
-          icon={Clock}
-          label="Preferred Time"
-          value={tasting.time}
-        />
-      </div>
-    </section>
+          <Info
+            icon={Clock}
+            label="Preferred Time"
+            value={tasting.time}
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -74,12 +79,14 @@ function Info({
     <div className="flex items-start gap-3">
       <Icon className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
 
-      <div>
+      <div className="min-w-0">
         <p className="text-xs text-muted-foreground">
           {label}
         </p>
 
-        <p className="mt-1 font-medium">{value}</p>
+        <p className="mt-1 font-medium">
+          {value}
+        </p>
       </div>
     </div>
   );

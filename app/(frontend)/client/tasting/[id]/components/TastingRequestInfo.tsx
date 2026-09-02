@@ -1,4 +1,7 @@
+import { Card, CardHeader, CardTitle, CardContent } from "@/app/(frontend)/components/ui/card";
 import { ClientTastingInquiry } from "../../types/type";
+
+
 
 interface TastingRequestInfoProps {
   tasting: ClientTastingInquiry;
@@ -8,25 +11,27 @@ export default function TastingRequestInfo({
   tasting,
 }: TastingRequestInfoProps) {
   return (
-    <section className="rounded-2xl border bg-background shadow-sm">
-      <div className="border-b px-5 py-4">
-        <h2 className="font-semibold">
+    <Card className="p-5">
+      <CardHeader>
+        <CardTitle className="text-base">
           Request Information
-        </h2>
-      </div>
+        </CardTitle>
+      </CardHeader>
 
-      <div className="grid gap-5 p-5 sm:grid-cols-2">
-        <Info
-          label="Requested On"
-          date={tasting.createdAt}
-        />
+      <CardContent>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Info
+            label="Requested On"
+            date={tasting.createdAt}
+          />
 
-        <Info
-          label="Last Updated"
-          date={tasting.updatedAt}
-        />
-      </div>
-    </section>
+          <Info
+            label="Last Updated"
+            date={tasting.updatedAt}
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

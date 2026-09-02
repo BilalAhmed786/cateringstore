@@ -1,13 +1,16 @@
-
 "use client";
 
 import { MessageSquare } from "lucide-react";
 
 import ReviewCard from "./ReviewCard";
 import { useGetMyReviews } from "../hooks/useGetMyReviews";
+
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
 import { GetMyReviewsParams } from "../types/type";
 import ContentSkeleton from "@/app/(frontend)/components/reusables/skeleton/ContentSkeleton";
+import { Card, CardContent } from "@/app/(frontend)/components/ui/card";
+
+
 
 interface ReviewListProps {
   search: string;
@@ -39,12 +42,11 @@ export default function ReviewList({
     return (
       <div className="space-y-4">
         {Array.from({ length: 3 }).map((_, index) => (
-          <div
-            key={index}
-            className="animate-pulse rounded-2xl border bg-background p-5"
-          >
-              <ContentSkeleton/>
-          </div>
+          <Card key={index}>
+            <CardContent className="p-5">
+              <ContentSkeleton />
+            </CardContent>
+          </Card>
         ))}
       </div>
     );
@@ -52,33 +54,37 @@ export default function ReviewList({
 
   if (isError) {
     return (
-      <div className="rounded-2xl border bg-background py-12 text-center">
-        <MessageSquare className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
+      <Card>
+        <CardContent className="py-12 text-center">
+          <MessageSquare className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
 
-        <h2 className="font-semibold">
-          Unable to load reviews
-        </h2>
+          <h2 className="font-semibold">
+            Unable to load reviews
+          </h2>
 
-        <p className="mt-1 text-sm text-muted-foreground">
-          Something went wrong while fetching your reviews.
-        </p>
-      </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Something went wrong while fetching your reviews.
+          </p>
+        </CardContent>
+      </Card>
     );
   }
 
   if (!data?.reviews?.length) {
     return (
-      <div className="rounded-2xl border bg-background py-12 text-center">
-        <MessageSquare className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
+      <Card>
+        <CardContent className="py-12 text-center">
+          <MessageSquare className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
 
-        <h2 className="font-semibold">
-          No reviews found
-        </h2>
+          <h2 className="font-semibold">
+            No reviews found
+          </h2>
 
-        <p className="mt-1 text-sm text-muted-foreground">
-          No reviews match your search or selected filter.
-        </p>
-      </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            No reviews match your search or selected filter.
+          </p>
+        </CardContent>
+      </Card>
     );
   }
 

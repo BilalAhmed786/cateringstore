@@ -27,7 +27,7 @@ export default function ReviewsPage() {
   }, [debouncedSearch, type]);
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-6 p-5">
       <Metadata 
       title="View the reviews you have shared" 
       desc="Reviews you have shared for our menu items, packages, events, and hampers"

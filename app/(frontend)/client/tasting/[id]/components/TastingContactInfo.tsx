@@ -5,6 +5,9 @@ import {
 } from "lucide-react";
 
 import { ClientTastingInquiry } from "../../types/type";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/app/(frontend)/components/ui/card";
+
+
 
 interface TastingContactInfoProps {
   tasting: ClientTastingInquiry;
@@ -14,37 +17,39 @@ export default function TastingContactInfo({
   tasting,
 }: TastingContactInfoProps) {
   return (
-    <section className="rounded-2xl border bg-background shadow-sm">
-      <div className="border-b px-5 py-4">
-        <h2 className="font-semibold">
+    <Card className="p-5">
+      <CardHeader>
+        <CardTitle className="text-base">
           Contact Information
-        </h2>
+        </CardTitle>
 
-        <p className="mt-1 text-sm text-muted-foreground">
+        <CardDescription>
           Contact details submitted with your request.
-        </p>
-      </div>
+        </CardDescription>
+      </CardHeader>
 
-      <div className="grid gap-5 p-5 sm:grid-cols-2">
-        <Info
-          icon={User}
-          label="Name"
-          value={tasting.name}
-        />
+      <CardContent>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Info
+            icon={User}
+            label="Name"
+            value={tasting.name}
+          />
 
-        <Info
-          icon={Mail}
-          label="Email"
-          value={tasting.email}
-        />
+          <Info
+            icon={Mail}
+            label="Email"
+            value={tasting.email}
+          />
 
-        <Info
-          icon={Phone}
-          label="Phone"
-          value={tasting.phone}
-        />
-      </div>
-    </section>
+          <Info
+            icon={Phone}
+            label="Phone"
+            value={tasting.phone}
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -61,7 +66,7 @@ function Info({
     <div className="flex items-start gap-3">
       <Icon className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
 
-      <div>
+      <div className="min-w-0">
         <p className="text-xs text-muted-foreground">
           {label}
         </p>

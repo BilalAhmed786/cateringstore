@@ -7,7 +7,7 @@ import ProfileInformation from "./components/ProfileInformation";
 
 export default function AccountSettingsPage() {
   return (
-    <>
+    <div className="space-y-6 p-5">
       <Metadata
         title="Account Settings"
         desc="Manage your account information and password"
@@ -19,6 +19,6 @@ export default function AccountSettingsPage() {
 
         <PasswordSettings />
       </div>
-    </>
+    </div>
   );
 }

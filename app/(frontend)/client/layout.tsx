@@ -20,7 +20,7 @@ export default function ClientLayout({
           {/* Fixed/Sticky Header */}
           <ClientHeader />
           {/* Children */}
-          <main className="flex-1 overflow-y-auto p-5 pt-5 sm:pt-5 sm:p-5 lg:p-5 lg:pt-5">
+          <main className="flex-1 overflow-y-auto">
            
               {children}
           

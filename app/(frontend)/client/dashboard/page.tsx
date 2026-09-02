@@ -7,7 +7,7 @@ import WelcomeSection from "./components/WelcomeSection";
 
 export default function ClientDashboardPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-5">
       {/* Welcome */}
       <WelcomeSection />
 

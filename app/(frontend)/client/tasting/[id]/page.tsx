@@ -57,7 +57,7 @@ export default function TastingDetailsPage() {
   }
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-6 p-5">
       <Metadata
         title="Tasting Request Details"
         desc="View your tasting request details"

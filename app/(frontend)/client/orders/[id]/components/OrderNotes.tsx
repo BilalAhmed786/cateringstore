@@ -1,24 +1,28 @@
 "use client";
 
+import { Card, CardHeader, CardTitle, CardContent } from "@/app/(frontend)/components/ui/card";
 import { FileText } from "lucide-react";
+
 
 interface OrderNotesProps {
   notes: string;
 }
 
-export default function OrderNotes({
-  notes,
-}: OrderNotesProps) {
+export default function OrderNotes({ notes }: OrderNotesProps) {
   return (
-    <div className="rounded-2xl border bg-background p-5 shadow-sm">
-      <h2 className="flex items-center gap-2 font-semibold">
-        <FileText className="h-4 w-4" />
-        Notes
-      </h2>
+    <Card className="p-5">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <FileText className="h-4 w-4" />
+          Notes
+        </CardTitle>
+      </CardHeader>
 
-      <p className="mt-2 text-sm text-muted-foreground">
-        {notes}
-      </p>
-    </div>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">
+          {notes}
+        </p>
+      </CardContent>
+    </Card>
   );
 }

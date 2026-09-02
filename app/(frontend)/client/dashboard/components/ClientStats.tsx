@@ -6,15 +6,15 @@ import {
   Star,
   Utensils,
 } from "lucide-react";
+
 import { useGetClientDashboardStats } from "../hooks/useGetClientDashboardStats";
 import ContentSkeleton from "@/app/(frontend)/components/reusables/skeleton/ContentSkeleton";
+import { Card, CardContent } from "@/app/(frontend)/components/ui/card";
+
+
 
 export default function ClientStats() {
-  const {
-    data,
-    isLoading,
-  
-  } = useGetClientDashboardStats();
+  const { data, isLoading } = useGetClientDashboardStats();
 
   const stats = [
     {
@@ -39,33 +39,38 @@ export default function ClientStats() {
     },
   ];
 
-  if(isLoading) return <ContentSkeleton/>
+  if (isLoading) {
+    return <ContentSkeleton />;
+  }
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {stats.map((stat) => {
         const Icon = stat.icon;
 
         return (
-          <div
+          <Card
             key={stat.label}
-            className="rounded-2xl border bg-background p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+            className="transition-all hover:-translate-y-0.5 hover:shadow-md"
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  {stat.label}
-                </p>
+            <CardContent className="p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {stat.label}
+                  </p>
 
-                <p className="mt-2 text-2xl font-bold">
-                  {isLoading ? "..." : stat.value}
-                </p>
-              </div>
+                  <p className="mt-2 text-2xl font-bold">
+                    {stat.value}
+                  </p>
+                </div>
 
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Icon className="h-5 w-5" />
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <Icon className="h-5 w-5" />
+                </div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         );
       })}
     </div>

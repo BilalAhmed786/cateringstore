@@ -52,7 +52,7 @@ export default function OrderDetailsPage({
   }
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-6 p-5">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <Metadata
           title="Order Details"

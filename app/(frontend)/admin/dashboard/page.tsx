@@ -57,7 +57,7 @@ export default function AdminDashboard() {
       <div className="flex-1 overflow-auto">
         <div className="space-y-8 p-8">
 
-          <div className="flex items-center justify-end gap-3 text-white">
+          <div className="flex items-center justify-end  text-white">
             <span className="text-sm">
               Period:
             </span>

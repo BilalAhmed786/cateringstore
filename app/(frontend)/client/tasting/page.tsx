@@ -33,7 +33,7 @@ export default function TastingPage() {
   }, [debouncedSearch, status]);
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-6 p-5">
       <Metadata
         title="Tasting Requests"
         desc="View and track your tasting requests"

@@ -3,15 +3,15 @@
 import { CalendarDays } from "lucide-react";
 
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
+import ContentSkeleton from "@/app/(frontend)/components/reusables/skeleton/ContentSkeleton";
+
+import { useGetMyTastings } from "../hooks/useGetMyTastings";
+import { TastingInquiryStatus } from "../types/type";
 
 import TastingCard from "./TastingCard";
+import { Card, CardContent } from "@/app/(frontend)/components/ui/card";
 
 
-import {
-  TastingInquiryStatus,
-} from "../types/type";
-import { useGetMyTastings } from "../hooks/useGetMyTastings";
-import ContentSkeleton from "@/app/(frontend)/components/reusables/skeleton/ContentSkeleton";
 
 interface TastingListProps {
   search: string;
@@ -43,12 +43,11 @@ export default function TastingList({
     return (
       <div className="space-y-4">
         {Array.from({ length: 3 }).map((_, index) => (
-          <div
-            key={index}
-            className="animate-pulse rounded-2xl border bg-background p-5"
-          >
-            <ContentSkeleton/>
-          </div>
+          <Card key={index}>
+            <CardContent className="p-5">
+              <ContentSkeleton />
+            </CardContent>
+          </Card>
         ))}
       </div>
     );
@@ -56,35 +55,39 @@ export default function TastingList({
 
   if (isError) {
     return (
-      <div className="rounded-2xl border bg-background py-12 text-center">
-        <CalendarDays className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
+      <Card>
+        <CardContent className="py-12 text-center">
+          <CalendarDays className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
 
-        <h2 className="font-semibold">
-          Unable to load tasting requests
-        </h2>
+          <h2 className="font-semibold">
+            Unable to load tasting requests
+          </h2>
 
-        <p className="mt-1 text-sm text-muted-foreground">
-          Something went wrong while fetching your
-          tasting requests.
-        </p>
-      </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Something went wrong while fetching your
+            tasting requests.
+          </p>
+        </CardContent>
+      </Card>
     );
   }
 
   if (!data?.inquiries?.length) {
     return (
-      <div className="rounded-2xl border bg-background py-12 text-center">
-        <CalendarDays className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
+      <Card>
+        <CardContent className="py-12 text-center">
+          <CalendarDays className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
 
-        <h2 className="font-semibold">
-          No tasting requests found
-        </h2>
+          <h2 className="font-semibold">
+            No tasting requests found
+          </h2>
 
-        <p className="mt-1 text-sm text-muted-foreground">
-          No tasting requests match your search or
-          selected status.
-        </p>
-      </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            No tasting requests match your search or
+            selected status.
+          </p>
+        </CardContent>
+      </Card>
     );
   }
 

@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "@/app/(frontend)/lib/firebase/firebase";
 import { Hand } from "lucide-react";
+
+import { auth } from "@/app/(frontend)/lib/firebase/firebase";
 import ContentSkeleton from "@/app/(frontend)/components/reusables/skeleton/ContentSkeleton";
+import { Card, CardContent } from "@/app/(frontend)/components/ui/card";
 
 
 export default function WelcomeSection() {
@@ -18,30 +20,35 @@ export default function WelcomeSection() {
     return unsubscribe;
   }, []);
 
+  if (!user) {
+    return <ContentSkeleton />;
+  }
+
   const displayName =
-    user?.displayName ||
-    user?.email?.split("@")[0] ||
+    user.displayName ||
+    user.email?.split("@")[0] ||
     "there";
 
-    if(!user) return <ContentSkeleton/>
   return (
-    <section className="relative rounded-2xl border bg-background shadow-sm p-8">
-      <div className="pointer-events-none w-56 rounded-full bg-primary/10 blur-3xl" />
+    <Card className="relative overflow-hidden">
+      {/* Decorative background */}
+      <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />
 
-      <div className="relative">
+      <CardContent className="relative p-6 sm:p-8">
         <p className="mb-2 text-sm font-medium text-primary">
-          Welcome back 
+          Welcome back
         </p>
 
-        <h1 className="text-2xl flex gap-2 font-bold tracking-tight sm:text-3xl">
-          Hello, {displayName} <Hand className="h-6 w-6 rotate-45 mt-2.5" />
+        <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight sm:text-3xl">
+          Hello, {displayName}
+          <Hand className="h-6 w-6 rotate-45" />
         </h1>
 
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground sm:text-base">
-          Manage your orders, tasting requests and reviews
-          from your catering account.
+          Manage your orders, tasting requests and reviews from your
+          catering account.
         </p>
-      </div>
-    </section>
+      </CardContent>
+    </Card>
   );
 }

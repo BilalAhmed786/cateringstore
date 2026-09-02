@@ -18,7 +18,6 @@ import {
   SelectValue,
 } from "@/app/(frontend)/components/ui/select";
 
-import { Switch } from "@/app/(frontend)/components/ui/switch";
 
 import { useDashboardSettingsStore } from "@/app/(frontend)/store/dashboardSettingsStore";
 
@@ -33,7 +32,7 @@ export default function DashboardSettingsForm() {
   } = useDashboardSettingsStore();
 
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="max-w-3xl space-y-6 p-5">
       {/* ================= APPEARANCE ================= */}
       <Card className="p-5">
         <CardHeader>

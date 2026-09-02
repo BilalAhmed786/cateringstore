@@ -1,3 +1,4 @@
+import { Card, CardHeader, CardTitle, CardContent } from "@/app/(frontend)/components/ui/card";
 
 
 interface TastingPreferencesProps {
@@ -8,14 +9,14 @@ export default function TastingPreferences({
   preferences,
 }: TastingPreferencesProps) {
   return (
-    <section className="rounded-2xl border bg-background shadow-sm">
-      <div className="border-b px-5 py-4">
-        <h2 className="font-semibold">
+    <Card className="p-5">
+      <CardHeader>
+        <CardTitle className="text-base">
           Food Preferences
-        </h2>
-      </div>
+        </CardTitle>
+      </CardHeader>
 
-      <div className="p-5">
+      <CardContent>
         {preferences.length ? (
           <div className="flex flex-wrap gap-2">
             {preferences.map((preference) => (
@@ -32,7 +33,7 @@ export default function TastingPreferences({
             No food preferences specified.
           </p>
         )}
-      </div>
-    </section>
+      </CardContent>
+    </Card>
   );
 }
