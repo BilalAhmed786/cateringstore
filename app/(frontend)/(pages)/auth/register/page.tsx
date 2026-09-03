@@ -10,7 +10,7 @@ import { useOAuth } from "../hooks/useOAuth";
 import Link from "next/link";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { FieldValues } from "react-hook-form";
-import image from "@/app/(frontend)/public/images/chef-plating-gourmet-food.jpg"
+import CateringBg from "@/app/(frontend)/public/images/chef-plating-gourmet-food.jpg";
 export default function RegisterPage() {
   const registerFields: FieldConfig[] = [
     {
@@ -50,10 +50,9 @@ export default function RegisterPage() {
         bg-center
         bg-no-repeat
         mt-20
-      
-      "
+    "
       style={{
-        backgroundImage: "url('/images/chef-plating-gourmet-food.jpg')",
+        backgroundImage:  `url(${CateringBg.src})`,
       }}
     >
       {/* Dark overlay */}
