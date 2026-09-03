@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { sendNotification } from "../../lib/notifications/sendNotification";
 import prisma from "../../lib/prisma/prisma";
-
+import { sendNotification } from "../../lib/notifications/sendNotification";
 
 interface NotificationJob {
   type: string;
@@ -16,63 +15,61 @@ export async function POST(request: NextRequest) {
     const rawBody = await request.text();
 
     const webhookSecret = process.env.CLOUDAMQP_SIGNING_SECRET;
-    const signature = request.headers.get("x-cloudamqp-signature");
 
-    // Compute expected HMAC signature
-    const expectedSignature = webhookSecret
-      ? crypto
-          .createHmac("sha256", webhookSecret)
-          .update(rawBody)
-          .digest("hex")
-      : null;
+    // 1. Get CloudAMQP Webhook Headers
+    const webhookId = request.headers.get("webhook-id");
+    const webhookTimestamp = request.headers.get("webhook-timestamp");
+    const webhookSignature = request.headers.get("webhook-signature");
 
-    // --- DEBUG LOGS (Check Vercel Runtime Logs) ---
-    console.log("--- CLOUDAMQP DEBUG LOGS ---");
-    console.log("Raw Body Length:", rawBody.length);
-    console.log("Raw Body Content:", rawBody);
-    console.log("Header x-cloudamqp-signature:", signature);
-    console.log("Env Secret Defined?:", Boolean(webhookSecret));
-    console.log("Env Secret Length:", webhookSecret?.length);
-    console.log("Expected Signature:", expectedSignature);
-    console.log("Match?:", signature === expectedSignature);
-    console.log("-------------------------------");
+    // 2. Signature Verification
+    if (webhookSecret && webhookSignature && webhookId && webhookTimestamp) {
+      // CloudAMQP constructs the payload as: "{id}.{timestamp}.{body}"
+      const payloadToSign = `${webhookId}.${webhookTimestamp}.${rawBody}`;
 
-    // 1. Validate Secret Header
-    if (webhookSecret) {
-      if (!signature) {
-        console.error("DEBUG: Signature header is missing entirely from CloudAMQP request.");
-        return NextResponse.json({ error: "Missing signature header" }, { status: 401 });
-      }
+      // Compute expected HMAC SHA256 signature (Base64 encoded)
+      const expectedSignature = crypto
+        .createHmac("sha256", webhookSecret)
+        .update(payloadToSign)
+        .digest("base64");
 
-      if (signature !== expectedSignature) {
-        console.error("DEBUG: Signature mismatch detected!");
+      // Extract all signatures from header (space-separated: "v1,sig1 v1,sig2")
+      const signatures = webhookSignature
+        .split(" ")
+        .map((part) => part.replace(/^v1,/, ""));
+
+      // Verify if at least one signature matches
+      const isValid = signatures.some((sig) => {
+        try {
+          return crypto.timingSafeEqual(
+            Buffer.from(sig),
+            Buffer.from(expectedSignature)
+          );
+        } catch {
+          return false;
+        }
+      });
+
+      if (!isValid) {
+        console.error("CloudAMQP signature verification failed!");
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
-    } else {
-      console.warn("DEBUG: CLOUDAMQP_SIGNING_SECRET is missing in process.env!");
     }
 
-    // 2. Parse job data
+    // 3. Process Job Payload
     const job: NotificationJob = JSON.parse(rawBody);
     const { type, orderId, userId, customerName } = job;
 
-    // 3. Fetch admin + super admin tokens
+    // Fetch Admin and Super Admin FCM Tokens
     const adminUsers = await prisma.user.findMany({
-      where: {
-        role: {
-          in: ["ADMIN", "SUPER_ADMIN"],
-        },
-      },
-      include: {
-        fcmTokens: true,
-      },
+      where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
+      include: { fcmTokens: true },
     });
 
     const adminTokens = adminUsers.flatMap((user) =>
       user.fcmTokens.map((fcmToken) => fcmToken.token)
     );
 
-    // 4. Send admin notifications
+    // Notify Admins
     await Promise.all(
       adminTokens.map(async (token) => {
         try {
@@ -89,7 +86,7 @@ export async function POST(request: NextRequest) {
       })
     );
 
-    // 5. Send client notification
+    // Notify Client
     if (userId) {
       const client = await prisma.user.findUnique({
         where: { id: userId },
@@ -116,6 +113,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Return 200 OK -> Tells CloudAMQP to ACK & remove the message from the queue
     return NextResponse.json({ success: true, orderId }, { status: 200 });
   } catch (error) {
     console.error("Notification job failed:", error);
