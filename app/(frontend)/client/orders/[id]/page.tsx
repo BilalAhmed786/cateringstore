@@ -57,6 +57,7 @@ export default function OrderDetailsPage({
         <Metadata
           title="Order Details"
           desc={`Order #${data.order.id}`}
+          classname="truncate"
         />
 
         <Link href="/client/orders">

@@ -18,8 +18,8 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useGetStoreSettings } from "@/app/(frontend)/admin/settings/store/hooks/useGetStoreSettings";
-import ContentSkeleton from "@/app/(frontend)/components/reusables/skeleton/ContentSkeleton";
 import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
+import { useLogout } from "@/app/(frontend)/admin/dashboard/hooks/useLogout";
 
 const menuItems = [
   {
@@ -57,6 +57,8 @@ export default function ClientSidebar() {
   };
 
   const { data } = useGetStoreSettings();
+  const {logout} = useLogout()
+  
   return (
     <>
       {/* Mobile Menu Button */}
@@ -206,10 +208,11 @@ export default function ClientSidebar() {
           <button
             type="button"
             className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-destructive"
-          >
+            onClick={logout}
+         >
             <LogOut className="h-5 w-5" />
+            Logout
 
-            <span>Logout</span>
           </button>
         </div>
       </aside>

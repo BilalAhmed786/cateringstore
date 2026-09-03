@@ -16,7 +16,6 @@ import { useGetMenuItems } from "@/app/(frontend)/admin/menu-items/hooks/useGetM
 import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
 import { MenuItemDetailsSheet } from "../../components/MenuItemDetailsSheet";
 
-
 export default function CategoryMenuItemsPage() {
   const params = useParams();
   const categoryId = params.categoryid as string;
@@ -78,7 +77,7 @@ export default function CategoryMenuItemsPage() {
     <div className="space-y-8 pt-28">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold">Category Menu Items</h1>
+        <h1 className="lg:text-3xl font-bold">Category Menu Items</h1>
 
         <p className="mt-2 text-muted-foreground">
           Browse all menu items in this category.
@@ -87,7 +86,7 @@ export default function CategoryMenuItemsPage() {
 
       {/* Filters */}
       <div className="flex flex-col items-center space-y-8">
-        <div className="w-full max-w-xs">
+        <div className="w-full max-w-2xl px-4">
           <PriceFilter
             value={priceRange}
             onChange={setPriceRange}

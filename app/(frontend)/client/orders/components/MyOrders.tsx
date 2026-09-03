@@ -8,7 +8,6 @@ import { OrderStatus } from "@prisma/client";
 import OrderStatusBadge from "./OrderStatusBadge";
 import OrderFilters from "./OrderFilters";
 
-
 import { useGetClientOrders } from "../hooks/useGetClientOrders";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
 import { DataTable } from "@/app/(frontend)/components/reusables/table/table";
@@ -17,14 +16,9 @@ import ContentSkeleton from "@/app/(frontend)/components/reusables/skeleton/Cont
 export default function MyOrders() {
   const [page, setPage] = useState(1);
 
-  const [status, setStatus] =
-    useState<OrderStatus | "all">("all");
+  const [status, setStatus] = useState<OrderStatus | "all">("all");
 
-  const {
-    data,
-    isLoading,
-    isError,
-  } = useGetClientOrders({
+  const { data, isLoading, isError } = useGetClientOrders({
     page,
     limit: 10,
     status,
@@ -32,9 +26,7 @@ export default function MyOrders() {
 
   const orders = data?.orders ?? [];
 
-  const handleStatusChange = (
-    value: OrderStatus | "all"
-  ) => {
+  const handleStatusChange = (value: OrderStatus | "all") => {
     setStatus(value);
     setPage(1);
   };
@@ -53,14 +45,10 @@ export default function MyOrders() {
           </div>
 
           <div>
-            <p className="font-medium">
-              #{order.id.slice(-6).toUpperCase()}
-            </p>
+            <p className="font-medium">#{order.id.slice(-6).toUpperCase()}</p>
 
             <p className="text-sm text-muted-foreground">
-              {new Date(
-                order.createdAt
-              ).toLocaleDateString("en-US", {
+              {new Date(order.createdAt).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
                 year: "numeric",
@@ -94,22 +82,19 @@ export default function MyOrders() {
           href={`/client/orders/${order.id}`}
           className="rounded-lg border px-3 py-2 text-xs font-medium transition-colors hover:bg-muted"
         >
-          <Eye size={16}/>
+          <Eye size={16} />
         </Link>
       ),
     },
   ];
 
-
-  if(isLoading) return <ContentSkeleton/>
+  if (isLoading) return <ContentSkeleton />;
 
   return (
     <div className="space-y-6 p-5">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold">
-          My Orders
-        </h1>
+        <h1 className="text-2xl font-bold">My Orders</h1>
 
         <p className="mt-1 text-sm text-muted-foreground">
           View and track your catering orders.
@@ -117,17 +102,12 @@ export default function MyOrders() {
       </div>
 
       {/* Status Filter */}
-      <OrderFilters
-        status={status}
-        onStatusChange={handleStatusChange}
-      />
+      <OrderFilters status={status} onStatusChange={handleStatusChange} />
 
       {/* Error */}
       {isError ? (
         <div className="rounded-md border py-10 text-center">
-          <p className="font-medium">
-            Unable to load orders
-          </p>
+          <p className="font-medium">Unable to load orders</p>
 
           <p className="mt-1 text-sm text-muted-foreground">
             Please try again later.
@@ -136,11 +116,9 @@ export default function MyOrders() {
       ) : (
         <>
           {/* Orders */}
-          <DataTable
-            items={orders}
-            isLoading={isLoading}
-            columns={columns}
-          />
+          
+            <DataTable items={orders} isLoading={isLoading} columns={columns} />
+          
 
           {/* Pagination */}
           {data && (

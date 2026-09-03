@@ -229,7 +229,7 @@ export default function EventCategoryBrowser() {
 
       <div className="flex flex-col items-center gap-6">
 
-        <div className="w-full max-w-xs">
+        <div className="w-full max-w-2xl px-4">
           <PriceFilter
             value={priceRange}
             onChange={handlePriceChange}
