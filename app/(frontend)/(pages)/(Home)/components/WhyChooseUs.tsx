@@ -5,6 +5,11 @@ import {
   Truck,
 } from "lucide-react";
 
+import {
+  Card,
+  CardContent,
+} from "@/app/(frontend)/components/ui/card";
+
 const features = [
   {
     icon: ChefHat,
@@ -35,49 +40,48 @@ const features = [
 export default function WhyChooseUs() {
   return (
     <section className="bg-muted/30 py-24">
-      <div className="w-full px-7">
-
+      <div className="w-full px-4 sm:px-7">
         {/* Heading */}
-
         <div className="mb-16 text-center">
           <span className="text-sm font-semibold uppercase tracking-widest text-primary">
             Why Choose Us
           </span>
 
-          <h2 className="mt-3 text-4xl font-bold">
+          <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
             Catering That Makes Every Event Special
           </h2>
 
-          <p className="mt-4 text-muted-foreground">
-            From intimate family gatherings to large corporate events,
-            we deliver unforgettable food, exceptional service, and
-            memorable experiences.
+          <p className="mx-auto mt-4 max-w-3xl text-muted-foreground">
+            From intimate family gatherings to large corporate events, we
+            deliver unforgettable food, exceptional service, and memorable
+            experiences.
           </p>
         </div>
 
         {/* Features */}
-
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => {
             const Icon = feature.icon;
 
             return (
-              <div
+              <Card
                 key={feature.title}
-                className="group rounded-2xl border bg-background p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+                className="group rounded-2xl shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
               >
-                <div className="mb-6 inline-flex rounded-xl bg-primary/10 p-4 text-primary transition group-hover:bg-primary group-hover:text-white">
-                  <Icon size={30} />
-                </div>
+                <CardContent className="p-8">
+                  <div className="mb-6 inline-flex rounded-xl bg-primary/10 p-4 text-primary transition group-hover:bg-primary group-hover:text-white">
+                    <Icon size={30} />
+                  </div>
 
-                <h3 className="mb-3 text-xl font-semibold">
-                  {feature.title}
-                </h3>
+                  <h3 className="mb-3 text-xl font-semibold">
+                    {feature.title}
+                  </h3>
 
-                <p className="text-sm leading-7 text-muted-foreground">
-                  {feature.description}
-                </p>
-              </div>
+                  <p className="text-sm leading-7 text-muted-foreground">
+                    {feature.description}
+                  </p>
+                </CardContent>
+              </Card>
             );
           })}
         </div>

@@ -2,20 +2,29 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+
 import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
 import { Button } from "@/app/(frontend)/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import {
+  Card,
+  CardContent,
+} from "@/app/(frontend)/components/ui/card";
+
 import { useCategories } from "@/app/(frontend)/admin/categories/menu/hooks/usecategories";
 import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
 export default function FeaturedMenuCategories() {
-  const { data: categories, isLoading } = useCategories({page:1,limit:10000});
-     
+  const { data: categories, isLoading } = useCategories({
+    page: 1,
+    limit: 10000,
+  });
+
   if (isLoading) {
     return (
       <section className="py-20">
         <div className="container mx-auto">
-          <Loader/>
+          <Loader />
         </div>
       </section>
     );
@@ -25,23 +34,25 @@ export default function FeaturedMenuCategories() {
 
   return (
     <section className="py-20">
-      <div className="px-7">
+      <div className="px-4 sm:px-7">
         {/* Heading */}
         <div className="mb-10">
           <p className="text-sm font-semibold uppercase tracking-[4px] text-primary">
             Menu Categories
           </p>
 
-          <h2 className="mt-2 text-4xl font-bold">
+          <h2 className="mt-2 text-3xl font-bold sm:text-4xl">
             Explore Our Menu Categories
           </h2>
-          <div className="flex justify-between items-center">
-            <p className="mt-3 max-w-2xl text-muted-foreground">
+
+          <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
               Browse our delicious catering categories crafted for weddings,
               birthdays, corporate events, and family gatherings.
             </p>
-            <Button asChild>
-              <Link href="/menuitem ">
+
+            <Button asChild className="w-fit shrink-0">
+              <Link href="/menuitem">
                 View All Menu
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -49,13 +60,14 @@ export default function FeaturedMenuCategories() {
           </div>
         </div>
 
+        {/* Categories */}
         <AppCarousel
           items={categories.categories}
           delay={3000}
           itemClassName="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
           showArrows={false}
           renderItem={(category) => (
-            <div className="overflow-hidden rounded-2xl shadow transition-shadow duration-300 hover:shadow-xl">
+            <Card className="overflow-hidden rounded-2xl shadow transition-shadow duration-300 hover:shadow-xl">
               <div className="group relative h-64 overflow-hidden">
                 <Image
                   src={category.image || "/placeholder.jpg"}
@@ -65,8 +77,10 @@ export default function FeaturedMenuCategories() {
                 />
               </div>
 
-              <div className="p-5">
-                <h3 className="text-xl font-semibold">{category.name}</h3>
+              <CardContent className="p-5">
+                <h3 className="text-xl font-semibold">
+                  {category.name}
+                </h3>
 
                 <Link
                   href={`/menuitem/category/${category.id}`}
@@ -74,8 +88,8 @@ export default function FeaturedMenuCategories() {
                 >
                   Explore →
                 </Link>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           )}
         />
       </div>

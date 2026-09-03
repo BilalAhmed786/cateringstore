@@ -2,21 +2,28 @@
 
 import Image from "next/image";
 import Link from "next/link";
+
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/app/(frontend)/components/ui/button";
+
+import {
+  Card,
+  CardContent,
+} from "@/app/(frontend)/components/ui/card";
+import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
 import { useHamperCategories } from "@/app/(frontend)/admin/categories/hamper/hooks/useHamperCategories";
 import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
-
-
 export default function FeaturedHampers() {
-  const { data: categories, isLoading } =useHamperCategories({page:1,limit:1000});
+  const { data: categories, isLoading } = useHamperCategories({
+    page: 1,
+    limit: 1000,
+  });
 
   if (isLoading) {
     return (
       <section className="py-24">
-        <Loader/>
+        <Loader />
       </section>
     );
   }
@@ -25,43 +32,41 @@ export default function FeaturedHampers() {
 
   return (
     <section className="py-24">
-      <div className="px-7">
-
+      <div className="px-4 sm:px-7">
         {/* Header */}
         <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-
           <div>
             <p className="text-sm font-semibold uppercase tracking-[4px] text-primary">
               Featured Hampers
             </p>
 
-            <h2 className="mt-2 text-4xl font-bold">
+            <h2 className="mt-2 text-3xl font-bold sm:text-4xl">
               Beautiful Hampers For Every Celebration
             </h2>
 
-            <p className="mt-4 max-w-2xl text-muted-foreground">
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
               Discover premium hamper categories perfect for birthdays,
               weddings, corporate gifting and every special occasion.
             </p>
           </div>
 
-          <Button asChild>
-            <Link href="/hampers">
-              View All Hampers
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-
+          <Link href="/hampers">
+            <UniButton
+              type="button"
+              label="View All Hampers"
+              className="w-fit shrink-0"
+            />
+          </Link>
         </div>
 
+        {/* Hampers */}
         <AppCarousel
           items={categories.categories}
           delay={3000}
           showArrows={false}
           itemClassName="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
           renderItem={(category) => (
-            <div className="overflow-hidden rounded-2xl shadow transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
-
+            <Card className="overflow-hidden rounded-2xl shadow transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
               <div className="group relative h-64 overflow-hidden">
                 <Image
                   src={category.image || "/placeholder.jpg"}
@@ -71,8 +76,7 @@ export default function FeaturedHampers() {
                 />
               </div>
 
-              <div className="p-5">
-
+              <CardContent className="p-5">
                 <h3 className="text-xl font-semibold">
                   {category.name}
                 </h3>
@@ -82,14 +86,12 @@ export default function FeaturedHampers() {
                   className="mt-3 inline-flex items-center text-sm font-medium text-primary hover:underline"
                 >
                   Explore →
+                  <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
-
-              </div>
-
-            </div>
+              </CardContent>
+            </Card>
           )}
         />
-
       </div>
     </section>
   );

@@ -94,11 +94,11 @@ export function EventDetailsSheet({
             {/* -------------------------------- */}
 
             <section className="space-y-4">
-              <h2 className="text-4xl font-bold">
+              <h2 className="lg:text-4xl font-bold">
                 {data.name}
               </h2>
 
-              <div className="text-3xl font-bold text-primary">
+              <div className="lg:text-3xl font-bold text-primary">
                 {storedata?.store?.currency} {data.finalPrice}
               </div>
 
@@ -141,12 +141,12 @@ export function EventDetailsSheet({
                   Included Menu Items
                 </h3>
 
-                <div className="px-12">
+                <div className="">
                   <AppCarousel
                     items={data.menuItems}
                     autoplay={false}
                     loop={false}
-                    showArrows
+                    showArrows={false}
                     className="w-full"
                     itemClassName="basis-full"
                     previousClassName="-left-10"
@@ -172,7 +172,7 @@ export function EventDetailsSheet({
 
                           <div className="space-y-4 p-6">
                             <div className="flex items-center justify-between gap-4">
-                              <h4 className="text-2xl font-semibold">
+                              <h4 className="lg:text-2xl font-semibold">
                                 {menu.title}
                               </h4>
 
@@ -206,12 +206,12 @@ export function EventDetailsSheet({
                   Included Packages
                 </h3>
 
-                <div className="px-12">
+                <div>
                   <AppCarousel
                     items={data.packages}
                     autoplay={false}
                     loop={false}
-                    showArrows
+                    showArrows={false}
                     className="w-full"
                     itemClassName="basis-full"
                     previousClassName="-left-10"
@@ -237,7 +237,7 @@ export function EventDetailsSheet({
 
                           <div className="space-y-4 p-6">
                             <div className="flex items-center justify-between gap-4">
-                              <h4 className="text-2xl font-semibold">
+                              <h4 className="lg:text-2xl font-semibold">
                                 {pkg.name}
                               </h4>
 
@@ -273,9 +273,6 @@ export function EventDetailsSheet({
                 reviewData.averageRating > 0 && (
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 
-                    <h3 className="text-xl font-semibold">
-                      Customer Reviews
-                    </h3>
 
                     <div className="flex gap-3">
 

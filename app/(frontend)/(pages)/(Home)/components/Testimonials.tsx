@@ -3,6 +3,10 @@
 import AppCarousel from "@/app/(frontend)/components/reusables/carousel/carousel";
 import { Star, Quote } from "lucide-react";
 import { useGetTestimonials } from "../hook/useGetTestimonials";
+import {
+  Card,
+  CardContent,
+} from "@/app/(frontend)/components/ui/card";
 
 export default function Testimonials() {
   const { data, isLoading, isError } = useGetTestimonials();
@@ -12,7 +16,7 @@ export default function Testimonials() {
   if (isLoading) {
     return (
       <section className="overflow-hidden py-24">
-        <div className="px-7">
+        <div className="px-4 sm:px-7">
           <div className="mx-auto max-w-2xl text-center">
             <div className="mx-auto h-5 w-28 animate-pulse rounded bg-muted" />
 
@@ -40,7 +44,7 @@ export default function Testimonials() {
 
   return (
     <section className="relative overflow-hidden py-24">
-      <div className="px-7">
+      <div className="px-4 sm:px-7">
         {/* Heading */}
         <div className="mx-auto max-w-2xl text-center">
           <span className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">
@@ -69,51 +73,53 @@ export default function Testimonials() {
             previousClassName="-left-5 hidden md:flex"
             nextClassName="-right-5 hidden md:flex"
             renderItem={(testimonial) => (
-              <article className="group relative flex h-full min-h-4 flex-col overflow-hidden rounded-3xl border bg-background p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-                {/* Quote */}
-                <div className="absolute right-6 top-5 opacity-10">
-                  <Quote className="w-7" />
-                </div>
-
-                {/* Rating */}
-                <div className="relative flex items-center gap-1">
-                  {Array.from({
-                    length: testimonial.rating,
-                  }).map((_, index) => (
-                    <Star
-                      key={index}
-                      className="h-5 w-5 fill-yellow-400 text-yellow-400"
-                    />
-                  ))}
-                </div>
-
-                {/* Review */}
-                <blockquote className="relative mt-7 flex-1">
-                  <p className="text-[15px] leading-7 text-muted-foreground">
-                    “{testimonial.review}”
-                  </p>
-                </blockquote>
-
-                {/* Divider */}
-                <div className="my-6 h-px bg-border" />
-
-                {/* Customer */}
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
-                    {testimonial.name.charAt(0).toUpperCase()}
+              <Card className="group relative flex h-full min-h-4 flex-col overflow-hidden rounded-3xl shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                <CardContent className="relative flex h-full flex-col p-7">
+                  {/* Quote */}
+                  <div className="absolute right-6 top-5 opacity-10">
+                    <Quote className="w-7" />
                   </div>
 
-                  <div className="min-w-0">
-                    <h4 className="truncate font-semibold">
-                      {testimonial.name}
-                    </h4>
+                  {/* Rating */}
+                  <div className="relative flex items-center gap-1">
+                    {Array.from({
+                      length: testimonial.rating,
+                    }).map((_, index) => (
+                      <Star
+                        key={index}
+                        className="h-5 w-5 fill-yellow-400 text-yellow-400"
+                      />
+                    ))}
+                  </div>
 
-                    <p className="mt-0.5 truncate text-sm text-muted-foreground">
-                      {testimonial.itemName}
+                  {/* Review */}
+                  <blockquote className="relative mt-7 flex-1">
+                    <p className="text-[15px] leading-7 text-muted-foreground">
+                      “{testimonial.review}”
                     </p>
+                  </blockquote>
+
+                  {/* Divider */}
+                  <div className="my-6 h-px bg-border" />
+
+                  {/* Customer */}
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
+                      {testimonial.name.charAt(0).toUpperCase()}
+                    </div>
+
+                    <div className="min-w-0">
+                      <h4 className="truncate font-semibold">
+                        {testimonial.name}
+                      </h4>
+
+                      <p className="mt-0.5 truncate text-sm text-muted-foreground">
+                        {testimonial.itemName}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </article>
+                </CardContent>
+              </Card>
             )}
           />
         </div>

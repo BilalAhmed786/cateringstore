@@ -43,18 +43,15 @@ export function ProductDetailsSheet({
   onSortChange,
   onReviewSubmit,
 }: ProductDetailsSheetProps) {
-
-  const {data:storedata} = useGetStoreSettings()
-   return (
+  const { data: storedata } = useGetStoreSettings();
+  return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
         className="w-full overflow-y-auto sm:max-w-5xl"
       >
         <SheetHeader className="border-b">
-          <SheetTitle>
-            {data?.name ?? "Package Details"}
-          </SheetTitle>
+          <SheetTitle>{data?.name ?? "Package Details"}</SheetTitle>
         </SheetHeader>
 
         {/* -------------------------------- */}
@@ -75,7 +72,6 @@ export function ProductDetailsSheet({
           </div>
         ) : (
           <div className="space-y-10 p-6">
-
             {/* -------------------------------- */}
             {/* Cover Image */}
             {/* -------------------------------- */}
@@ -95,9 +91,7 @@ export function ProductDetailsSheet({
             {/* -------------------------------- */}
 
             <section className="space-y-4">
-              <h2 className="text-4xl font-bold">
-                {data.name}
-              </h2>
+              <h2 className="text-4xl font-bold">{data.name}</h2>
 
               <div className="text-3xl font-bold text-primary">
                 {storedata?.store.currency} {data.finalPrice}
@@ -123,9 +117,7 @@ export function ProductDetailsSheet({
             {/* -------------------------------- */}
 
             <section className="space-y-3">
-              <h3 className="text-2xl font-semibold">
-                Description
-              </h3>
+              <h3 className="text-2xl font-semibold">Description</h3>
 
               <p className="leading-8 text-muted-foreground">
                 {data.description}
@@ -138,16 +130,14 @@ export function ProductDetailsSheet({
 
             {data.items.length > 0 && (
               <section className="space-y-5">
-                <h3 className="text-2xl font-semibold">
-                  Included Menu Items
-                </h3>
+                <h3 className="text-2xl font-semibold">Included Menu Items</h3>
 
-                <div className="px-12">
+                <div className="">
                   <AppCarousel
                     items={data.items}
                     autoplay={false}
                     loop={false}
-                    showArrows
+                    showArrows={false}
                     className="w-full"
                     itemClassName="basis-full"
                     previousClassName="-left-10"
@@ -161,13 +151,8 @@ export function ProductDetailsSheet({
 
                           <div className="relative h-87.5 w-full overflow-hidden">
                             <Image
-                              src={
-                                menu.images?.[0]?.url ??
-                                "/placeholder.png"
-                              }
-                              alt={
-                                menu.title ?? "Menu item"
-                              }
+                              src={menu.images?.[0]?.url ?? "/placeholder.png"}
+                              alt={menu.title ?? "Menu item"}
                               fill
                               sizes="(max-width: 640px) 100vw, 800px"
                               className="object-cover"
@@ -178,7 +163,7 @@ export function ProductDetailsSheet({
 
                           <div className="space-y-4 p-6">
                             <div className="flex items-center justify-between gap-4">
-                              <h4 className="text-2xl font-semibold">
+                              <h4 className="lg:text-2xl font-semibold">
                                 {menu.title}
                               </h4>
 
@@ -206,40 +191,31 @@ export function ProductDetailsSheet({
             {/* -------------------------------- */}
 
             <section className="space-y-5">
-
               {/* Review Header + Filters */}
 
-              {reviewData &&
-                reviewData.averageRating > 0 && (
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              {reviewData && reviewData.averageRating > 0 && (
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                  <div className="flex gap-3">
+                    <BaseSelect
+                      label="Rating"
+                      value={rating}
+                      onChange={onRatingChange}
+                      options={ratingOptions}
+                      placeholder="Rating"
+                    />
 
-                    <h3 className="text-xl font-semibold">
-                      Customer Reviews
-                    </h3>
-
-                    <div className="flex gap-3">
-                      <BaseSelect
-                        label="Rating"
-                        value={rating}
-                        onChange={onRatingChange}
-                        options={ratingOptions}
-                        placeholder="Rating"
-                      />
-
-                      <BaseSelect
-                        label="Sort"
-                        value={sort}
-                        onChange={(value) =>
-                          onSortChange(
-                            value as "asc" | "desc",
-                          )
-                        }
-                        options={sortOptions}
-                        placeholder="Sort"
-                      />
-                    </div>
+                    <BaseSelect
+                      label="Sort"
+                      value={sort}
+                      onChange={(value) =>
+                        onSortChange(value as "asc" | "desc")
+                      }
+                      options={sortOptions}
+                      placeholder="Sort"
+                    />
                   </div>
-                )}
+                </div>
+              )}
 
               {/* Reviews Loading */}
 
@@ -250,9 +226,7 @@ export function ProductDetailsSheet({
               ) : (
                 <ReviewSection
                   reviews={reviewData?.reviews ?? []}
-                  canReview={
-                    reviewData?.canReview ?? false
-                  }
+                  canReview={reviewData?.canReview ?? false}
                   onSubmit={onReviewSubmit}
                 />
               )}

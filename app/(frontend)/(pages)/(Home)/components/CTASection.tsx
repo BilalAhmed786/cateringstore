@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { CalendarDays, PhoneCall } from "lucide-react";
-import { Button } from "../../../components/ui/button";
 import AnimatedCounter from "./AnimatedCounter";
+import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 
 export default function CTASection() {
   return (
@@ -16,34 +15,38 @@ export default function CTASection() {
             Lets Make Your Event Special
           </span>
 
-          <h2 className="mt-6 text-4xl font-bold leading-tight lg:text-6xl">
+          <h2 className="mt-6 text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
             Delicious Food,
             <br />
             Memorable Celebrations
           </h2>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
+          <p className="mx-auto mt-6 max-w-2xl text-base text-gray-300 sm:text-lg">
             Whether you are planning a wedding, birthday, corporate event, or
             family gathering, our catering team is ready to serve you with
             exceptional food and professional service.
           </p>
 
           {/* Buttons */}
-
           <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <Button size="lg" asChild>
-              <Link href="/tasting">
-                <CalendarDays className="mr-2 h-5 w-5" />
-                Book Now
-              </Link>
-            </Button>
+            <Link href="/tasting">
+              <UniButton
+                type="button"
+                size="lg"
+                label="Book Now"
+                className="w-fit"
+              />
+            </Link>
 
-            <Button size="lg" variant="secondary" asChild>
-              <Link href="/contact">
-                <PhoneCall className="mr-2 h-5 w-5" />
-                Contact Us
-              </Link>
-            </Button>
+            <Link href="/contact">
+              <UniButton
+                type="button"
+                size="lg"
+                variant="secondary"
+                label="Contact Us"
+                className="w-fit"
+              />
+            </Link>
           </div>
 
           {/* Stats */}

@@ -96,7 +96,7 @@ export function MenuItemDetailsSheet({
             Menu item not found.
           </div>
         ) : (
-          <div className="w-full space-y-10 px-6">
+          <div className="w-full space-y-10">
             {/* -------------------------------- */}
             {/* Images */}
             {/* -------------------------------- */}
@@ -114,7 +114,7 @@ export function MenuItemDetailsSheet({
                     src={image.url}
                     alt={data.title}
                     fill
-                    className="object-cover"
+                    className="lg:object-cover object-contain"
                   />
                 </div>
               )}
@@ -161,10 +161,10 @@ export function MenuItemDetailsSheet({
               <section className="space-y-5">
                   {reviewData && reviewData.totalReviews > 0 && (
                 <div className="flex items-end justify-between gap-4">
-                  <h3 className="text-xl font-semibold">Customer Reviews</h3>
+                  
                   
 
-                  <div className="flex gap-3">
+                  <div className="flex flex-wrap gap-3">
                     <BaseSelect
                       label="Rating"
                       value={rating}

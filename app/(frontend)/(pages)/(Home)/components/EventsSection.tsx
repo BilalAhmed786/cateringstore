@@ -2,14 +2,19 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { Button } from "../../../components/ui/button";
 import { useEventCategories } from "@/app/(frontend)/admin/categories/event/hooks/useEventCategories";
 import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
-
+import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
+import {
+  Card,
+  CardContent,
+} from "@/app/(frontend)/components/ui/card";
 
 export default function EventsSection() {
-const { data: events, isLoading } = useEventCategories({page:1,limit:1000});
+  const { data: events, isLoading } = useEventCategories({
+    page: 1,
+    limit: 1000,
+  });
 
   if (isLoading) {
     return (
@@ -23,42 +28,45 @@ const { data: events, isLoading } = useEventCategories({page:1,limit:1000});
 
   return (
     <section className="bg-muted/30 py-24">
-      <div className="px-7">
+      <div className="px-4 sm:px-7">
         {/* Heading */}
-        <div className="mb-14 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+        <div className="mb-14 flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
           <div>
             <span className="text-sm font-semibold uppercase tracking-widest text-primary">
               Events We Cater
             </span>
 
-            <h2 className="mt-2 text-4xl font-bold">
+            <h2 className="mt-2 text-3xl font-bold sm:text-4xl">
               Making Every Celebration Memorable
             </h2>
 
-            <p className="mt-4 max-w-2xl text-muted-foreground">
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
               From intimate family gatherings to grand weddings, we provide
               exceptional catering for every occasion.
             </p>
           </div>
 
-          <Button asChild>
-            <Link href="/events">
-              View All Events
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+          <Link href="/events">
+            <UniButton
+              type="button"
+              label="View All Events"
+              className="w-fit shrink-0"
+            />
+          </Link>
         </div>
 
-        {/* Grid */}
+        {/* Events Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {events.categories.map((event, index) => {
             const isLarge = index < 2;
 
             return (
-              <div
+              <Card
                 key={event.id}
-                className={`group relative overflow-hidden rounded-3xl ${
-                  isLarge ? "lg:col-span-2 h-112.5" : "h-55"
+                className={`group relative overflow-hidden rounded-3xl border-0 p-0 shadow-sm transition-all duration-300 hover:shadow-xl ${
+                  isLarge
+                    ? "h-112.5 lg:col-span-2"
+                    : "h-55"
                 }`}
               >
                 <Image
@@ -69,10 +77,10 @@ const { data: events, isLoading } = useEventCategories({page:1,limit:1000});
                 />
 
                 {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to from-black/90 via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 
                 {/* Content */}
-                <div className="absolute inset-x-0 bottom-0 p-8 text-white">
+                <CardContent className="absolute inset-x-0 bottom-0 p-8 text-white">
                   <h3 className="translate-y-4 transform text-2xl font-bold transition-all duration-500 group-hover:translate-y-0">
                     {event.name}
                   </h3>
@@ -84,15 +92,15 @@ const { data: events, isLoading } = useEventCategories({page:1,limit:1000});
                         {event.name.toLowerCase()} with delicious menus,
                         professional service, and unforgettable experiences.
                       </p>
-                      <Button
-                        className="mt-6 lg:translate-y-6 lg:opacity-0 lg:transition-all lg:duration-500 lg:delay-200 lg:group-hover:translate-y-0 lg:group-hover:opacity-100"
-                        variant="secondary"
-                        asChild
-                      >
-                        <Link href={`/events/category/${event.id}`}>
-                          Explore Event
-                        </Link>
-                      </Button>
+
+                      <Link href={`/events/category/${event.id}`}>
+                        <UniButton
+                          type="button"
+                          label="Explore Event"
+                          variant="secondary"
+                          className="mt-6 lg:translate-y-6 lg:opacity-0 lg:transition-all lg:duration-500 lg:delay-200 lg:group-hover:translate-y-0 lg:group-hover:opacity-100"
+                        />
+                      </Link>
                     </>
                   ) : (
                     <Link
@@ -102,8 +110,8 @@ const { data: events, isLoading } = useEventCategories({page:1,limit:1000});
                       Explore Event →
                     </Link>
                   )}
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             );
           })}
         </div>
