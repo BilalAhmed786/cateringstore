@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "../../lib/guard/roleGuard";
-import { sendNotification } from "../../lib/notifications/sendNotification";
 import prisma from "../../lib/prisma/prisma";
+import { publishNotification } from "../../lib/rabbitmq/publishNotification";
 
 export async function POST(req: NextRequest) {
   try {
@@ -68,7 +68,8 @@ export async function POST(req: NextRequest) {
         guests,
         date: new Date(date),
         time,
-        foodPreferences: foodPreferences ?? [], name,
+        foodPreferences: foodPreferences ?? [],
+        name,
         email,
         phone,
         message: message || null,
@@ -76,39 +77,14 @@ export async function POST(req: NextRequest) {
     });
 
     // ---------------------------------------
-    // Get Admin + Super Admin FCM tokens
+    // Publish notification job to RabbitMQ
     // ---------------------------------------
 
-    const adminTokens = await prisma.fcmToken.findMany({
-      where: {
-        user: {
-          role: {
-            in: ["ADMIN", "SUPER_ADMIN"],
-          },
-        },
-      },
-      select: {
-        token: true,
-      },
+    await publishNotification({
+      type: "NEW_TASTING_INQUIRY",
+      inquiryId: inquiry.id,
+      customerName: name,
     });
-
-    // ---------------------------------------
-    // Send notifications
-    // ---------------------------------------
-
-    if (adminTokens.length > 0) {
-      await Promise.allSettled(
-        adminTokens.map(({ token }) =>
-          sendNotification({
-            token,
-            title: "New Tasting Inquiry",
-            body: `${name} submitted a new tasting request.`,
-            type: "NEW_TASTING_INQUIRY",
-            inquiryId: inquiry.id,
-          }),
-        ),
-      );
-    }
 
     // ---------------------------------------
     // Response

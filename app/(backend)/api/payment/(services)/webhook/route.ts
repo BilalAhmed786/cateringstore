@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/(backend)/lib/prisma/prisma";
 import { stripe } from "@/app/(backend)/lib/stripe/stripe";
 import { createOrder } from "../../utils/order/createOrder";
-import { sendNotification } from "@/app/(backend)/lib/notifications/sendNotification";
+import { publishNotification } from "@/app/(backend)/lib/rabbitmq/publishNotification";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -68,7 +68,10 @@ export async function POST(req: NextRequest) {
       });
 
       if (!session) {
-        console.error("CheckoutSession not found:", paymentIntent.id);
+        console.error(
+          "CheckoutSession not found:",
+          paymentIntent.id,
+        );
 
         return NextResponse.json({
           received: true,
@@ -81,7 +84,10 @@ export async function POST(req: NextRequest) {
       // ---------------------------------------
 
       if (session.status === "COMPLETED") {
-        console.log("CheckoutSession already completed:", paymentIntent.id);
+        console.log(
+          "CheckoutSession already completed:",
+          paymentIntent.id,
+        );
 
         return NextResponse.json({
           received: true,
@@ -118,81 +124,25 @@ export async function POST(req: NextRequest) {
       });
 
       // ---------------------------------------
-      // Get Admin + Super Admin FCM tokens
+      // Publish notification job to RabbitMQ
       // ---------------------------------------
 
-      const adminUsers = await prisma.user.findMany({
-        where: {
-          role: {
-            in: ["ADMIN", "SUPER_ADMIN"],
-          },
-        },
-        include: {
-          fcmTokens: true,
-        },
+      await publishNotification({
+        type: "NEW_ORDER",
+        orderId: order.id,
+        userId: order.userId,
+        customerName: session.fullName,
       });
 
-      const adminTokens = adminUsers.flatMap((user) =>
-        user.fcmTokens.map((fcmToken) => fcmToken.token),
+      console.log(
+        "Order successfully created and notification queued:",
+        paymentIntent.id,
       );
-
-      // ---------------------------------------
-      // Send notification to Admin + Super Admin
-      // ---------------------------------------
-
-      for (const token of adminTokens) {
-        try {
-          await sendNotification({
-            token,
-            title: "New Order",
-            body: `New order from ${session.fullName}`,
-            type: "NEW_ORDER",
-            orderId: order.id,
-          });
-        } catch (error) {
-          console.error("Failed to notify admin FCM token:", token, error);
-        }
-      }
-
-      // ---------------------------------------
-      // Get Client FCM tokens
-      // ---------------------------------------
-
-      if (order.userId) {
-        const client = await prisma.user.findUnique({
-          where: {
-            id: order.userId,
-          },
-          include: {
-            fcmTokens: true,
-          },
-        });
-
-        const clientTokens =
-          client?.fcmTokens.map((fcmToken) => fcmToken.token) ?? [];
-
-        // ---------------------------------------
-        // Send notification to Client
-        // ---------------------------------------
-
-        for (const token of clientTokens) {
-          try {
-            await sendNotification({
-              token,
-              title: "Order Received",
-              body: "Your order has been received successfully.",
-              type: "ORDER_RECEIVED",
-              orderId: order.id,
-            });
-          } catch (error) {
-            console.error("Failed to notify client FCM token:", token, error);
-          }
-        }
-      }
-
-      console.log("Order successfully created:", paymentIntent.id);
     } catch (error) {
-      console.error("Error processing successful payment:", error);
+      console.error(
+        "Error processing successful payment:",
+        error,
+      );
 
       return NextResponse.json(
         {
@@ -222,9 +172,15 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      console.log("CheckoutSession marked FAILED:", paymentIntent.id);
+      console.log(
+        "CheckoutSession marked FAILED:",
+        paymentIntent.id,
+      );
     } catch (error) {
-      console.error("Failed to update CheckoutSession:", error);
+      console.error(
+        "Failed to update CheckoutSession:",
+        error,
+      );
 
       return NextResponse.json(
         {
