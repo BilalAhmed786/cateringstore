@@ -12,7 +12,10 @@ import {
 } from "@/app/(frontend)/components/ui/tabs";
 
 import { generateSchema } from "../../../components/reusables/validation/valdiation";
-import { CartItem, FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
+import {
+  CartItem,
+  FieldConfig,
+} from "@/app/(frontend)/components/reusables/types/types";
 
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { useCreatePackage } from "../hooks/usecreatepackage";
@@ -25,16 +28,27 @@ import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 /* -------------------- FORM FIELDS -------------------- */
 const fields: FieldConfig[] = [
-  { name: "name", label: "Package Name", type: "text", required: true },
-  { name: "description", label: "Description", type: "textarea" },
-  { name: "discount", label: "Discount", type: "number" },
+  {
+    name: "name",
+    label: "Package Name",
+    type: "text",
+    required: true,
+    className: "mt-5",
+  },
+  {
+    name: "description",
+    label: "Description",
+    type: "textarea",
+    className: "mt-5",
+  },
+  { name: "discount", label: "Discount", type: "number", className: "mt-5" },
   {
     name: "image",
     label: "Image",
     type: "file",
-    className: "w-[200] relative h-32 rounded", // image preview classes
+    className: "w-[200] relative h-32 rounded mt-5", // image preview classes
     dragdrop: "border-4 border-blue-500 p-12 rounded-xl", // drag area classes
-    required:true
+    required: true,
   },
 ];
 
@@ -48,7 +62,6 @@ export default function CreatePackagePage() {
       name: "",
       description: "",
       discount: 0,
-      
     },
   });
 
@@ -72,8 +85,6 @@ export default function CreatePackagePage() {
 
   /* -------------------- SUBMIT -------------------- */
   const onSubmit = (data: FieldValues) => {
-
-   
     if (!selectedItems.length) {
       toast.error("Please select at least one menu item.");
       setActiveTab("items");
@@ -84,7 +95,7 @@ export default function CreatePackagePage() {
       name: data.name,
       description: data.description,
       discount: Number(data.discount ?? 0),
-      image:data.image,
+      image: data.image,
       items: selectedItems.map((i) => ({
         menuItemId: i.id,
         quantity: i.quantity,
@@ -118,11 +129,17 @@ export default function CreatePackagePage() {
               </FieldGroup>
             </TabsContent>
 
-            <TabsContent value="items">
+            <TabsContent value="items" className="min-w-0">
               <div
-                className={`grid gap-6 ${selectedItems.length ? "lg:grid-cols-3" : ""}`}
+                className={`grid min-w-0 gap-6 ${
+                  selectedItems.length ? "lg:grid-cols-3" : ""
+                }`}
               >
-                <div className={selectedItems.length ? "lg:col-span-2" : ""}>
+                <div
+                  className={`min-w-0 w-full ${
+                    selectedItems.length ? "lg:col-span-2" : ""
+                  }`}
+                >
                   <MenuItemBrowser
                     selectable={false}
                     showFilters
@@ -131,15 +148,17 @@ export default function CreatePackagePage() {
                 </div>
 
                 {selectedItems.length > 0 && (
-                  <EntityCart
-                    title="Package Items"
-                    items={selectedItems}
-                    onChange={setSelectedItems}
-                  />
+                  <div className="min-w-0 w-full">
+                    <EntityCart
+                      title="Package Items"
+                      items={selectedItems}
+                      onChange={setSelectedItems}
+                    />
+                  </div>
                 )}
               </div>
 
-              <div className="pt-4 float-right">
+              <div className="flex justify-end pt-4">
                 <UniButton
                   type="button"
                   loading={isPending}

@@ -55,6 +55,7 @@ export default function OrderDetailsPage({
         <Metadata
           title="Order Details"
           desc={`Order #${order.id}`}
+          classname="min-w-0"
         />
 
         <Link href="/admin/orders">

@@ -16,8 +16,8 @@ export function EntityCart({
   const removeItem = (id: string) => {
     onChange(items.filter((i) => i.id !== id));
   };
-  
-  const {data} = useGetStoreSettings()
+
+  const { data } = useGetStoreSettings();
 
   const updateQty = (id: string, qty: number) => {
     onChange(
@@ -27,33 +27,31 @@ export function EntityCart({
               ...i,
               quantity: Math.max(1, qty),
             }
-          : i
-      )
+          : i,
+      ),
     );
   };
 
   const total = items.reduce(
     (sum, i) => sum + ((i.price || i.finalPrice) ?? 0) * i.quantity,
-    0
+    0,
   );
 
   const cartContent = (
-    <div className="rounded-xl border bg-white p-4 space-y-4">
+    <div className="w-full min-w-0 space-y-4 rounded-xl border bg-white p-4">
       <h3 className="text-lg font-semibold">{title}</h3>
 
       {!items.length && (
-        <p className="text-sm text-muted-foreground">
-          No items selected
-        </p>
+        <p className="text-sm text-muted-foreground">No items selected</p>
       )}
 
       {items.map((item) => (
         <div
           key={item.id}
-          className="flex items-center gap-3 rounded-lg border p-2"
+          className="flex min-w-0 flex-wrap items-center gap-3 rounded-lg border p-2"
         >
           {/* Image */}
-          <div className="h-14 w-14 overflow-hidden rounded bg-slate-100">
+          <div className="h-14 w-14 shrink-0 overflow-hidden rounded bg-slate-100">
             <Image
               src={
                 item.images?.length
@@ -68,12 +66,12 @@ export function EntityCart({
           </div>
 
           {/* Info */}
-          <div className="flex-1">
-            <p className="font-medium">
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-medium" title={item.title || item.name}>
               {item.title || item.name}
             </p>
 
-            <p className="text-sm text-muted-foreground">
+            <p className="truncate text-sm text-muted-foreground">
               {data?.store.currency} {item.price || item.finalPrice}
             </p>
 
@@ -87,7 +85,7 @@ export function EntityCart({
                 -
               </Button>
 
-              <span>{item.quantity}</span>
+              <span className="shrink-0">{item.quantity}</span>
 
               <Button
                 type="button"
@@ -105,6 +103,7 @@ export function EntityCart({
             type="button"
             size="sm"
             variant="destructive"
+            className="shrink-0 mb-8"
             onClick={() => removeItem(item.id)}
           >
             Remove
@@ -125,10 +124,7 @@ export function EntityCart({
   }
 
   return (
-    <CartCollapse
-      itemsCount={items.length}
-      total={total.toFixed(2)}
-    >
+    <CartCollapse itemsCount={items.length} total={total.toFixed(2)}>
       {cartContent}
     </CartCollapse>
   );

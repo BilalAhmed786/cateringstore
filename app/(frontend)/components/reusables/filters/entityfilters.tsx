@@ -7,7 +7,7 @@ import { EntityFiltersProps } from "./filtertypes";
 export function EntityFilters({ filters, search }: EntityFiltersProps) {
   return (
     <div>
-      <div className="flex space-y-5 gap-5">
+      <div className="flex flex-wrap space-y-2 gap-2">
         {filters?.map((filter) => (
           <BaseSelect
             key={filter.key}

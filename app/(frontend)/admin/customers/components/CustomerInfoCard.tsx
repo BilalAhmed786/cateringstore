@@ -22,7 +22,7 @@ interface Props {
 
 export function CustomerInfoCard({ customer }: Props) {
   return (
-    <Card className="p-5">
+    <Card className="min-w-0 p-5">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <User className="h-5 w-5" />

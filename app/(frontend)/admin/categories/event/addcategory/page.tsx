@@ -16,6 +16,7 @@ export default function AddEventCategoryPage() {
       type: "text",
       placeholder: "Enter Event category name",
       required: true,
+      className:"mt-5"
     },
     {
       name: "image",

@@ -14,6 +14,7 @@ export default function AddCategoryPage() {
       label: "Category Name",
       type: "text",
       placeholder: "Enter category name",
+      className:"mt-5"
     },
     {
       name: "image",

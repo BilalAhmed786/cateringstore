@@ -122,7 +122,7 @@ export default function EventBrowser({
           search={{
             value: search,
             onChange: onSearchChange,
-            classname: "w-3xl",
+            classname: "lg:w-3xl",
           }}
         />
       )}

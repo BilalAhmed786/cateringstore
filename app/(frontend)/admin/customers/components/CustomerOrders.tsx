@@ -12,14 +12,13 @@ import {
 import type { CustomerOrder } from "../types/type";
 import { CustomerOrderItem } from "./CustomerOrderItem";
 
-
 interface Props {
   orders: CustomerOrder[];
 }
 
 export function CustomerOrders({ orders }: Props) {
   return (
-    <Card className="p-5">
+    <Card className="min-w-0 p-5">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ShoppingBag className="h-5 w-5" />
@@ -29,16 +28,11 @@ export function CustomerOrders({ orders }: Props) {
 
       <CardContent>
         {orders.length === 0 ? (
-          <p className="text-muted-foreground">
-            This customer has no orders.
-          </p>
+          <p className="text-muted-foreground">This customer has no orders.</p>
         ) : (
           <div className="space-y-3">
             {orders.map((order) => (
-              <CustomerOrderItem
-                key={order.id}
-                order={order}
-              />
+              <CustomerOrderItem key={order.id} order={order} />
             ))}
           </div>
         )}

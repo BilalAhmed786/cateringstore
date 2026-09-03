@@ -1,11 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  FieldValues,
-  FormProvider,
-  useForm,
-} from "react-hook-form";
+import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -28,6 +24,7 @@ import StoreConfigurationStep from "./steps/StoreConfigurationStep";
 
 import { useGetStoreSettings } from "../hooks/useGetStoreSettings";
 import { useUpdateStoreSettings } from "../hooks/useUpdateStoreSettings";
+import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 
 const fields = [
   {
@@ -171,8 +168,7 @@ export default function StoreSettingsForm() {
       timezone: data.store.timezone ?? "Asia/Karachi",
       storeStatus: data.store.storeStatus ?? "OPEN",
 
-      maintenanceMessage:
-        data.store.maintenanceMessage ?? "",
+      maintenanceMessage: data.store.maintenanceMessage ?? "",
     });
   }, [data, methods]);
 
@@ -188,13 +184,7 @@ export default function StoreSettingsForm() {
     }
 
     if (step === 2) {
-      fieldsToValidate = [
-        "email",
-        "phone",
-        "address",
-        "city",
-        "website",
-      ];
+      fieldsToValidate = ["email", "phone", "address", "city", "website"];
     }
 
     const valid = await methods.trigger(fieldsToValidate);
@@ -209,8 +199,6 @@ export default function StoreSettingsForm() {
   };
 
   const handleSubmit = async (values: FieldValues) => {
-  
-
     await updateStore.mutateAsync({
       name: values.name?.trim(),
 
@@ -232,27 +220,16 @@ export default function StoreSettingsForm() {
 
       storeStatus: values.storeStatus,
 
-      maintenanceMessage:
-        values.maintenanceMessage?.trim(),
+      maintenanceMessage: values.maintenanceMessage?.trim(),
 
       isActive: data?.store.isActive ?? true,
 
       // FileUploadInput returns File[]
-      file: Array.isArray(values.file)
-        ? values.file
-        : [],
+      file: Array.isArray(values.file) ? values.file : [],
     });
   };
 
-  if (isLoading) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          Loading store settings...
-        </CardContent>
-      </Card>
-    );
-  }
+  if (isLoading) return <Loader />;
 
   return (
     <Card className="w-full p-5">
@@ -260,40 +237,33 @@ export default function StoreSettingsForm() {
         <CardTitle>Store Settings</CardTitle>
 
         <CardDescription>
-          Manage your catering store information
-          and configuration.
+          Manage your catering store information and configuration.
         </CardDescription>
 
-        <div className="flex items-center gap-3 pt-4 text-sm">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 pt-4 text-sm">
           <span
             className={
-              step === 1
-                ? "font-semibold text-slate-900"
-                : "text-slate-400"
+              step === 1 ? "font-semibold text-slate-900" : "text-slate-400"
             }
           >
             1. Basic
           </span>
 
-          <span>→</span>
+          <span className="text-muted-foreground">→</span>
 
           <span
             className={
-              step === 2
-                ? "font-semibold text-slate-900"
-                : "text-slate-400"
+              step === 2 ? "font-semibold text-slate-900" : "text-slate-400"
             }
           >
             2. Contact
           </span>
 
-          <span>→</span>
+          <span className="text-muted-foreground">→</span>
 
           <span
             className={
-              step === 3
-                ? "font-semibold text-slate-900"
-                : "text-slate-400"
+              step === 3 ? "font-semibold text-slate-900" : "text-slate-400"
             }
           >
             3. Configuration
@@ -303,17 +273,13 @@ export default function StoreSettingsForm() {
 
       <CardContent>
         <FormProvider {...methods}>
-          <form
-            onSubmit={methods.handleSubmit(handleSubmit)}
-          >
+          <form onSubmit={methods.handleSubmit(handleSubmit)}>
             <FieldGroup>
               {step === 1 && <StoreBasicStep logo={data?.store?.logo || ""} />}
 
               {step === 2 && <StoreContactStep />}
 
-              {step === 3 && (
-                <StoreConfigurationStep />
-              )}
+              {step === 3 && <StoreConfigurationStep />}
             </FieldGroup>
 
             <div className="mt-6 flex justify-end gap-2">
@@ -327,18 +293,13 @@ export default function StoreSettingsForm() {
               )}
 
               {step < 3 ? (
-                <UniButton
-                  type="button"
-                  label="Next"
-                  onClick={nextStep}
-                />
+                <UniButton type="button" label="Next" onClick={nextStep} />
               ) : (
                 <UniButton
                   type="submit"
                   label="Save Store Settings"
                   loading={
-                    methods.formState.isSubmitting ||
-                    updateStore.isPending
+                    methods.formState.isSubmitting || updateStore.isPending
                   }
                 />
               )}

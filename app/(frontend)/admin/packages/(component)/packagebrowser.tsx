@@ -125,7 +125,7 @@ export default function PackageBrowser({
       {showFilters && (
         <EntityFilters
           filters={filters}
-          search={{ value: search, onChange: onSearchChange,classname:"w-3xl" }}
+          search={{ value: search, onChange: onSearchChange,classname:"lg:w-3xl" }}
         />
       )}
 

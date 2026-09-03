@@ -34,9 +34,9 @@ export default function CreateHamperPage() {
 
   /* -------------------- FORM FIELDS -------------------- */
   const initialFields: FieldConfig[] = [
-    { name: "name", label: "Hamper Name", type: "text", required: true },
-    { name: "description", label: "Description", type: "textarea" },
-    { name: "discount", label: "Discount", type: "number" },
+    { name: "name", label: "Hamper Name", type: "text", required: true,className:"mt-5"},
+    { name: "description", label: "Description", type: "textarea",className:"mt-5" },
+    { name: "discount", label: "Discount", type: "number",className:"mt-5"},
     {
       name: "categoryId",
       label: "Category",
@@ -45,6 +45,7 @@ export default function CreateHamperPage() {
         label: c.name,
         value: c.id,
       })),
+      className:"mt-5"
     },
     {
       name: "image",

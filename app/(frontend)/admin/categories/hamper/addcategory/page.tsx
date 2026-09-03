@@ -16,6 +16,7 @@ export default function AddHamperCategoryPage() {
       type: "text",
       placeholder: "Enter hamper category name",
       required: true,
+      className:"mt-5"
     },
     {
       name: "image",

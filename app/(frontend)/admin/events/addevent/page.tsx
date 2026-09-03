@@ -16,30 +16,52 @@ import { FieldGroup } from "@/app/(frontend)/components/ui/field";
 import { FormField } from "@/app/(frontend)/components/reusables/fields/fieldscase";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 import { generateSchema } from "@/app/(frontend)/components/reusables/validation/valdiation";
-import { CartItem, FieldConfig } from "@/app/(frontend)/components/reusables/types/types";
+import {
+  CartItem,
+  FieldConfig,
+} from "@/app/(frontend)/components/reusables/types/types";
+
 import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
 import PackageBrowser from "../../packages/(component)/packagebrowser";
 import { EntityCart } from "../../../components/reusables/cart/entitycart";
-
 
 import { GridItem } from "../../../components/reusables/grid/gridtypes";
 import { useEventCategories } from "../../categories/event/hooks/useEventCategories";
 import { useCreateEvent } from "../hooks/useCreateEvent";
 
-
 export default function AddEventPage() {
   const [activeTab, setActiveTab] = useState("details");
+
   const [selectedMenuItems, setSelectedMenuItems] = useState<CartItem[]>([]);
   const [selectedPackages, setSelectedPackages] = useState<CartItem[]>([]);
+
   const { mutate: createEvent, isPending } = useCreateEvent();
-  const {data} =  useEventCategories({page:1,limit:100})
-  
-  
+
+  const { data } = useEventCategories({
+    page: 1,
+    limit: 100,
+  });
+
   /* -------------------- EVENT FIELDS -------------------- */
-const eventFields: FieldConfig[] = [
-  { name: "name", label: "Event Name", type: "text", required: true },
-  { name: "description", label: "Description", type: "textarea" },
-  { name: "discount", label: "Discount", type: "number" },
+
+  const eventFields: FieldConfig[] = [
+    {
+      name: "name",
+      label: "Event Name",
+      type: "text",
+      required: true,
+      className:"mt-5"
+    },
+    {
+      name: "description",
+      label: "Description",
+      type: "textarea",
+    },
+    {
+      name: "discount",
+      label: "Discount",
+      type: "number",
+    },
     {
       name: "categoryId",
       label: "Category",
@@ -48,21 +70,16 @@ const eventFields: FieldConfig[] = [
         label: c.name,
         value: c.id,
       })),
-    
     },
     {
       name: "image",
       label: "Image",
       type: "file",
-      className: "w-[200] relative h-32 rounded", // image preview classes
+      className: "w-[200] relative h-32 rounded",
       dragdrop: "border-4 border-blue-500 p-12 rounded-xl",
-      
     },
-  
-];
-  
-  
-  
+  ];
+
   const schema = generateSchema(eventFields);
 
   const form = useForm({
@@ -70,21 +87,25 @@ const eventFields: FieldConfig[] = [
     defaultValues: {
       name: "",
       description: "",
-      discount:0
+      discount: 0,
     },
   });
 
   const { handleSubmit } = form;
 
   /* -------------------- MENU SELECT -------------------- */
-  const handleSelectMenuItem = (item:GridItem) => {
+
+  const handleSelectMenuItem = (item: GridItem) => {
     setSelectedMenuItems((prev) => {
       const exists = prev.find((i) => i.id === item.id);
 
       if (exists) {
         return prev.map((i) =>
           i.id === item.id
-            ? { ...i, quantity: i.quantity + 1 }
+            ? {
+                ...i,
+                quantity: i.quantity + 1,
+              }
             : i
         );
       }
@@ -94,6 +115,7 @@ const eventFields: FieldConfig[] = [
   };
 
   /* -------------------- PACKAGE SELECT -------------------- */
+
   const handleSelectPackage = (item: GridItem) => {
     setSelectedPackages((prev) => {
       const exists = prev.find((i) => i.id === item.id);
@@ -101,7 +123,10 @@ const eventFields: FieldConfig[] = [
       if (exists) {
         return prev.map((i) =>
           i.id === item.id
-            ? { ...i, quantity: i.quantity + 1 }
+            ? {
+                ...i,
+                quantity: i.quantity + 1,
+              }
             : i
         );
       }
@@ -111,71 +136,100 @@ const eventFields: FieldConfig[] = [
   };
 
   /* -------------------- SUBMIT -------------------- */
- const onSubmit = (data: FieldValues) => {
-  if (!selectedMenuItems.length && !selectedPackages.length) {
-    toast.error("Select at least one menu item or package");
-    setActiveTab("menu-items");
-    return;
-  }
 
-  createEvent({
-    name: data.name,
-    description: data.description,
-    discount:data.discount,
-    categoryId:data.categoryId,
-    image:data.image,
-    menuItems: selectedMenuItems.map((i) => ({
-      menuItemId: i.id,
-      quantity: i.quantity,
-    })),
-    packages: selectedPackages.map((p) => ({
-      packageId: p.id,
-      quantity: p.quantity,
-    })),
-  });
-};
+  const onSubmit = (data: FieldValues) => {
+    if (!selectedMenuItems.length && !selectedPackages.length) {
+      toast.error("Select at least one menu item or package");
+      setActiveTab("menu-items");
+      return;
+    }
+
+    createEvent({
+      name: data.name,
+      description: data.description,
+      discount: data.discount,
+      categoryId: data.categoryId,
+      image: data.image,
+
+      menuItems: selectedMenuItems.map((item) => ({
+        menuItemId: item.id,
+        quantity: item.quantity,
+      })),
+
+      packages: selectedPackages.map((item) => ({
+        packageId: item.id,
+        quantity: item.quantity,
+      })),
+    });
+  };
 
   const onError = () => {
     toast.error("Please fill all required fields");
     setActiveTab("details");
   };
 
-  const hasCart = selectedMenuItems.length > 0 || selectedPackages.length > 0;
+  const hasCart =
+    selectedMenuItems.length > 0 || selectedPackages.length > 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-2xl font-bold mb-4">Add Event</h1>
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+      <h1 className="mb-4 text-2xl font-bold">Add Event</h1>
 
       <FormProvider {...form}>
-        <form className="bg-white p-8 rounded-xl shadow-lg space-y-6">
-
+        <form className="w-full min-w-0 space-y-6 rounded-xl bg-white p-4 shadow-lg sm:p-8">
           {/* ---------------- FLEX LAYOUT ---------------- */}
-          <div className="flex gap-6">
 
+          <div className="flex min-w-0 flex-col gap-6 lg:flex-row">
             {/* ---------------- LEFT SIDE ---------------- */}
+
             <div
-              className={`transition-all duration-300 ${
-                hasCart ? "flex-3" : "flex-1"
+              className={`min-w-0 w-full transition-all duration-300 ${
+                hasCart ? "lg:flex-1" : "w-full"
               }`}
             >
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList>
-                  <TabsTrigger value="details">Event Details</TabsTrigger>
-                  <TabsTrigger value="menu-items">Menu Items</TabsTrigger>
-                  <TabsTrigger value="packages">Packages</TabsTrigger>
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full min-w-0"
+              >
+                {/* ---------------- TABS ---------------- */}
+
+                <TabsList className="grid h-auto w-full grid-cols-2 gap-2 sm:grid-cols-3 mb-10 lg:mb-2">
+                  <TabsTrigger value="details">
+                    Event Details
+                  </TabsTrigger>
+
+                  <TabsTrigger value="menu-items">
+                    Menu Items
+                  </TabsTrigger>
+
+                  <TabsTrigger value="packages">
+                    Packages
+                  </TabsTrigger>
                 </TabsList>
 
-                {/* DETAILS */}
-                <TabsContent value="details">
+                {/* ---------------- DETAILS ---------------- */}
+
+                <TabsContent
+                  value="details"
+                  className="min-w-0"
+                >
                   <FieldGroup>
                     {eventFields.map((field) => (
-                      <FormField key={field.name} field={field} />
+                      <FormField
+                        key={field.name}
+                        field={field}
+                      />
                     ))}
                   </FieldGroup>
                 </TabsContent>
 
-                {/* MENU ITEMS */}
-                <TabsContent value="menu-items">
+                {/* ---------------- MENU ITEMS ---------------- */}
+
+                <TabsContent
+                  value="menu-items"
+                  className="min-w-0"
+                >
                   <MenuItemBrowser
                     selectable={false}
                     showFilters
@@ -183,20 +237,24 @@ const eventFields: FieldConfig[] = [
                   />
                 </TabsContent>
 
-                {/* PACKAGES */}
-                <TabsContent value="packages">
+                {/* ---------------- PACKAGES ---------------- */}
+
+                <TabsContent
+                  value="packages"
+                  className="min-w-0"
+                >
                   <PackageBrowser
-                    selectable ={false}
+                    selectable={false}
                     onSelectItem={handleSelectPackage}
                   />
                 </TabsContent>
               </Tabs>
             </div>
 
-            {/* ---------------- RIGHT CART ---------------- */}
+            {/* ---------------- CART ---------------- */}
+
             {hasCart && (
-              <div className="w-full max-w-sm flex flex-col gap-4">
-                
+              <div className="flex w-full min-w-0 flex-col gap-4 lg:w-96 lg:max-w-sm lg:shrink-0">
                 {selectedMenuItems.length > 0 && (
                   <EntityCart
                     title="Selected Menu Items"
@@ -212,13 +270,12 @@ const eventFields: FieldConfig[] = [
                     onChange={setSelectedPackages}
                   />
                 )}
-
               </div>
             )}
-
           </div>
 
           {/* ---------------- SUBMIT ---------------- */}
+
           <div className="flex justify-end pt-4">
             <UniButton
               type="button"
@@ -227,7 +284,6 @@ const eventFields: FieldConfig[] = [
               onClick={handleSubmit(onSubmit, onError)}
             />
           </div>
-
         </form>
       </FormProvider>
     </div>

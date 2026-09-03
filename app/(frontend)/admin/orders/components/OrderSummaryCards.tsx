@@ -16,7 +16,7 @@ interface Props {
 
 export function OrderSummaryCards({ order }: Props) {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid min-w-0 gap-4 md:grid-cols-2 lg:grid-cols-4">
       <SummaryCard
         icon={<ShoppingBag className="h-5 w-5" />}
         label="Order ID"
@@ -56,9 +56,9 @@ function SummaryCard({
   value,
 }: SummaryCardProps) {
   return (
-    <Card className="">
-      <CardContent className="p-4">
-        <div className="mb-2 flex items-center gap-2 text-muted-foreground">
+    <Card className="min-w-0">
+      <CardContent className="min-w-0 p-5">
+        <div className="mb-2 flex min-w-0 items-center gap-2 text-muted-foreground">
           {icon}
 
           <span className="text-sm">
@@ -66,7 +66,10 @@ function SummaryCard({
           </span>
         </div>
 
-        <p className="truncate font-medium">
+        <p
+          className="min-w-0 truncate font-medium"
+          title={value}
+        >
           {value}
         </p>
       </CardContent>
