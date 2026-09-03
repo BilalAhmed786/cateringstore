@@ -15,18 +15,41 @@ export async function POST(request: NextRequest) {
   try {
     const rawBody = await request.text();
 
-    // 1. Validate Secret Header (Security)
     const webhookSecret = process.env.CLOUDAMQP_SIGNING_SECRET;
+    const signature = request.headers.get("x-cloudamqp-signature");
+
+    // Compute expected HMAC signature
+    const expectedSignature = webhookSecret
+      ? crypto
+          .createHmac("sha256", webhookSecret)
+          .update(rawBody)
+          .digest("hex")
+      : null;
+
+    // --- DEBUG LOGS (Check Vercel Runtime Logs) ---
+    console.log("--- CLOUDAMQP DEBUG LOGS ---");
+    console.log("Raw Body Length:", rawBody.length);
+    console.log("Raw Body Content:", rawBody);
+    console.log("Header x-cloudamqp-signature:", signature);
+    console.log("Env Secret Defined?:", Boolean(webhookSecret));
+    console.log("Env Secret Length:", webhookSecret?.length);
+    console.log("Expected Signature:", expectedSignature);
+    console.log("Match?:", signature === expectedSignature);
+    console.log("-------------------------------");
+
+    // 1. Validate Secret Header
     if (webhookSecret) {
-      const signature = request.headers.get("x-cloudamqp-signature");
-      const expectedSignature = crypto
-        .createHmac("sha256", webhookSecret)
-        .update(rawBody)
-        .digest("hex");
+      if (!signature) {
+        console.error("DEBUG: Signature header is missing entirely from CloudAMQP request.");
+        return NextResponse.json({ error: "Missing signature header" }, { status: 401 });
+      }
 
       if (signature !== expectedSignature) {
+        console.error("DEBUG: Signature mismatch detected!");
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
+    } else {
+      console.warn("DEBUG: CLOUDAMQP_SIGNING_SECRET is missing in process.env!");
     }
 
     // 2. Parse job data
