@@ -9,7 +9,11 @@ importScripts(
 console.log("[FCM SW] Service worker loaded");
 
 firebase.initializeApp({
-  // your Firebase config
+  apiKey: "AIzaSyBfyBrefVK9fDFMjtMtUs20oQttGaFdBgw",
+  authDomain: "catering-store.firebaseapp.com",
+  projectId: "catering-store",
+  messagingSenderId: "423137048883",
+  appId: "1:423137048883:web:1683ae913f9a14bb3be646",
 });
 
 console.log("[FCM SW] Firebase initialized");
