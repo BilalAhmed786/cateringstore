@@ -38,8 +38,8 @@ const moreItems = [
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
- const  {data}= useGetStoreSettings()
- 
+  const { data } = useGetStoreSettings();
+
   const { showHeader } = useHeaderScroll();
 
   const {
@@ -54,9 +54,7 @@ export default function Header() {
   const isLoggedIn = !!user;
 
   // Notifications
-  const notifications = useNotificationStore(
-    (state) => state.notifications,
-  );
+  const notifications = useNotificationStore((state) => state.notifications);
 
   const clearNotifications = useNotificationStore(
     (state) => state.clearNotifications,
@@ -86,26 +84,24 @@ export default function Header() {
       {/* ================================================= */}
 
       <div className="flex w-full items-center justify-between px-6 py-3 md:grid md:grid-cols-[auto_1fr_auto] md:px-8">
-
         {/* ================================================= */}
         {/* LOGO */}
         {/* ================================================= */}
 
         <div className="flex w-[65px] shrink-0 items-center">
-          {!data?.store.logo ? 
-          
-          <Loader/> : 
-          <Link href="/">
-            <Image
-              src={data?.store?.logo ?? ""}
-              alt="data.store.name"
-              width={65}
-              height={65}
-              className="rounded-full object-cover"
-            />
-          </Link>
-          
-        }
+          {!data?.store.logo ? (
+            <Loader />
+          ) : (
+            <Link href="/">
+              <Image
+                src={data?.store?.logo ?? ""}
+                alt="data.store.name"
+                width={65}
+                height={65}
+                className="rounded-full object-cover"
+              />
+            </Link>
+          )}
         </div>
 
         {/* ================================================= */}
@@ -131,23 +127,14 @@ export default function Header() {
                 className="flex items-center gap-1 transition-colors hover:text-primary focus:outline-none"
               >
                 More
-
                 <ChevronDown className="mt-1 h-4 w-4" />
               </button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent
-              align="end"
-              className="w-40"
-            >
+            <DropdownMenuContent align="end" className="w-40">
               {moreItems.map((item) => (
-                <DropdownMenuItem
-                  key={item.href}
-                  asChild
-                >
-                  <Link href={item.href}>
-                    {item.name}
-                  </Link>
+                <DropdownMenuItem key={item.href} asChild>
+                  <Link href={item.href}>{item.name}</Link>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -159,7 +146,6 @@ export default function Header() {
         {/* ================================================= */}
 
         <div className="hidden min-w-[120px] items-center justify-end gap-3 md:flex">
-
           {/* --------------------------------------------- */}
           {/* Notification */}
           {/* --------------------------------------------- */}
@@ -169,9 +155,7 @@ export default function Header() {
               <button
                 type="button"
                 aria-label="Notifications"
-                onClick={() =>
-                  setNotificationOpen((prev) => !prev)
-                }
+                onClick={() => setNotificationOpen((prev) => !prev)}
                 className="relative flex h-9 w-9 items-center justify-center rounded-full border bg-background transition-colors hover:bg-muted focus:outline-none"
               >
                 <Bell className="h-4 w-4" />
@@ -190,12 +174,9 @@ export default function Header() {
 
               {notificationOpen && (
                 <div className="absolute right-0 top-11 z-50 w-80 overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-xl">
-
                   {/* Dropdown Header */}
                   <div className="flex items-center justify-between border-b px-4 py-3">
-                    <h3 className="font-semibold">
-                      Notifications
-                    </h3>
+                    <h3 className="font-semibold">Notifications</h3>
 
                     {notifications.length > 0 && (
                       <button
@@ -215,29 +196,24 @@ export default function Header() {
                     </div>
                   ) : (
                     <div className="max-h-96 overflow-y-auto">
-                      {notifications.map(
-                        (notification) => (
-                          <div
-                            key={notification.id}
-                            className="cursor-pointer border-b px-4 py-3 transition-colors hover:bg-muted"
-                          >
-                            <p className="font-medium">
-                              {notification.title}
-                            </p>
+                      {notifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          className="cursor-pointer border-b px-4 py-3 transition-colors hover:bg-muted"
+                        >
+                          <p className="font-medium">{notification.title}</p>
 
-                            <p className="mt-1 text-sm text-muted-foreground">
-                              {notification.body}
-                            </p>
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            {notification.body}
+                          </p>
 
-                            {notification.orderId && (
-                              <p className="mt-1 text-xs text-muted-foreground/70">
-                                Order ID:{" "}
-                                {notification.orderId}
-                              </p>
-                            )}
-                          </div>
-                        ),
-                      )}
+                          {notification.orderId && (
+                            <p className="mt-1 text-xs text-muted-foreground/70">
+                              Order ID: {notification.orderId}
+                            </p>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -251,10 +227,7 @@ export default function Header() {
 
           <div className="flex h-9 w-9 items-center justify-center">
             {authLoading ? (
-              <Loader
-                variant="inline"
-                size={20}
-              />
+              <Loader variant="inline" size={20} />
             ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -267,10 +240,7 @@ export default function Header() {
                   </button>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent
-                  align="end"
-                  className="w-44"
-                >
+                <DropdownMenuContent align="end" className="w-44">
                   {isLoggedIn ? (
                     <>
                       <DropdownMenuItem
@@ -285,23 +255,17 @@ export default function Header() {
                         disabled={isPending}
                         className="cursor-pointer text-destructive focus:text-destructive"
                       >
-                        {isPending
-                          ? "Logging out..."
-                          : "Logout"}
+                        {isPending ? "Logging out..." : "Logout"}
                       </DropdownMenuItem>
                     </>
                   ) : (
                     <>
                       <DropdownMenuItem asChild>
-                        <Link href="/auth/login">
-                          Login
-                        </Link>
+                        <Link href="/auth/login">Login</Link>
                       </DropdownMenuItem>
 
                       <DropdownMenuItem asChild>
-                        <Link href="/auth/register">
-                          Register
-                        </Link>
+                        <Link href="/auth/register">Register</Link>
                       </DropdownMenuItem>
                     </>
                   )}
@@ -318,22 +282,10 @@ export default function Header() {
         <div className="flex w-10 shrink-0 items-center justify-end md:hidden">
           <UniButton
             variant="ghost"
-            icon={
-              open ? (
-                <X size={28} />
-              ) : (
-                <Menu size={28} />
-              )
-            }
-            onClick={() =>
-              setOpen((prev) => !prev)
-            }
+            icon={open ? <X size={28} /> : <Menu size={28} />}
+            onClick={() => setOpen((prev) => !prev)}
             className="h-10 w-10 p-0"
-            aria-label={
-              open
-                ? "Close menu"
-                : "Open menu"
-            }
+            aria-label={open ? "Close menu" : "Open menu"}
           />
         </div>
       </div>
@@ -351,6 +303,8 @@ export default function Header() {
         isPending={isPending}
         onDashboard={goToDashboard}
         onLogout={handleLogout}
+        notifications={notifications}
+        clearNotifications={clearNotifications}
       />
     </header>
   );
