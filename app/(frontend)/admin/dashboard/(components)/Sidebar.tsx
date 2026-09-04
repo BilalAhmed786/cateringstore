@@ -30,6 +30,7 @@ import {
 
 import { useDashboardSettingsStore } from "@/app/(frontend)/store/dashboardSettingsStore";
 
+
 interface SidebarProps {
   mobileOpen: boolean;
   setMobileOpen: (value: boolean) => void;
@@ -52,15 +53,15 @@ export default function Sidebar({
   const setSidebar = useDashboardSettingsStore(
     (state) => state.setSidebar,
   );
-
   const desktopExpanded = sidebar === "expanded";
-
+  
   const toggleDesktopSidebar = () => {
     setSidebar(
       desktopExpanded ? "collapsed" : "expanded",
     );
   };
 
+ 
   return (
     <>
       {/* Mobile overlay */}

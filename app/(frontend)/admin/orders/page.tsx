@@ -13,6 +13,7 @@ import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 import { useGetOrders } from "./hooks/useOrders";
 import { useGetStoreSettings } from "../settings/store/hooks/useGetStoreSettings";
+import OrderStatusBadge from "../../client/orders/components/OrderStatusBadge";
 
 const statusOptions = [
   { label: "All", value: "all" },
@@ -31,7 +32,7 @@ export default function OrdersPage() {
   const limit = 10;
 
   const debouncedSearch = useDebounce(search, 700);
-  const {data:storedata} = useGetStoreSettings()
+  const { data: storedata } = useGetStoreSettings();
   const { data, isFetching } = useGetOrders({
     page,
     limit,
@@ -55,15 +56,10 @@ export default function OrdersPage() {
   return (
     <div className="w-full flex justify-center py-10">
       <div className="w-full px-4 space-y-6">
-
-        <Metadata
-          title="Orders"
-          desc="Manage customer orders"
-        />
+        <Metadata title="Orders" desc="Manage customer orders" />
 
         {/* Search + Status */}
         <div className="flex flex-wrap items-end justify-between gap-4">
-
           <BaseSearch
             label=""
             value={search}
@@ -78,10 +74,7 @@ export default function OrdersPage() {
             className="h-10 rounded-md border bg-background px-3 text-sm"
           >
             {statusOptions.map((option) => (
-              <option
-                key={option.value}
-                value={option.value}
-              >
+              <option key={option.value} value={option.value}>
                 {option.label}
               </option>
             ))}
@@ -91,9 +84,7 @@ export default function OrdersPage() {
         {/* Table */}
         <div
           className={`transition-opacity duration-200 ${
-            isFetching
-              ? "opacity-60 pointer-events-none"
-              : "opacity-100"
+            isFetching ? "opacity-60 pointer-events-none" : "opacity-100"
           }`}
         >
           {isFetching ? (
@@ -106,26 +97,20 @@ export default function OrdersPage() {
                 {
                   header: "Order",
                   accessor: (order) => (
-                    <span className="font-medium">
-                      #{order.id.slice(0, 8)}
-                    </span>
+                    <span className="font-medium">#{order.id.slice(0, 8)}</span>
                   ),
                 },
 
                 {
                   header: "Customer",
                   accessor: (order) =>
-                    order.guestName ??
-                    order.user?.name ??
-                    "Guest",
+                    order.guestName ?? order.user?.name ?? "Guest",
                 },
 
                 {
                   header: "Email",
                   accessor: (order) =>
-                    order.guestEmail ??
-                    order.user?.email ??
-                    "-",
+                    order.guestEmail ?? order.user?.email ?? "-",
                 },
 
                 {
@@ -140,32 +125,24 @@ export default function OrdersPage() {
                 {
                   header: "Status",
                   accessor: (order) => (
-                    <OrderStatusBadge
-                      status={order.status}
-                    />
+                    <OrderStatusBadge status={order.status} />
                   ),
                 },
 
                 {
                   header: "Created",
                   accessor: (order) =>
-                    new Date(
-                      order.createdAt
-                    ).toLocaleDateString(),
+                    new Date(order.createdAt).toLocaleDateString(),
                 },
 
                 {
                   header: "Actions",
                   accessor: (order) => (
-                    <Link
-                      href={`/admin/orders/${order.id}`}
-                    >
+                    <Link href={`/admin/orders/${order.id}`}>
                       <UniButton
                         size="sm"
                         variant="outline"
-                        icon={
-                          <Eye className="h-4 w-4" />
-                        }
+                        icon={<Eye className="h-4 w-4" />}
                       />
                     </Link>
                   ),
@@ -176,38 +153,17 @@ export default function OrdersPage() {
         </div>
 
         {/* Pagination */}
-        <ItemsPagination
-          page={page}
-          total={total}
-          limit={limit}
-          onPageChange={setPage}
-        />
+        {!isFetching && (
+          <ItemsPagination
+            page={page}
+            total={total}
+            limit={limit}
+            onPageChange={setPage}
+          />
+        )}
       </div>
     </div>
   );
 }
 
-function OrderStatusBadge({
-  status,
-}: {
-  status: string;
-}) {
-  const styles: Record<string, string> = {
-    PENDING: "bg-yellow-100 text-yellow-800",
-    CONFIRMED: "bg-blue-100 text-blue-800",
-    COOKING: "bg-orange-100 text-orange-800",
-    DELIVERED: "bg-green-100 text-green-800",
-    CANCELLED: "bg-red-100 text-red-800",
-  };
 
-  return (
-    <span
-      className={`rounded-full px-3 py-1 text-xs font-medium ${
-        styles[status] ??
-        "bg-gray-100 text-gray-800"
-      }`}
-    >
-      {status}
-    </span>
-  );
-}

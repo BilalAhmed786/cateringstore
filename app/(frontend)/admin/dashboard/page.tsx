@@ -12,7 +12,6 @@ import { formatDashboardStats } from "./(components)/formatDashboardStats";
 import { MenuItemDropdown } from "@/app/(frontend)/components/reusables/actiondropdown/actiondropdown";
 import { useGetOrders } from "../orders/hooks/useOrders";
 import { useGetStoreSettings } from "../settings/store/hooks/useGetStoreSettings";
-
 const periods:duration[] = [
   {
     label: "1 Month",

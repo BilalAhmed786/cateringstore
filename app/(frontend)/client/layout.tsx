@@ -21,7 +21,7 @@ export default function ClientLayout({
           {/* Fixed/Sticky Header */}
           <ClientHeader />
           {/* Children */}
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 min-h-screen overflow-auto">
            
               {children}
           
