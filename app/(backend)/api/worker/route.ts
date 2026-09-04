@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     // 2. Signature Verification
     if (webhookSecret && webhookSignature && webhookId && webhookTimestamp) {
-      // CloudAMQP constructs the payload as: "{id}.{timestamp}.{body}"
+      
       const payloadToSign = `${webhookId}.${webhookTimestamp}.${rawBody}`;
 
       // Compute expected HMAC SHA256 signature (Base64 encoded)

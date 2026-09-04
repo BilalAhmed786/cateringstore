@@ -16,18 +16,14 @@ firebase.initializeApp({
   appId: "1:423137048883:web:1683ae913f9a14bb3be646",
 });
 
-console.log("[FCM SW] Firebase initialized");
+
 
 const messaging = firebase.messaging();
 
-console.log("[FCM SW] Messaging initialized");
+
 
 messaging.onBackgroundMessage((payload) => {
-  console.log("[FCM SW] Background message received:", payload);
-
-  console.log("[FCM SW] Notification:", payload.notification);
-  console.log("[FCM SW] Data:", payload.data);
-
+  
   const title = payload.notification?.title || "New Notification";
 
   const options = {
@@ -36,17 +32,6 @@ messaging.onBackgroundMessage((payload) => {
     data: payload.data || {},
   };
 
-  console.log("[FCM SW] Showing notification:", {
-    title,
-    options,
-  });
-
-  self.registration
-    .showNotification(title, options)
-    .then(() => {
-      console.log("[FCM SW] Notification displayed successfully");
-    })
-    .catch((error) => {
-      console.error("[FCM SW] Failed to display notification:", error);
-    });
+  self.registration.showNotification(title, options)
+  
 });
