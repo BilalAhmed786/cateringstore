@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Menu, X, User, Bell, ChevronDown } from "lucide-react";
 import Image from "next/image";
+
 import { Loader } from "../reusables/loader/loader";
 import { UniButton } from "../reusables/button/button";
 
@@ -38,6 +39,7 @@ const moreItems = [
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
+
   const { data } = useGetStoreSettings();
 
   const { showHeader } = useHeaderScroll();
@@ -53,8 +55,13 @@ export default function Header() {
 
   const isLoggedIn = !!user;
 
+  // ---------------------------------------
   // Notifications
-  const notifications = useNotificationStore((state) => state.notifications);
+  // ---------------------------------------
+
+  const notifications = useNotificationStore(
+    (state) => state.notifications,
+  );
 
   const clearNotifications = useNotificationStore(
     (state) => state.clearNotifications,
@@ -71,6 +78,14 @@ export default function Header() {
     } catch {
       // useLogout already handles the error/toast
     }
+  };
+
+  // ---------------------------------------
+  // Toggle notifications
+  // ---------------------------------------
+
+  const handleNotificationToggle = () => {
+    setNotificationOpen((prev) => !prev);
   };
 
   return (
@@ -95,7 +110,7 @@ export default function Header() {
             <Link href="/">
               <Image
                 src={data?.store?.logo ?? ""}
-                alt="data.store.name"
+                alt={data?.store?.name ?? "Store logo"}
                 width={65}
                 height={65}
                 className="rounded-full object-cover"
@@ -147,7 +162,7 @@ export default function Header() {
 
         <div className="hidden min-w-[120px] items-center justify-end gap-3 md:flex">
           {/* --------------------------------------------- */}
-          {/* Notification */}
+          {/* Desktop Notification */}
           {/* --------------------------------------------- */}
 
           {isLoggedIn && (
@@ -155,12 +170,11 @@ export default function Header() {
               <button
                 type="button"
                 aria-label="Notifications"
-                onClick={() => setNotificationOpen((prev) => !prev)}
+                onClick={handleNotificationToggle}
                 className="relative flex h-9 w-9 items-center justify-center rounded-full border bg-background transition-colors hover:bg-muted focus:outline-none"
               >
                 <Bell className="h-4 w-4" />
 
-                {/* Notification count */}
                 {notifications.length > 0 && (
                   <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
                     {notifications.length}
@@ -168,13 +182,9 @@ export default function Header() {
                 )}
               </button>
 
-              {/* ----------------------------------------- */}
-              {/* Notification Dropdown */}
-              {/* ----------------------------------------- */}
-
+              {/* Desktop Notification Dropdown */}
               {notificationOpen && (
                 <div className="absolute right-0 top-11 z-50 w-80 overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-xl">
-                  {/* Dropdown Header */}
                   <div className="flex items-center justify-between border-b px-4 py-3">
                     <h3 className="font-semibold">Notifications</h3>
 
@@ -189,7 +199,6 @@ export default function Header() {
                     )}
                   </div>
 
-                  {/* No notifications */}
                   {notifications.length === 0 ? (
                     <div className="px-4 py-6 text-center text-sm text-muted-foreground">
                       No notifications
@@ -201,7 +210,9 @@ export default function Header() {
                           key={notification.id}
                           className="cursor-pointer border-b px-4 py-3 transition-colors hover:bg-muted"
                         >
-                          <p className="font-medium">{notification.title}</p>
+                          <p className="font-medium">
+                            {notification.title}
+                          </p>
 
                           <p className="mt-1 text-sm text-muted-foreground">
                             {notification.body}
@@ -276,10 +287,85 @@ export default function Header() {
         </div>
 
         {/* ================================================= */}
-        {/* MOBILE MENU BUTTON */}
+        {/* MOBILE RIGHT SIDE */}
         {/* ================================================= */}
 
-        <div className="flex w-10 shrink-0 items-center justify-end md:hidden">
+        <div className="flex shrink-0 items-center gap-2 md:hidden">
+          {/* --------------------------------------------- */}
+          {/* Mobile Notification */}
+          {/* --------------------------------------------- */}
+
+          {isLoggedIn && (
+            <div className="relative">
+              <button
+                type="button"
+                aria-label="Notifications"
+                onClick={handleNotificationToggle}
+                className="relative flex h-8 w-8 items-center justify-center rounded-full border bg-background transition-colors hover:bg-muted focus:outline-none"
+              >
+                <Bell className="h-4 w-4" />
+
+                {notifications.length > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                    {notifications.length}
+                  </span>
+                )}
+              </button>
+
+              {/* Mobile Notification Dropdown */}
+              {notificationOpen && (
+                <div className="absolute right-0 top-12 z-50 w-[calc(100vw-2rem)] max-w-80 overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-xl">
+                  <div className="flex items-center justify-between border-b px-4 py-3">
+                    <h3 className="font-semibold">Notifications</h3>
+
+                    {notifications.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={clearNotifications}
+                        className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+
+                  {notifications.length === 0 ? (
+                    <div className="px-4 py-6 text-center text-sm text-muted-foreground">
+                      No notifications
+                    </div>
+                  ) : (
+                    <div className="max-h-80 overflow-y-auto">
+                      {notifications.map((notification) => (
+                        <div
+                          key={notification.id}
+                          className="border-b px-4 py-3 last:border-b-0 hover:bg-muted"
+                        >
+                          <p className="font-medium">
+                            {notification.title}
+                          </p>
+
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            {notification.body}
+                          </p>
+
+                          {notification.orderId && (
+                            <p className="mt-1 text-xs text-muted-foreground/70">
+                              Order ID: {notification.orderId}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* --------------------------------------------- */}
+          {/* Hamburger */}
+          {/* --------------------------------------------- */}
+
           <UniButton
             variant="ghost"
             icon={open ? <X size={28} /> : <Menu size={28} />}
@@ -303,8 +389,6 @@ export default function Header() {
         isPending={isPending}
         onDashboard={goToDashboard}
         onLogout={handleLogout}
-        notifications={notifications}
-        clearNotifications={clearNotifications}
       />
     </header>
   );
