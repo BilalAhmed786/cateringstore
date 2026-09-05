@@ -59,7 +59,7 @@ export default function AboutStory() {
             </div>
 
             <div className="mt-8">
-              <Link href="/contact">
+              <Link href="/contactus">
                 <UniButton label="Talk To Our Team" />
               </Link>
             </div>

@@ -21,10 +21,7 @@ async function getCurrentUserToken(): Promise<string | null> {
   });
 }
 
-export async function apiRequest<
-  TResponse = unknown,
-  TBody = unknown
->({
+export async function apiRequest<TResponse = unknown, TBody = unknown>({
   url,
   method = "GET",
   headers = {},
@@ -78,11 +75,7 @@ export async function apiRequest<
       ...headers,
     },
 
-    body: body
-      ? isFormData
-        ? body
-        : JSON.stringify(body)
-      : undefined,
+    body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
   });
 
   // ---------------------------------------
@@ -103,6 +96,19 @@ export async function apiRequest<
     window.location.href = "/auth/login";
 
     throw new Error("Session expired");
+  }
+  // ---------------------------------------
+  // Too Many Requests
+  // ---------------------------------------
+
+  if (res.status === 429) {
+    const retryAfter = res.headers.get("Retry-After");
+
+    window.location.href = retryAfter
+      ? `/too-many-requests?retryAfter=${retryAfter}`
+      : "/too-many-requests";
+
+    throw new Error("Too many requests");
   }
 
   // ---------------------------------------

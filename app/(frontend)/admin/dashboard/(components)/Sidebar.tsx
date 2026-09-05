@@ -129,7 +129,7 @@ export default function Sidebar({
         <Separator className="shrink-0 bg-slate-800" />
 
         {/* Navigation */}
-        <nav className="min-h-0 flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:w-2">
+        <nav className="min-h-0 flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:w-2 [scrollbar-gutter:stable]">
           <div className="space-y-2">
 
             <NavItem

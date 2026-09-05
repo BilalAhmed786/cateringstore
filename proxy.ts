@@ -1,14 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyJwt } from "@/app/(backend)/lib/jwt/jwt";
+import { rateLimit } from "./app/(backend)/lib/ratelimit/rateLimit";
 
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  if (pathname.startsWith("/_next") || pathname.startsWith("/api")) {
+  // Rate limit requests
+  if (pathname.startsWith("/api")) {
+    const result = rateLimit(req);
+
+    if (!result.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Too many requests. Please try again later.",
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(result.retryAfter),
+          },
+        },
+      );
+    }
+
     return NextResponse.next();
   }
 
-  const token = req.cookies.get("access_token")?.value;
+  if (pathname.startsWith("/_next")) {
+    return NextResponse.next();
+  }
+
+ if (pathname.startsWith("/_next") || pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
+
+
+   //JWT logic
+  
+   const token = req.cookies.get("access_token")?.value;
 
   try {
     const decoded = token ? verifyJwt(token) : null;
@@ -25,7 +55,6 @@ export function proxy(req: NextRequest) {
       return NextResponse.next(); // allow login/register for unauthenticated users
     }
 
-    
     if (pathname.startsWith("/admin")) {
       if (!decoded) {
         return NextResponse.redirect(new URL("/auth/login", req.url));
@@ -48,7 +77,6 @@ export function proxy(req: NextRequest) {
       }
     }
 
-  
     return NextResponse.next();
   } catch (err) {
     console.log(err);
@@ -59,5 +87,10 @@ export function proxy(req: NextRequest) {
 
 // Apply middleware to admin, client, and auth routes
 export const config = {
-  matcher: ["/admin/:path*", "/client/:path*", "/auth/:path*"],
+  matcher: [
+    "/api/:path*",
+    "/admin/:path*",
+    "/client/:path*",
+    "/auth/:path*",
+  ],
 };

@@ -14,7 +14,6 @@ export function ShoppingCart() {
   const totalItems = useCartCount();
   const subtotal = useCartSubtotal();
   const { data } = useGetStoreSettings();
-console.log(subtotal)
   return (
     <div className="fixed top-4 right-4 z-50 h-4/5 overflow-auto  [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-gray-400">
       <CartCollapse 

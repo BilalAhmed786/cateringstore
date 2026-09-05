@@ -38,7 +38,7 @@ export default function CTASection() {
               />
             </Link>
 
-            <Link href="/contact">
+            <Link href="/contactus">
               <UniButton
                 type="button"
                 size="lg"
