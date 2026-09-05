@@ -15,11 +15,12 @@ model FcmToken {
 }
 
 model User {
-  id             String           @id
-  email          String           @unique
+  id             String   @id
+  email          String   @unique
   name           String?
-  role           Role             @default(CLIENT)
-  createdAt      DateTime         @default(now())
+  role           Role     @default(CLIENT)
+  createdAt      DateTime @default(now())
+
   fcmTokens      FcmToken[]
   eventReviews   EventReview[]
   hamperReviews  HamperReview[]
@@ -27,6 +28,8 @@ model User {
   orders         Order[]
   packageReviews PackageReview[]
   tastingInquiry TastingInquiry[]
+
+  @@index([createdAt])
 }
 
 model MenuCategory {
@@ -36,16 +39,19 @@ model MenuCategory {
   createdAt DateTime   @default(now())
   publicId  String?
   items     MenuItem[]
+
+  @@index([createdAt])
 }
 
 model MenuItem {
-  id           String           @id @default(uuid())
-  title        String
-  description  String?
-  price        Float
-  available    Boolean          @default(true)
-  categoryId   String
-  createdAt    DateTime         @default(now())
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  price       Float
+  available   Boolean  @default(true)
+  categoryId  String
+  createdAt   DateTime @default(now())
+
   eventLinks   EventMenuItem[]
   hamperItems  HamperItem[]
   images       ItemImage[]
@@ -53,6 +59,9 @@ model MenuItem {
   reviews      MenuItemReview[]
   orderItems   OrderMenuItem[]
   packageItems PackageItem[]
+
+  @@index([categoryId, available, createdAt])
+  @@index([price])
 }
 
 model MenuItemReview {
@@ -66,6 +75,7 @@ model MenuItemReview {
   user       User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, menuItemId])
+  @@index([menuItemId, createdAt])
 }
 
 model ItemImage {
@@ -78,21 +88,26 @@ model ItemImage {
 }
 
 model Order {
-  id              String          @id @default(uuid())
+  id              String      @id @default(uuid())
   userId          String?
-  status          OrderStatus     @default(PENDING)
+  status          OrderStatus @default(PENDING)
   total           Float
-  createdAt       DateTime        @default(now())
+  createdAt       DateTime    @default(now())
   guestEmail      String?
   guestName       String?
   guestPhone      String?
   notes           String?
-  paymentIntentId String?         @unique
+  paymentIntentId String?     @unique
+
   user            User?           @relation(fields: [userId], references: [id])
   orderEvents     OrderEvent[]
   orderHampers    OrderHamper[]
-  items           OrderMenuItem[]
+  items            OrderMenuItem[]
   orderPackages   OrderPackage[]
+
+  @@index([createdAt])
+  @@index([status, createdAt])
+  @@index([userId, createdAt])
 }
 
 model OrderMenuItem {
@@ -165,6 +180,9 @@ model Package {
   orderPackages OrderPackage[]
   items         PackageItem[]
   reviews       PackageReview[]
+
+  @@index([available, createdAt])
+  @@index([finalPrice])
 }
 
 model PackageReview {
@@ -178,6 +196,7 @@ model PackageReview {
   user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, packageId])
+  @@index([packageId, createdAt])
 }
 
 model PackageItem {
@@ -196,26 +215,32 @@ model EventCategory {
   createdAt DateTime @default(now())
   publicId  String?
   items     Event[]
+
+  @@index([createdAt])
 }
 
 model Event {
-  id            String          @id @default(uuid())
-  createdAt     DateTime        @default(now())
+  id            String        @id @default(uuid())
+  createdAt     DateTime      @default(now())
   description   String?
   name          String
-  available     Boolean         @default(true)
+  available     Boolean       @default(true)
   categoryId    String
   image         String?
   publicId      String?
   discountType  DiscountType?
   discountValue Float?
-  finalPrice    Float           @default(0)
-  originalPrice Float           @default(0)
-  category      EventCategory   @relation(fields: [categoryId], references: [id])
-  menuItems     EventMenuItem[]
-  packages      EventPackage[]
-  reviews       EventReview[]
-  orderEvents   OrderEvent[]
+  finalPrice    Float         @default(0)
+  originalPrice Float         @default(0)
+
+  category    EventCategory   @relation(fields: [categoryId], references: [id])
+  menuItems   EventMenuItem[]
+  packages    EventPackage[]
+  reviews     EventReview[]
+  orderEvents OrderEvent[]
+
+  @@index([categoryId, available, createdAt])
+  @@index([finalPrice])
 }
 
 model EventReview {
@@ -229,6 +254,7 @@ model EventReview {
   user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, eventId])
+   @@index([eventId, createdAt])
 }
 
 model EventMenuItem {
@@ -264,25 +290,31 @@ model HamperCategory {
   createdAt DateTime @default(now())
   publicId  String?
   items     Hamper[]
+
+  @@index([createdAt])
 }
 
 model Hamper {
-  id            String         @id @default(uuid())
+  id            String        @id @default(uuid())
   name          String
   description   String?
   image         String?
-  available     Boolean        @default(true)
-  createdAt     DateTime       @default(now())
+  available     Boolean       @default(true)
+  createdAt     DateTime      @default(now())
   discountType  DiscountType?
   discountValue Float?
   finalPrice    Float
   originalPrice Float
   categoryId    String
   publicId      String?
-  category      HamperCategory @relation(fields: [categoryId], references: [id])
-  items         HamperItem[]
-  reviews       HamperReview[]
-  orderHampers  OrderHamper[]
+
+  category     HamperCategory @relation(fields: [categoryId], references: [id])
+  items        HamperItem[]
+  reviews      HamperReview[]
+  orderHampers OrderHamper[]
+
+  @@index([categoryId, available, createdAt])
+  @@index([finalPrice])
 }
 
 model HamperItem {
@@ -308,11 +340,9 @@ model HamperReview {
 }
 
 model TastingInquiry {
-  id String @id @default(uuid())
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
   eventType       String
   guests          String
   date            DateTime
@@ -322,33 +352,34 @@ model TastingInquiry {
   email           String
   phone           String
   message         String?
+  status          TastingInquiryStatus @default(PENDING)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  status TastingInquiryStatus @default(PENDING)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@index([status, createdAt])
+  @@index([userId])
 }
 
 model StoreSettings {
   id String @id @default(uuid())
 
-  name String
+  name        String
   description String?
 
-  email String?
-  phone String?
+  email   String?
+  phone   String?
   address String?
-  city String?
+  city    String?
   website String?
 
-  currency String @default("PKR")
-  timezone String @default("Asia/Karachi")
-  storeStatus StoreStatus @default(OPEN)
+  currency           String      @default("PKR")
+  timezone           String      @default("Asia/Karachi")
+  storeStatus        StoreStatus @default(OPEN)
   maintenanceMessage String?
 
   isActive Boolean @default(true)
 
-  logo String?
+  logo         String?
   logoPublicId String?
 
   createdAt DateTime @default(now())
