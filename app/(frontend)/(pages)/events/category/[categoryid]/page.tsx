@@ -17,27 +17,8 @@ import { useGetSingleEvent } from "@/app/(frontend)/admin/events/hooks/usegetsin
 import { EventDetailsSheet } from "../../components/EventDetailsSheet";
 import { useGetEventReviews } from "../../hook/useGetEventReviews";
 import { useCreateEventReview } from "../../hook/useCreateHamperReview";
-import { Metadata } from 'next';
 
-type Props = {
-  params: { categoryid: string };
-};
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const categoryId = params.categoryid;
-  
-  
-const formattedName = categoryId.replace(/-/g, ' ');
-
-  return {
-    title: `${formattedName.toUpperCase()} Catering Events`,
-    description: `Discover top catering packages and menus tailored for ${formattedName} events.`,
-    openGraph: {
-      title: `${formattedName} Events | Catering Store`,
-      description: `Explore catering packages for ${formattedName}.`,
-    },
-  };
-}
 
 export default function EventCategoryBrowser() {
   const params = useParams();

@@ -18,35 +18,9 @@ import { useCartStore } from "@/app/(frontend)/store/useCartStore";
 import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
 import { useGetHamperReviews } from "../../hook/useGetHamperReviews";
 import { useCreateHamperReview } from "../../hook/useCreateHamperReview";
-import type { Metadata } from 'next';
-// Your client UI component
 
-type Props = {
-  params: Promise<{ categoryid: string }>;
-};
 
 // 1. Dynamic Metadata Generator
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { categoryid } = await params;
-
-  // Format dynamic slug (e.g., "luxury-hampers" -> "Luxury Hampers")
-  const categoryTitle = categoryid
-    .replace(/-/g, ' ')
-    .replace(/\b\w/g, (char) => char.toUpperCase());
-
-  return {
-    title: `${categoryTitle} Hampers`, // Renders as: "Luxury Hampers | Catering Store"
-    description: `Shop our exclusive range of ${categoryTitle} hampers, gift boxes, and seasonal packages.`,
-    openGraph: {
-      title: `${categoryTitle} Hampers | Catering Store`,
-      description: `Explore and order premium ${categoryTitle} hampers online.`,
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
-  };
-}
 
 export default function HamperCategoryBrowser() {
   const params = useParams();
