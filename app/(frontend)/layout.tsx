@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     "event packages",
     "tasting",
   ],
-  authors: [{ name: "Catering Store" }],
+  authors: [{ name: "Saif Catering Store" }],
   openGraph: {
     title: "Premium Catering Services & Hampers",
     description:
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.png",
+        url: "/icon.png",
         width: 1200,
         height: 630,
         alt: "Catering Store Preview",

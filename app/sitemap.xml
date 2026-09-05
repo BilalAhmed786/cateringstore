@@ -1,24 +1,56 @@
-import { MetadataRoute } from 'next';
+import { MetadataRoute } from "next";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = '';
+export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = "https://cateringstore.vercel.app";
 
-  // Static routes
-  const routes = ['', '/aboutus', '/contactus', '/events', '/hampers', '/menuitem', '/packages', '/tasting'].map(
-    (route) => ({
-      url: `${baseUrl}${route}`,
+  return [
+    {
+      url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: 'daily' as const,
-      priority: route === '' ? 1.0 : 0.8,
-    })
-  );
-
-   // Fetch dynamic IDs if you have an API endpoint or DB call
-      const categories = await getCategories();
-      const categoryRoutes = categories.map((cat) => ({
-      url: `${baseUrl}/events/category/${cat.id}`,
+      changeFrequency: "daily",
+      priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/aboutus`,
       lastModified: new Date(),
-    }));
-
-  return [...routes];
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/contactus`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/events`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/hampers`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/menuitem`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/packages`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/tasting`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+  ];
 }
