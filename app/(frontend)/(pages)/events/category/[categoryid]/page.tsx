@@ -3,26 +3,41 @@
 import { useEffect, useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { useParams } from "next/navigation";
-
 import { EntityFilters } from "@/app/(frontend)/components/reusables/filters/entityfilters";
 import { PriceFilter } from "@/app/(frontend)/components/reusables/filters/pricefilter";
 import { StorefrontGrid } from "@/app/(frontend)/components/reusables/storefront-grid/StorefrontGrid";
 import { ShoppingCart } from "@/app/(frontend)/components/reusables/shopping-cart/ShoppingCart";
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
-
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 import { useInfiniteScroll } from "@/app/(frontend)/components/reusables/hooks/useInfiniteScroll";
-
 import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
 import { useCartStore } from "@/app/(frontend)/store/useCartStore";
-
 import { useGetEvents } from "@/app/(frontend)/admin/events/hooks/usegetEvents";
 import { useGetSingleEvent } from "@/app/(frontend)/admin/events/hooks/usegetsingleevent";
-
 import { EventDetailsSheet } from "../../components/EventDetailsSheet";
-
 import { useGetEventReviews } from "../../hook/useGetEventReviews";
 import { useCreateEventReview } from "../../hook/useCreateHamperReview";
+import { Metadata } from 'next';
+
+type Props = {
+  params: { categoryid: string };
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const categoryId = params.categoryid;
+  
+  
+const formattedName = categoryId.replace(/-/g, ' ');
+
+  return {
+    title: `${formattedName.toUpperCase()} Catering Events`,
+    description: `Discover top catering packages and menus tailored for ${formattedName} events.`,
+    openGraph: {
+      title: `${formattedName} Events | Catering Store`,
+      description: `Explore catering packages for ${formattedName}.`,
+    },
+  };
+}
 
 export default function EventCategoryBrowser() {
   const params = useParams();

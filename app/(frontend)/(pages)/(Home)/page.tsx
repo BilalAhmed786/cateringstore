@@ -7,7 +7,12 @@ import FeaturedPackages from "./components/FeaturedPackages";
 import HeroSection from "./components/HeroSection";
 import Testimonials from "./components/Testimonials";
 import WhyChooseUs from "./components/WhyChooseUs";
+import { Metadata } from 'next';
 
+export const metadata: Metadata = {
+  title: 'Home | Premium Catering & Gourmet Hampers',
+  description: 'Explore our event catering packages, custom food menus, and exclusive gift hampers.',
+};
 
 export default function HomePage() {
   return (

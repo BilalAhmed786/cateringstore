@@ -7,14 +7,40 @@ import { EntityFilters } from "@/app/(frontend)/components/reusables/filters/ent
 import { PriceFilter } from "@/app/(frontend)/components/reusables/filters/pricefilter";
 import { StorefrontGrid } from "@/app/(frontend)/components/reusables/storefront-grid/StorefrontGrid";
 import { ShoppingCart } from "@/app/(frontend)/components/reusables/shopping-cart/ShoppingCart";
-
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 import { useInfiniteScroll } from "@/app/(frontend)/components/reusables/hooks/useInfiniteScroll";
-
 import { useGetMenuItems } from "@/app/(frontend)/admin/menu-items/hooks/useGetMenuItems";
-
 import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
 import { MenuItemDetailsSheet } from "../../components/MenuItemDetailsSheet";
+import type { Metadata } from 'next';
+
+
+type Props = {
+  params: Promise<{ categoryid: string }>;
+};
+
+// 1. Dynamic Metadata Generator
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { categoryid } = await params;
+
+  const categoryTitle = categoryid
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+  return {
+    title: `${categoryTitle} Menu`, // Renders as: "Appetizers Menu | Catering Store"
+    description: `Browse our fresh selection of ${categoryTitle} dishes available for event orders and delivery.`,
+    openGraph: {
+      title: `${categoryTitle} Catering Menu | Catering Store`,
+      description: `Order top-rated ${categoryTitle} items for your next event.`,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
+
 
 export default function CategoryMenuItemsPage() {
   const params = useParams();
