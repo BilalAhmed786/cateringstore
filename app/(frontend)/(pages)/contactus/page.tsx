@@ -1,14 +1,15 @@
+import { createMetadata } from "../../lib/seo/seo";
 import ContactHero from "./components/contact-hero";
 import ContactInquiry from "./components/contact-inquiry";
 import ContactMethods from "./components/contact-methods";
 import ContactCTA from "./contact-cta";
 import ContactHelp from "./contact-help";
-import { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Contact Us',
-  description: 'Get in touch with us for catering inquiries, custom booking, or menu quotes.',
-};
+
+export const metadata = createMetadata(
+  "Contact Us | Catering Store",
+  "Get in touch with Catering Store for catering inquiries, custom bookings, menu quotes, and event catering services."
+);
 
 export default function ContactPage() {
   return (

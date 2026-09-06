@@ -1,13 +1,12 @@
-// app/(frontend)/(pages)/(Home)/components/StructuredData.tsx
 export default function StructuredData() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'FoodEstablishment',
-    name: 'Catering Store',
+    name: 'saif Catering Store',
     image: 'https://cateringstore.vercel.app/icon.png',
     '@id': 'https://cateringstore.vercel.app',
     url: 'https://cateringstore.vercel.app',
-    telephone: '+92-300-0000000',
+    telephone: '+92-3315195278',
     priceRange: '$$',
     address: {
       '@type': 'PostalAddress',

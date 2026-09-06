@@ -1,3 +1,4 @@
+import { createMetadata } from "../../lib/seo/seo";
 import { ShoppingCart } from "../../components/reusables/shopping-cart/ShoppingCart";
 import CTASection from "./components/CTASection";
 import EventsSection from "./components/EventsSection";
@@ -7,12 +8,13 @@ import FeaturedPackages from "./components/FeaturedPackages";
 import HeroSection from "./components/HeroSection";
 import Testimonials from "./components/Testimonials";
 import WhyChooseUs from "./components/WhyChooseUs";
-import { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Home | Premium Catering & Gourmet Hampers',
-  description: 'Explore our event catering packages, custom food menus, and exclusive gift hampers.',
-};
+
+export const metadata = createMetadata(
+  "Home | Premium Catering & Gourmet Hampers",
+  "Explore our event catering packages, custom food menus, and exclusive gift hampers."
+);
+
 
 export default function HomePage() {
   return (
