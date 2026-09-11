@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Home, Menu, X } from "lucide-react";
+import { Bell, Home, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -21,11 +21,11 @@ export default function ClientHeader() {
   );
 
   return (
-    <header className="z-30 h-20 border-b bg-background/90 backdrop-blur-md md:left-64">
+    <header className="h-20 shrink-0 border-b bg-background/90 backdrop-blur-md">
       <div className="flex h-full items-center justify-between gap-3 px-4 sm:px-6">
         {/* Left side */}
         <div className="flex items-center gap-3">
-          {/* Mobile menu button */}
+          {/* Mobile menu */}
           <button
             type="button"
             className="flex h-9 w-9 items-center justify-center rounded-md border bg-background transition-colors hover:bg-muted md:hidden"
@@ -54,7 +54,6 @@ export default function ClientHeader() {
               )}
             </button>
 
-            {/* Notification dropdown */}
             {notificationOpen && (
               <div className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-lg border bg-background shadow-xl">
                 <div className="flex items-center justify-between border-b px-4 py-3">

@@ -16,12 +16,12 @@ export default function ClientLayout({
         <ClientSidebar />
 
         {/* Right side */}
-        <div className="flex flex-1 flex-col overflow-auto">
+        <div className="flex flex-1 min-h-screen flex-col overflow-hidden">
           <FCMInitializer />
           {/* Fixed/Sticky Header */}
           <ClientHeader />
           {/* Children */}
-          <main className="flex-1 min-h-screen overflow-auto">
+          <main className="flex-1 overflow-auto">
            
               {children}
           
