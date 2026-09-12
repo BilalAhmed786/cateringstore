@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/admin/', '/checkout/', '/auth/'],
     },
-    sitemap: 'http://cateringstore.vercel.app',
+    sitemap: 'https://cateringstore.vercel.app/sitemap.xml',
   };
 }
