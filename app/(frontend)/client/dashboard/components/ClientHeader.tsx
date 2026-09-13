@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Home, Menu, X } from "lucide-react";
+import { Bell, Home, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -21,7 +21,7 @@ export default function ClientHeader() {
   );
 
   return (
-    <header className="z-30 h-20 border-b bg-background/90 backdrop-blur-md md:left-64">
+    <header className="z-30 h-20 min-h-20 shrink-0 border-b bg-background/90 backdrop-blur-md">
       <div className="flex h-full items-center justify-between gap-3 px-4 sm:px-6">
         {/* Left side */}
         <div className="flex items-center gap-3">

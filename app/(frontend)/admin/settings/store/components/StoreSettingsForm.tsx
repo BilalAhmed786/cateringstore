@@ -7,9 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle,
+  
 } from "@/app/(frontend)/components/ui/card";
 
 import { FieldGroup } from "@/app/(frontend)/components/ui/field";
@@ -25,6 +24,7 @@ import StoreConfigurationStep from "./steps/StoreConfigurationStep";
 import { useGetStoreSettings } from "../hooks/useGetStoreSettings";
 import { useUpdateStoreSettings } from "../hooks/useUpdateStoreSettings";
 import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 const fields = [
   {
@@ -232,81 +232,83 @@ export default function StoreSettingsForm() {
   if (isLoading) return <Loader />;
 
   return (
-    <Card className="w-full p-5">
-      <CardHeader>
-        <CardTitle>Store Settings</CardTitle>
+    <div className="flex flex-col gap-2">
+      <Metadata
+        title="Store Settings"
+        desc="Manage your catering store information and configuration."
+      />
+      <Card className="w-full p-5">
+        <CardHeader>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 pt-4 text-sm">
+            <span
+              className={
+                step === 1 ? "font-semibold text-slate-900" : "text-slate-400"
+              }
+            >
+              1. Basic
+            </span>
 
-        <CardDescription>
-          Manage your catering store information and configuration.
-        </CardDescription>
+            <span className="text-muted-foreground">→</span>
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 pt-4 text-sm">
-          <span
-            className={
-              step === 1 ? "font-semibold text-slate-900" : "text-slate-400"
-            }
-          >
-            1. Basic
-          </span>
+            <span
+              className={
+                step === 2 ? "font-semibold text-slate-900" : "text-slate-400"
+              }
+            >
+              2. Contact
+            </span>
 
-          <span className="text-muted-foreground">→</span>
+            <span className="text-muted-foreground">→</span>
 
-          <span
-            className={
-              step === 2 ? "font-semibold text-slate-900" : "text-slate-400"
-            }
-          >
-            2. Contact
-          </span>
+            <span
+              className={
+                step === 3 ? "font-semibold text-slate-900" : "text-slate-400"
+              }
+            >
+              3. Configuration
+            </span>
+          </div>
+        </CardHeader>
 
-          <span className="text-muted-foreground">→</span>
+        <CardContent>
+          <FormProvider {...methods}>
+            <form onSubmit={methods.handleSubmit(handleSubmit)}>
+              <FieldGroup>
+                {step === 1 && (
+                  <StoreBasicStep logo={data?.store?.logo || ""} />
+                )}
 
-          <span
-            className={
-              step === 3 ? "font-semibold text-slate-900" : "text-slate-400"
-            }
-          >
-            3. Configuration
-          </span>
-        </div>
-      </CardHeader>
+                {step === 2 && <StoreContactStep />}
 
-      <CardContent>
-        <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(handleSubmit)}>
-            <FieldGroup>
-              {step === 1 && <StoreBasicStep logo={data?.store?.logo || ""} />}
+                {step === 3 && <StoreConfigurationStep />}
+              </FieldGroup>
 
-              {step === 2 && <StoreContactStep />}
+              <div className="mt-6 flex justify-end gap-2">
+                {step > 1 && (
+                  <UniButton
+                    type="button"
+                    variant="outline"
+                    label="Back"
+                    onClick={previousStep}
+                  />
+                )}
 
-              {step === 3 && <StoreConfigurationStep />}
-            </FieldGroup>
-
-            <div className="mt-6 flex justify-end gap-2">
-              {step > 1 && (
-                <UniButton
-                  type="button"
-                  variant="outline"
-                  label="Back"
-                  onClick={previousStep}
-                />
-              )}
-
-              {step < 3 ? (
-                <UniButton type="button" label="Next" onClick={nextStep} />
-              ) : (
-                <UniButton
-                  type="submit"
-                  label="Save Store Settings"
-                  loading={
-                    methods.formState.isSubmitting || updateStore.isPending
-                  }
-                />
-              )}
-            </div>
-          </form>
-        </FormProvider>
-      </CardContent>
-    </Card>
+                {step < 3 ? (
+                  <UniButton type="button" label="Next" onClick={nextStep} />
+                ) : (
+                  <UniButton
+                    type="submit"
+                    label="Save Store Settings"
+                    loading={
+                      methods.formState.isSubmitting || updateStore.isPending
+                    }
+                  />
+                )}
+              </div>
+            </form>
+          </FormProvider>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

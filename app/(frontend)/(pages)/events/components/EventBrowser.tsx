@@ -24,6 +24,7 @@ import { useEventCategories } from "@/app/(frontend)/admin/categories/event/hook
 
 import { useCreateEventReview } from "../hook/useCreateHamperReview";
 import { useGetEventReviews } from "../hook/useGetEventReviews";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 export function EventBrowser() {
   // ---------------------------------------
@@ -131,7 +132,7 @@ export function EventBrowser() {
   useEffect(() => {
     if (!data) return;
 
-    function retreiveData(data:GridItem[]) {
+    function retreiveData(data: GridItem[]) {
       if (page === 1) {
         setItems(data);
       } else {
@@ -139,7 +140,7 @@ export function EventBrowser() {
       }
     }
 
-    retreiveData(data.items)
+    retreiveData(data.items);
   }, [data, page]);
 
   // ---------------------------------------
@@ -201,10 +202,14 @@ export function EventBrowser() {
 
   return (
     <div className="space-y-8 pt-28">
-      {/* -------------------------------- */}
-      {/* Filters */}
-      {/* -------------------------------- */}
+      <Metadata
+        title="Catering for Every Occasion"
+        desc="Make your special occasions memorable with delicious food and catering options designed for weddings,
+        parties, corporate events, and celebrations."
+        classname="flex max-w-xl"
+      />
 
+      {/* Filters */}
       <div className="flex flex-col items-center space-y-8">
         <div className="flex w-full flex-col justify-center gap-10 px-5 lg:flex-row">
           {/* Category */}

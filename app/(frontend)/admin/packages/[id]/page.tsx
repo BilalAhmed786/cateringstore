@@ -26,6 +26,7 @@ import { useUploadPackageImage } from "../hooks/useuploadpackageimage";
 import { FieldGroup } from "@/app/(frontend)/components/ui/field";
 import { FormField } from "@/app/(frontend)/components/reusables/fields/fieldscase";
 import { GridItem } from "../../../components/reusables/grid/gridtypes";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 export default function EditPackagePage() {
   const { id } = useParams<{ id: string }>();
@@ -157,7 +158,7 @@ export default function EditPackagePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 p-6">
-      <h1 className="text-2xl font-bold">Edit Package</h1>
+      <Metadata title="Edit Package" desc="Edit your current package"/>
 
       <FormProvider {...form}>
         <form className="w-full space-y-6 bg-white p-8 rounded-xl shadow-lg">

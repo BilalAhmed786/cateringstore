@@ -33,6 +33,7 @@ import { useEventCategories } from "../../categories/event/hooks/useEventCategor
 import { useUploadEventImage } from "../hooks/useuploadeventimage";
 import { GridItem } from "../../../components/reusables/grid/gridtypes";
 import { useUpdateEvent } from "../hooks/useUpdateEvent";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 /* ---------------- COMPONENT ---------------- */
 
@@ -222,14 +223,10 @@ export default function EditEventPage() {
     return <div className="p-6">Loading...</div>;
   }
 
-  // const _hasCart =
-  //   selectedMenuItems.length > 0 || selectedPackages.length > 0;
-
-  /* ---------------- UI ---------------- */
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-2xl font-bold">Edit Event</h1>
+    <Metadata title="Edit Event" desc="Edit your current event"/>
 
       <FormProvider {...form}>
         <form className="bg-white p-8 rounded-xl shadow-lg space-y-6">

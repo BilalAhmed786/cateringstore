@@ -24,6 +24,7 @@ import { FormField } from "@/app/(frontend)/components/reusables/fields/fieldsca
 import { useGetSingleHamperDetails } from "../hooks/usegetsinglehamper";
 import { useHamperCategories } from "../../categories/hamper/hooks/useHamperCategories";
 import { useUploadHamperImage } from "../hooks/useuploadhamperimage";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 /* ---------------- COMPONENT ---------------- */
 
 export default function EditHamperPage() {
@@ -179,7 +180,7 @@ const form = useForm({
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 p-6">
-      <h1 className="text-2xl font-bold">Edit Hamper</h1>
+    <Metadata title="Edit Hamper" desc="Edit your current hamper"/>
 
       <FormProvider {...form}>
         <form className="w-full space-y-6 bg-white p-8 rounded-xl shadow-lg">

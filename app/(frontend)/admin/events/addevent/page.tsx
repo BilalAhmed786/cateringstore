@@ -28,6 +28,7 @@ import { EntityCart } from "../../../components/reusables/cart/entitycart";
 import { GridItem } from "../../../components/reusables/grid/gridtypes";
 import { useEventCategories } from "../../categories/event/hooks/useEventCategories";
 import { useCreateEvent } from "../hooks/useCreateEvent";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 export default function AddEventPage() {
   const [activeTab, setActiveTab] = useState("details");
@@ -50,7 +51,7 @@ export default function AddEventPage() {
       label: "Event Name",
       type: "text",
       required: true,
-      className:"mt-5"
+      className: "mt-5",
     },
     {
       name: "description",
@@ -106,7 +107,7 @@ export default function AddEventPage() {
                 ...i,
                 quantity: i.quantity + 1,
               }
-            : i
+            : i,
         );
       }
 
@@ -127,7 +128,7 @@ export default function AddEventPage() {
                 ...i,
                 quantity: i.quantity + 1,
               }
-            : i
+            : i,
         );
       }
 
@@ -168,12 +169,14 @@ export default function AddEventPage() {
     setActiveTab("details");
   };
 
-  const hasCart =
-    selectedMenuItems.length > 0 || selectedPackages.length > 0;
+  const hasCart = selectedMenuItems.length > 0 || selectedPackages.length > 0;
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
-      <h1 className="mb-4 text-2xl font-bold">Add Event</h1>
+      <Metadata
+        title="Add Event"
+        desc="select menuitem and pacakges for Event"
+      />
 
       <FormProvider {...form}>
         <form className="w-full min-w-0 space-y-6 rounded-xl bg-white p-4 shadow-lg sm:p-8">
@@ -195,41 +198,26 @@ export default function AddEventPage() {
                 {/* ---------------- TABS ---------------- */}
 
                 <TabsList className="grid h-auto w-full grid-cols-2 gap-2 sm:grid-cols-3 mb-10 lg:mb-2">
-                  <TabsTrigger value="details">
-                    Event Details
-                  </TabsTrigger>
+                  <TabsTrigger value="details">Event Details</TabsTrigger>
 
-                  <TabsTrigger value="menu-items">
-                    Menu Items
-                  </TabsTrigger>
+                  <TabsTrigger value="menu-items">Menu Items</TabsTrigger>
 
-                  <TabsTrigger value="packages">
-                    Packages
-                  </TabsTrigger>
+                  <TabsTrigger value="packages">Packages</TabsTrigger>
                 </TabsList>
 
                 {/* ---------------- DETAILS ---------------- */}
 
-                <TabsContent
-                  value="details"
-                  className="min-w-0"
-                >
+                <TabsContent value="details" className="min-w-0">
                   <FieldGroup>
                     {eventFields.map((field) => (
-                      <FormField
-                        key={field.name}
-                        field={field}
-                      />
+                      <FormField key={field.name} field={field} />
                     ))}
                   </FieldGroup>
                 </TabsContent>
 
                 {/* ---------------- MENU ITEMS ---------------- */}
 
-                <TabsContent
-                  value="menu-items"
-                  className="min-w-0"
-                >
+                <TabsContent value="menu-items" className="min-w-0">
                   <MenuItemBrowser
                     selectable={false}
                     showFilters
@@ -239,10 +227,7 @@ export default function AddEventPage() {
 
                 {/* ---------------- PACKAGES ---------------- */}
 
-                <TabsContent
-                  value="packages"
-                  className="min-w-0"
-                >
+                <TabsContent value="packages" className="min-w-0">
                   <PackageBrowser
                     selectable={false}
                     onSelectItem={handleSelectPackage}

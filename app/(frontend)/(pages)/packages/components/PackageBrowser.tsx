@@ -23,6 +23,7 @@ import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
 
 import { useCreatePackageReview } from "../hooks/useCreatePackageReview";
 import { useGetPackageReviews } from "../hooks/useGetPackageReviews";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 export function PackageBrowser() {
   const [search, setSearch] = useState("");
@@ -100,7 +101,7 @@ export function PackageBrowser() {
   useEffect(() => {
     if (!data) return;
 
-    function Dataretreive(data:GridItem[]) {
+    function Dataretreive(data: GridItem[]) {
       if (page === 1) {
         setItems(data);
       } else {
@@ -108,7 +109,7 @@ export function PackageBrowser() {
       }
     }
 
-    Dataretreive(data.items)
+    Dataretreive(data.items);
   }, [data, page]);
 
   const handleSearchChange = (value: string) => {
@@ -142,10 +143,16 @@ export function PackageBrowser() {
 
   return (
     <div className="space-y-8 pt-28">
+      <Metadata
+        title="Catering Packages"
+        desc="Discover our carefully crafted catering packages, perfect for gatherings, celebrations, and every special occasion."
+        classname="flex max-w-xl"
+      />
+
       {/* Filters */}
 
       <div className="flex flex-col items-center gap-6">
-        <div className="w-full max-w-xs">
+        <div className="w-full max-w-xs p-2">
           <PriceFilter
             value={priceRange}
             onChange={handlePriceChange}

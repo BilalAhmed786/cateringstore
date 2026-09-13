@@ -11,8 +11,9 @@ import { useGetMenuItems } from "@/app/(frontend)/admin/menu-items/hooks/useGetM
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 import { useInfiniteScroll } from "@/app/(frontend)/components/reusables/hooks/useInfiniteScroll";
 import { GridItem } from "@/app/(frontend)/components/reusables/grid/gridtypes";
-import { MenuItemDetailsSheet } from "./MenuItemDetailsSheet"; // <-- update path
+import { MenuItemDetailsSheet } from "./MenuItemDetailsSheet";
 import { Loader } from "@/app/(frontend)/components/reusables/loader/loader";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 export function MenuItemBrowser() {
   const [category, setCategory] = useState("all");
@@ -41,38 +42,48 @@ export function MenuItemBrowser() {
 
   const hasMore = items.length < (data?.total ?? 0);
 
+  // -----------------------------------------
   // Filters
+  // -----------------------------------------
 
   const handleCategoryChange = (value: string) => {
-   setCategory(value);
+    setCategory(value);
     setPage(1);
+    setItems([]);
   };
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
     setPage(1);
+    setItems([]);
   };
 
   const handlePriceChange = (value: [number, number]) => {
     setPriceRange(value);
     setPage(1);
+    setItems([]);
   };
 
+  // -----------------------------------------
   // Update items
+  // -----------------------------------------
 
   useEffect(() => {
     if (!data) return;
-    function dataItems(data:GridItem[]) {
+    function retriveData(data: GridItem[]) {
       if (page === 1) {
         setItems(data);
       } else {
         setItems((prev) => [...prev, ...data]);
       }
     }
-    dataItems(data.items);
+
+    retriveData(data.items);
   }, [data, page]);
 
+  // -----------------------------------------
   // Infinite Scroll
+  // -----------------------------------------
 
   useInfiniteScroll({
     loading: isFetching,
@@ -81,11 +92,18 @@ export function MenuItemBrowser() {
   });
 
   return (
-    <div className="space-y-8 pt-28">
-      {/* Filters */}
+    <div className="space-y-10 pt-28">
+      {/* Page Header */}
+      <Metadata
+        classname="flex max-w-xl"
+        title="Delicious Meals, Made for You"
+        desc="Explore our freshly prepared menu items, choose your favorites, and order delicious meals for any occasion."
+      />
 
-      <div className="flex flex-col items-center space-y-8">
-        <div className="flex w-full flex-col justify-center gap-10 px-5 lg:flex-row">
+      {/* Filters */}
+      <div className="flex flex-col items-center space-y-7 px-5">
+        <div className="flex w-full flex-col items-center justify-center gap-6 lg:flex-row lg:gap-10">
+          {/* Category Filter */}
           <EntityFilters
             filters={[
               {
@@ -107,6 +125,7 @@ export function MenuItemBrowser() {
             ]}
           />
 
+          {/* Price Filter */}
           <div className="w-full max-w-xs">
             <PriceFilter
               value={priceRange}
@@ -118,19 +137,19 @@ export function MenuItemBrowser() {
           </div>
         </div>
 
+        {/* Search */}
         <EntityFilters
           search={{
             value: search,
             onChange: handleSearchChange,
             placeholder: "Search menu items...",
-            classname: "sm:w-xl lg:w-5xl",
+            classname: "w-full sm:w-xl lg:w-5xl",
           }}
         />
       </div>
 
-      {/* Grid */}
-
-      <div className="relative mx-7">
+      {/* Menu Items */}
+      <div className="relative mx-5 sm:mx-7">
         <StorefrontGrid
           items={items}
           type="menuitem"
@@ -140,11 +159,15 @@ export function MenuItemBrowser() {
             setDetailsOpen(true);
           }}
         />
-        {isFetching  && page !==1 && <Loader variant="page"/>}
+
+        {/* Loading More */}
+        {isFetching && page !== 1 && <Loader variant="page" />}
       </div>
 
+      {/* Shopping Cart */}
       <ShoppingCart />
 
+      {/* Item Details */}
       <MenuItemDetailsSheet
         id={selectedItemId}
         open={detailsOpen}

@@ -12,6 +12,7 @@ import { useGetClientOrders } from "../hooks/useGetClientOrders";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
 import { DataTable } from "@/app/(frontend)/components/reusables/table/table";
 import ContentSkeleton from "@/app/(frontend)/components/reusables/skeleton/ContentSkeleton";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 export default function MyOrders() {
   const [page, setPage] = useState(1);
@@ -92,15 +93,7 @@ export default function MyOrders() {
 
   return (
     <div className="space-y-6 p-5">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold">My Orders</h1>
-
-        <p className="mt-1 text-sm text-muted-foreground">
-          View and track your catering orders.
-        </p>
-      </div>
-
+      <Metadata title="My Orders" desc="View and track your catering orders." />
       {/* Status Filter */}
       <OrderFilters status={status} onStatusChange={handleStatusChange} />
 
@@ -116,9 +109,8 @@ export default function MyOrders() {
       ) : (
         <>
           {/* Orders */}
-          
-            <DataTable items={orders} isLoading={isLoading} columns={columns} />
-          
+
+          <DataTable items={orders} isLoading={isLoading} columns={columns} />
 
           {/* Pagination */}
           {data && (

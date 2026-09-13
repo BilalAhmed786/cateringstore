@@ -53,12 +53,13 @@ export default function OrderDetailsPage({
 
   return (
     <div className="w-full space-y-6 p-5">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <Metadata
+       <Metadata
           title="Order Details"
           desc={`Order #${data.order.id}`}
           classname="truncate"
         />
+      <div className="flex flex-wrap items-center justify-between gap-4">
+       
 
         <Link href="/client/orders">
           <UniButton

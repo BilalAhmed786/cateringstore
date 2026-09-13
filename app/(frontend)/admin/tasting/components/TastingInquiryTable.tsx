@@ -10,9 +10,9 @@ import { EntityFilters } from "@/app/(frontend)/components/reusables/filters/ent
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
 import { ItemsPagination } from "@/app/(frontend)/components/reusables/pagination/pagination";
 
-
 import { TastingInquiry } from "../types/type";
 import { useGetTastingInquiries } from "../hooks/useGetTastingInquiries";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 export default function TastingInquiryTable() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function TastingInquiryTable() {
 
   const [search, setSearch] = useState("");
 
-  const debouncedSearch = useDebounce(search,1000);
+  const debouncedSearch = useDebounce(search, 1000);
 
   // ---------------------------------------
   // Pagination
@@ -152,14 +152,10 @@ export default function TastingInquiryTable() {
   return (
     <div className="space-y-6 p-6">
       {/* Header */}
-
-      <div>
-        <h1 className="text-2xl font-bold">Tasting Inquiries</h1>
-
-        <p className="mt-1 text-sm text-muted-foreground">
-          Manage customer tasting requests.
-        </p>
-      </div>
+      <Metadata
+        title="Tasting Inquiries"
+        desc=" Manage customer tasting requests."
+      />
 
       {/* Filters */}
 

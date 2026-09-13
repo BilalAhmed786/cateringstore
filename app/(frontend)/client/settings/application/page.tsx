@@ -1,11 +1,10 @@
 "use client";
 
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+  
 } from "@/app/(frontend)/components/ui/card";
 
 import { Label } from "@/app/(frontend)/components/ui/label";
@@ -33,15 +32,11 @@ export default function DashboardSettingsForm() {
 
   return (
     <div className="max-w-3xl space-y-6 p-5">
+
+      <Metadata title="Appearance" desc="Customize how your dashboard looks."/>
       {/* ================= APPEARANCE ================= */}
       <Card className="p-5">
-        <CardHeader>
-          <CardTitle>Appearance</CardTitle>
-
-          <CardDescription>
-            Customize how your dashboard looks.
-          </CardDescription>
-        </CardHeader>
+      
 
         <CardContent className="space-y-6">
           {/* Theme */}

@@ -15,6 +15,7 @@ import { TastingInquiryStatus } from "../types/type";
 // Replace this with your actual auth hook
 import { useCurrentUser } from "@/app/(frontend)/components/header/hook/useCurrentUser";
 
+
 interface Props {
   id: string;
 }
@@ -39,30 +40,21 @@ const statusOptions = [
   },
 ];
 
-export default function TastingInquiryDetails({
-  id,
-}: Props) {
+export default function TastingInquiryDetails({ id }: Props) {
   const router = useRouter();
 
   const { user } = useCurrentUser();
 
-  const { data, isLoading, isError } =
-    useGetTastingInquiry(id);
+  const { data, isLoading, isError } = useGetTastingInquiry(id);
 
-  const updateStatus =
-    useUpdateTastingInquiryStatus();
+  const updateStatus = useUpdateTastingInquiryStatus();
 
   const inquiry = data?.data;
 
-  const [status, setStatus] =
-    useState<TastingInquiryStatus | undefined>();
+  const [status, setStatus] = useState<TastingInquiryStatus | undefined>();
 
   if (isLoading) {
-    return (
-      <div className="p-6">
-        Loading tasting inquiry...
-      </div>
-    );
+    return <div className="p-6">Loading tasting inquiry...</div>;
   }
 
   if (isError || !inquiry) {
@@ -75,14 +67,10 @@ export default function TastingInquiryDetails({
 
   const currentStatus = status ?? inquiry.status;
 
-  const isSuperAdmin =
-    user?.role === "SUPER_ADMIN";
+  const isSuperAdmin = user?.role === "SUPER_ADMIN";
 
-  const handleStatusChange = async (
-    value: string,
-  ) => {
-    const newStatus =
-      value as TastingInquiryStatus;
+  const handleStatusChange = async (value: string) => {
+    const newStatus = value as TastingInquiryStatus;
 
     setStatus(newStatus);
 
@@ -92,23 +80,18 @@ export default function TastingInquiryDetails({
         status: newStatus,
       });
 
-      toast.success(
-        "Tasting inquiry status updated.",
-      );
+      toast.success("Tasting inquiry status updated.");
     } catch (error) {
       console.error(error);
 
       setStatus(inquiry.status);
 
-      toast.error(
-        "Failed to update tasting status.",
-      );
+      toast.error("Failed to update tasting status.");
     }
   };
 
   return (
     <div className="space-y-6 p-6">
-
       {/* Header */}
 
       <div className="flex items-center gap-4">
@@ -116,84 +99,49 @@ export default function TastingInquiryDetails({
           label="Back"
           variant="outline"
           icon={<ArrowLeft className="h-4 w-4" />}
-          onClick={() =>
-            router.push("/admin/tasting")
-          }
+          onClick={() => router.push("/admin/tasting")}
         />
-
-        <div>
-          <h1 className="text-2xl font-bold">
-            Tasting Inquiry
-          </h1>
-
-          <p className="text-sm text-muted-foreground">
-            View tasting request details.
-          </p>
-        </div>
       </div>
 
       {/* Customer */}
 
       <div className="rounded-xl border p-6">
-        <h2 className="mb-4 text-lg font-semibold">
-          Customer Information
-        </h2>
+        <h2 className="mb-4 text-lg font-semibold">Customer Information</h2>
 
         <div className="grid gap-4 md:grid-cols-3">
-
           <div>
-            <p className="text-sm text-muted-foreground">
-              Name
-            </p>
+            <p className="text-sm text-muted-foreground">Name</p>
 
-            <p className="font-medium">
-              {inquiry.name}
-            </p>
+            <p className="font-medium">{inquiry.name}</p>
           </div>
 
           <div>
-            <p className="text-sm text-muted-foreground">
-              Email
-            </p>
+            <p className="text-sm text-muted-foreground">Email</p>
 
-            <p className="font-medium">
-              {inquiry.email}
-            </p>
+            <p className="font-medium">{inquiry.email}</p>
           </div>
 
           <div>
-            <p className="text-sm text-muted-foreground">
-              Phone
-            </p>
+            <p className="text-sm text-muted-foreground">Phone</p>
 
-            <p className="font-medium">
-              {inquiry.phone}
-            </p>
+            <p className="font-medium">{inquiry.phone}</p>
           </div>
-
         </div>
       </div>
 
       {/* Event */}
 
       <div className="rounded-xl border p-6">
-        <h2 className="mb-4 text-lg font-semibold">
-          Tasting Details
-        </h2>
+        <h2 className="mb-4 text-lg font-semibold">Tasting Details</h2>
 
         <div className="grid gap-6 md:grid-cols-4">
-
           <div className="flex gap-3">
             <CalendarDays className="h-5 w-5 text-primary" />
 
             <div>
-              <p className="text-sm text-muted-foreground">
-                Event
-              </p>
+              <p className="text-sm text-muted-foreground">Event</p>
 
-              <p className="font-medium">
-                {inquiry.eventType}
-              </p>
+              <p className="font-medium">{inquiry.eventType}</p>
             </div>
           </div>
 
@@ -201,13 +149,9 @@ export default function TastingInquiryDetails({
             <Users className="h-5 w-5 text-primary" />
 
             <div>
-              <p className="text-sm text-muted-foreground">
-                Guests
-              </p>
+              <p className="text-sm text-muted-foreground">Guests</p>
 
-              <p className="font-medium">
-                {inquiry.guests}
-              </p>
+              <p className="font-medium">{inquiry.guests}</p>
             </div>
           </div>
 
@@ -215,14 +159,10 @@ export default function TastingInquiryDetails({
             <CalendarDays className="h-5 w-5 text-primary" />
 
             <div>
-              <p className="text-sm text-muted-foreground">
-                Date
-              </p>
+              <p className="text-sm text-muted-foreground">Date</p>
 
               <p className="font-medium">
-                {new Date(
-                  inquiry.date,
-                ).toLocaleDateString()}
+                {new Date(inquiry.date).toLocaleDateString()}
               </p>
             </div>
           </div>
@@ -231,54 +171,39 @@ export default function TastingInquiryDetails({
             <Clock className="h-5 w-5 text-primary" />
 
             <div>
-              <p className="text-sm text-muted-foreground">
-                Time
-              </p>
+              <p className="text-sm text-muted-foreground">Time</p>
 
-              <p className="font-medium">
-                {inquiry.time}
-              </p>
+              <p className="font-medium">{inquiry.time}</p>
             </div>
           </div>
-
         </div>
       </div>
 
       {/* Food */}
 
       <div className="rounded-xl border p-6">
-        <h2 className="mb-4 text-lg font-semibold">
-          Food Preferences
-        </h2>
+        <h2 className="mb-4 text-lg font-semibold">Food Preferences</h2>
 
         {inquiry.foodPreferences.length > 0 ? (
           <div className="flex flex-wrap gap-2">
-            {inquiry.foodPreferences.map(
-              (food) => (
-                <span
-                  key={food}
-                  className="rounded-full bg-muted px-3 py-1 text-sm"
-                >
-                  {food}
-                </span>
-              ),
-            )}
+            {inquiry.foodPreferences.map((food) => (
+              <span
+                key={food}
+                className="rounded-full bg-muted px-3 py-1 text-sm"
+              >
+                {food}
+              </span>
+            ))}
           </div>
         ) : (
-          <p className="text-muted-foreground">
-            No food preferences provided.
-          </p>
+          <p className="text-muted-foreground">No food preferences provided.</p>
         )}
 
         {inquiry.message && (
           <div className="mt-6">
-            <p className="text-sm text-muted-foreground">
-              Message
-            </p>
+            <p className="text-sm text-muted-foreground">Message</p>
 
-            <p className="mt-1">
-              {inquiry.message}
-            </p>
+            <p className="mt-1">{inquiry.message}</p>
           </div>
         )}
       </div>
@@ -286,9 +211,7 @@ export default function TastingInquiryDetails({
       {/* Status */}
 
       <div className="rounded-xl border p-6">
-        <h2 className="mb-4 text-lg font-semibold">
-          Status
-        </h2>
+        <h2 className="mb-4 text-lg font-semibold">Status</h2>
 
         {isSuperAdmin ? (
           <BaseSelect
@@ -304,7 +227,6 @@ export default function TastingInquiryDetails({
           </span>
         )}
       </div>
-
     </div>
   );
 }

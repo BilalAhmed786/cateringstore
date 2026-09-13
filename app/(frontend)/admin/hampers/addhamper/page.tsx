@@ -16,16 +16,22 @@ import { FormField } from "@/app/(frontend)/components/reusables/fields/fieldsca
 import { UniButton } from "@/app/(frontend)/components/reusables/button/button";
 
 import { generateSchema } from "@/app/(frontend)/components/reusables/validation/valdiation";
-import { FieldConfig, GridSelectableItem } from "@/app/(frontend)/components/reusables/types/types";
+import {
+  FieldConfig,
+  GridSelectableItem,
+} from "@/app/(frontend)/components/reusables/types/types";
 
 import MenuItemBrowser from "../../menu-items/(components)/menuitemsbrowser";
 import { EntityCart } from "../../../components/reusables/cart/entitycart";
 import { useCreateHamper } from "../hooks/usecreatehampers";
 import { useHamperCategories } from "../../categories/hamper/hooks/useHamperCategories";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 export default function CreateHamperPage() {
   const [activeTab, setActiveTab] = useState("details");
-  const [selectedItems, setSelectedItems] = useState<(GridSelectableItem & { quantity: number })[]>([]);
+  const [selectedItems, setSelectedItems] = useState<
+    (GridSelectableItem & { quantity: number })[]
+  >([]);
   const { mutate: createHamper, isPending } = useCreateHamper();
   const { data } = useHamperCategories({
     page: 1,
@@ -34,9 +40,20 @@ export default function CreateHamperPage() {
 
   /* -------------------- FORM FIELDS -------------------- */
   const initialFields: FieldConfig[] = [
-    { name: "name", label: "Hamper Name", type: "text", required: true,className:"mt-5"},
-    { name: "description", label: "Description", type: "textarea",className:"mt-5" },
-    { name: "discount", label: "Discount", type: "number",className:"mt-5"},
+    {
+      name: "name",
+      label: "Hamper Name",
+      type: "text",
+      required: true,
+      className: "mt-5",
+    },
+    {
+      name: "description",
+      label: "Description",
+      type: "textarea",
+      className: "mt-5",
+    },
+    { name: "discount", label: "Discount", type: "number", className: "mt-5" },
     {
       name: "categoryId",
       label: "Category",
@@ -45,7 +62,7 @@ export default function CreateHamperPage() {
         label: c.name,
         value: c.id,
       })),
-      className:"mt-5"
+      className: "mt-5",
     },
     {
       name: "image",
@@ -53,7 +70,6 @@ export default function CreateHamperPage() {
       type: "file",
       className: "w-[200] relative h-32 rounded", // image preview classes
       dragdrop: "border-4 border-blue-500 p-12 rounded-xl",
-      
     },
   ];
 
@@ -68,7 +84,7 @@ export default function CreateHamperPage() {
     defaultValues: {
       name: "",
       description: "",
-      categoryid:"",
+      categoryid: "",
       eventId: "",
       discount: 0,
     },
@@ -113,7 +129,7 @@ export default function CreateHamperPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 p-6">
-      <h1 className="text-2xl font-bold mb-4">Add Hamper</h1>
+      <Metadata title="Add Hamper" desc="select menu items for hampers" />
 
       <FormProvider {...form}>
         <form className="w-full space-y-6 bg-white p-8 rounded-xl shadow-lg">

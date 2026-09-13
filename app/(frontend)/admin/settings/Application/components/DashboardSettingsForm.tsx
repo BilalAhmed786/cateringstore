@@ -1,5 +1,6 @@
 "use client";
 
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 import {
   Card,
   CardContent,
@@ -26,10 +27,7 @@ import { useTheme } from "next-themes";
 
 export default function DashboardSettingsForm() {
   // Theme is managed by next-themes
-  const {
-    theme,
-    setTheme,
-  } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   // Other dashboard preferences are managed by Zustand
   const {
@@ -45,40 +43,27 @@ export default function DashboardSettingsForm() {
   return (
     <div className="max-w-3xl space-y-6">
       {/* ================= APPEARANCE ================= */}
+      <Metadata
+        title="Appearance"
+        desc=" Customize how the admin dashboard looks."
+      />
       <Card className="p-5">
-        <CardHeader>
-          <CardTitle>Appearance</CardTitle>
-
-          <CardDescription>
-            Customize how the admin dashboard looks.
-          </CardDescription>
-        </CardHeader>
-
         <CardContent className="space-y-6">
           {/* Theme */}
           <div className="space-y-2">
             <Label>Theme</Label>
 
-            <Select
-              value={theme}
-              onValueChange={setTheme}
-            >
+            <Select value={theme} onValueChange={setTheme}>
               <SelectTrigger>
                 <SelectValue placeholder="Select theme" />
               </SelectTrigger>
 
               <SelectContent>
-                <SelectItem value="system">
-                  System
-                </SelectItem>
+                <SelectItem value="system">System</SelectItem>
 
-                <SelectItem value="light">
-                  Light
-                </SelectItem>
+                <SelectItem value="light">Light</SelectItem>
 
-                <SelectItem value="dark">
-                  Dark
-                </SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
               </SelectContent>
             </Select>
 
@@ -91,30 +76,19 @@ export default function DashboardSettingsForm() {
           <div className="space-y-2">
             <Label>Accent Color</Label>
 
-            <Select
-              value={accentColor}
-              onValueChange={setAccentColor}
-            >
+            <Select value={accentColor} onValueChange={setAccentColor}>
               <SelectTrigger>
                 <SelectValue placeholder="Select accent color" />
               </SelectTrigger>
 
               <SelectContent>
-                <SelectItem value="default">
-                  Default
-                </SelectItem>
+                <SelectItem value="default">Default</SelectItem>
 
-                <SelectItem value="blue">
-                  Blue
-                </SelectItem>
+                <SelectItem value="blue">Blue</SelectItem>
 
-                <SelectItem value="green">
-                  Green
-                </SelectItem>
+                <SelectItem value="green">Green</SelectItem>
 
-                <SelectItem value="purple">
-                  Purple
-                </SelectItem>
+                <SelectItem value="purple">Purple</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -136,22 +110,15 @@ export default function DashboardSettingsForm() {
           <div className="space-y-2">
             <Label>Sidebar State</Label>
 
-            <Select
-              value={sidebar}
-              onValueChange={setSidebar}
-            >
+            <Select value={sidebar} onValueChange={setSidebar}>
               <SelectTrigger>
                 <SelectValue placeholder="Select sidebar state" />
               </SelectTrigger>
 
               <SelectContent>
-                <SelectItem value="expanded">
-                  Expanded
-                </SelectItem>
+                <SelectItem value="expanded">Expanded</SelectItem>
 
-                <SelectItem value="collapsed">
-                  Collapsed
-                </SelectItem>
+                <SelectItem value="collapsed">Collapsed</SelectItem>
               </SelectContent>
             </Select>
           </div>

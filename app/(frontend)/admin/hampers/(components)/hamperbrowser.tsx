@@ -13,6 +13,7 @@ import { useGetHampers } from "../hooks/usegethampers";
 import { useDeleteHamper } from "../hooks/usedeletehamper";
 import { useToggleHamper } from "../hooks/usetogglehamper";
 import { useDebounce } from "@/app/(frontend)/components/reusables/hooks/useDebounce";
+import Metadata from "@/app/(frontend)/components/reusables/metadata/metadata";
 
 export default function HamperBrowser({
   showFilters = true,
@@ -110,6 +111,8 @@ export default function HamperBrowser({
   /* ---------------- UI ---------------- */
   return (
     <div className="space-y-6">
+
+
       {showFilters && (
         <EntityFilters
           filters={filters}
