@@ -96,13 +96,13 @@ export function MenuItemBrowser() {
       {/* Page Header */}
       <Metadata
         classname="flex max-w-xl"
-        title="Delicious Meals, Made for You"
+        title="We Offerd Tasty Meal"
         desc="Explore our freshly prepared menu items, choose your favorites, and order delicious meals for any occasion."
       />
 
       {/* Filters */}
-      <div className="flex flex-col items-center space-y-7 px-5">
-        <div className="flex w-full flex-col items-center justify-center gap-6 lg:flex-row lg:gap-10">
+      <div className="flex flex-col items-center space-y-8">
+        <div className="flex w-full flex-col justify-center gap-10 px-5 lg:flex-row">
           {/* Category Filter */}
           <EntityFilters
             filters={[
