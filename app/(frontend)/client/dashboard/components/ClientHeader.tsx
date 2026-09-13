@@ -25,7 +25,7 @@ export default function ClientHeader() {
       <div className="flex h-full items-center justify-between gap-3 px-4 sm:px-6">
         {/* Left side */}
         <div className="flex items-center gap-3">
-          {/* Mobile menu button */}
+          {/* Mobile menu */}
           <button
             type="button"
             className="flex h-9 w-9 items-center justify-center rounded-md border bg-background transition-colors hover:bg-muted md:hidden"
@@ -54,7 +54,6 @@ export default function ClientHeader() {
               )}
             </button>
 
-            {/* Notification dropdown */}
             {notificationOpen && (
               <div className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-lg border bg-background shadow-xl">
                 <div className="flex items-center justify-between border-b px-4 py-3">
